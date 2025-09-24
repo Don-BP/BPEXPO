@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    
+    <!-- Use your company logo for the browser tab icon -->
+    <link rel="icon" type="image/png" href="/bp-expo/images/brain-power-logo.png" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Set the correct title for your application -->
+    <title>BP EXPO: Global Discovery</title>
+    
+    <!-- Google Fonts Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Updated Font link to include the "900" weight used for titles -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="/bp-expo/assets/index-CuR1ZPHH.js"></script>
+    <link rel="stylesheet" crossorigin href="/bp-expo/assets/index-DBezbrnM.css">
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script>
+    // IMMEDIATE AUTHENTICATION CHECK - BEFORE ANYTHING ELSE
+    (function() {
+        console.log('=== BP-EXPO IMMEDIATE AUTH CHECK ===');
+
+        // Check HTTPS first
+        if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+            console.log('Redirecting to HTTPS...');
+            window.location.href = 'https://' + window.location.hostname + window.location.pathname;
+            return; // Stop execution
+        }
+
+        // Check if we have stored auth data
+        const token = localStorage.getItem('bplabo_jwt_token');
+        const userData = localStorage.getItem('bplabo_current_user');
+
+        console.log('Token exists:', !!token);
+        console.log('User data exists:', !!userData);
+
+        // If no auth data, redirect immediately
+        if (!token || !userData) {
+            console.log('No auth data found, redirecting to login...');
+            window.location.href = '../login.html';
+            return; // Stop execution
+        }
+
+        // Parse user data and check if valid
+        try {
+            const user = JSON.parse(userData);
+            console.log('User data valid:', !!user);
+
+            if (!user || !user.id) {
+                console.log('Invalid user data, redirecting to login...');
+                localStorage.removeItem('bplabo_jwt_token');
+                localStorage.removeItem('bplabo_current_user');
+                window.location.href = '../login.html';
+                return; // Stop execution
+            }
+
+            console.log('Auth data valid, proceeding to load BP-EXPO...');
+        } catch (error) {
+            console.log('Error parsing user data, redirecting to login...');
+            localStorage.removeItem('bplabo_jwt_token');
+            localStorage.removeItem('bplabo_current_user');
+            window.location.href = '../login.html';
+            return; // Stop execution
+        }
+
+        console.log('=== BP-EXPO AUTH CHECK PASSED ===');
+    })();
+    </script>
+  </body>
+</html>

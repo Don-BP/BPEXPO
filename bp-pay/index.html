@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BP-PAY</title>
+    <script type="module" crossorigin src="./assets/index-XeoLqhiz.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DBGLAebb.css">
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script type="module">
+      // Authentication check
+      import auth from '../js/auth.js';
+
+      // Check if user is authenticated
+      if (!auth.isLoggedIn()) {
+        window.location.href = '../login.html';
+      }
+    </script>
+  </body>
+</html>

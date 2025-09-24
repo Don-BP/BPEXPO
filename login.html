@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BP LABO - Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px; position: relative; background: radial-gradient(rgb(220, 241, 255) 30%, rgba(0, 119, 255, 0.639) 80%); }
+        body::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('assets/main-bg.jpg'); background-size: cover; background-position: center; opacity: 0.2; z-index: -1; }
+        .login-container { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 40px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .logo { max-width: 200px; width: 100%; height: auto; margin-bottom: 20px; }
+        .login-title { font-size: 2rem; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .login-subtitle { font-size: 1rem; opacity: 0.8; margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .login-form { display: flex; flex-direction: column; gap: 20px; }
+        .form-group { text-align: left; }
+        .form-label { display: block; margin-bottom: 5px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+        .form-input { width: 100%; padding: 12px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 10px; background: rgba(255, 255, 255, 0.1); color: white; font-size: 1rem; backdrop-filter: blur(5px); }
+        .form-input::placeholder { color: rgba(255, 255, 255, 0.7); }
+        .form-input:focus { outline: none; border-color: rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.2); }
+        .login-btn { padding: 12px 30px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 10px; color: white; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin-top: 10px; }
+        .login-btn:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.3); border-color: rgba(255, 255, 255, 0.6); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .toggle-link { color: rgba(255, 255, 255, 0.8); text-decoration: none; font-size: 0.9rem; margin-top: 15px; display: inline-block; transition: color 0.3s ease; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); cursor: pointer; }
+        .toggle-link:hover { color: white; }
+        .error-message { background: rgba(255, 0, 0, 0.2); border: 1px solid rgba(255, 0, 0, 0.4); color: white; padding: 10px; border-radius: 5px; margin-bottom: 15px; display: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        .success-message { background: rgba(0, 255, 0, 0.2); border: 1px solid rgba(0, 255, 0, 0.4); color: white; padding: 10px; border-radius: 5px; margin-bottom: 15px; display: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <img src="assets/bp-labo.png" alt="BP LABO Logo" class="logo">
+        <h1 class="login-title">Welcome to BP LABO</h1>
+        <p class="login-subtitle">Please sign in to continue</p>
+
+        <div id="error-message" class="error-message"></div>
+        <div id="success-message" class="success-message"></div>
+
+        <!-- Login Form -->
+        <form id="login-form" class="login-form">
+            <div class="form-group">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" id="username" class="form-input" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="login-btn" id="login-btn">Sign In</button>
+        </form>
+
+        <!-- Register Form (hidden by default) -->
+        <form id="register-form" class="login-form" style="display: none;">
+            <div class="form-group">
+                <label for="reg-username" class="form-label">Username</label>
+                <input type="text" id="reg-username" class="form-input" placeholder="Choose a username" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-email" class="form-label">Email Address</label>
+                <input type="email" id="reg-email" class="form-input" placeholder="your.email@company.com" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-employee-id" class="form-label">Employee ID</label>
+                <input type="text" id="reg-employee-id" class="form-input" placeholder="e.g., GUEST1" required>
+                <!-- --- UPDATED INSTRUCTIONAL TEXT --- -->
+                <small style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">Format: 4-8 uppercase letters and numbers.</small>
+                <!-- --- END OF UPDATE --- -->
+            </div>
+            <div class="form-group">
+                <label for="reg-license-code" class="form-label">License Code</label>
+                <input type="text" id="reg-license-code" class="form-input" placeholder="BP-XXXX-XXXX" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-password" class="form-label">Password</label>
+                <input type="password" id="reg-password" class="form-input" placeholder="Choose a password (min 6 chars)" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-confirm-password" class="form-label">Confirm Password</label>
+                <input type="password" id="reg-confirm-password" class="form-input" placeholder="Confirm your password" required>
+            </div>
+            <button type="submit" class="login-btn" id="register-btn">Create Account</button>
+        </form>
+
+        <div style="margin-top: 20px;">
+            <a id="forgot-password-link" class="toggle-link">Forgot your password?</a>
+        </div>
+        <a id="toggle-link" class="toggle-link">Don't have an account? Sign up</a>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const toggleLink = document.getElementById('toggle-link');
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+
+            if (!loginForm || !registerForm || !toggleLink) return;
+
+            toggleLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                const isLoginVisible = loginForm.style.display !== 'none';
+                if (isLoginVisible) {
+                    loginForm.style.display = 'none';
+                    registerForm.style.display = 'flex';
+                    toggleLink.textContent = 'Already have an account? Sign in';
+                } else {
+                    loginForm.style.display = 'flex';
+                    registerForm.style.display = 'none';
+                    toggleLink.textContent = 'Don\'t have an account? Sign up';
+                }
+                errorMessage.style.display = 'none';
+                successMessage.style.display = 'none';
+            });
+
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorMessage.style.display = 'none';
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+                try {
+                    await auth.login(username, password);
+                    successMessage.textContent = 'Login successful! Redirecting...';
+                    successMessage.style.display = 'block';
+                    window.location.href = 'index.html';
+                } catch (error) {
+                    errorMessage.textContent = error.message;
+                    errorMessage.style.display = 'block';
+                }
+            });
+
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorMessage.style.display = 'none';
+                const username = document.getElementById('reg-username').value.trim();
+                const password = document.getElementById('reg-password').value;
+                const confirmPassword = document.getElementById('reg-confirm-password').value;
+                const email = document.getElementById('reg-email').value.trim();
+                const employeeId = document.getElementById('reg-employee-id').value.trim().toUpperCase();
+                const licenseCode = document.getElementById('reg-license-code').value.trim().toUpperCase();
+
+                if (password !== confirmPassword) {
+                    errorMessage.textContent = 'Passwords do not match';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
+                try {
+                    await auth.register(username, password, email, employeeId, licenseCode);
+                    successMessage.textContent = 'Account created! Please sign in.';
+                    successMessage.style.display = 'block';
+                    registerForm.reset();
+                    loginForm.style.display = 'flex';
+                    registerForm.style.display = 'none';
+                    toggleLink.textContent = 'Don\'t have an account? Sign up';
+                } catch (error) {
+                    errorMessage.textContent = error.message;
+                    errorMessage.style.display = 'block';
+                }
+            });
+            
+            document.getElementById('forgot-password-link').addEventListener('click', () => {
+                alert('Password reset functionality is not yet implemented.');
+            });
+        });
+    </script>
+</body>
+</html>

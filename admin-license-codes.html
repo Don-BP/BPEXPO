@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BP LABO - Admin License Codes</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .license-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .license-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+        .employee-id {
+            font-weight: bold;
+            color: #495057;
+        }
+        .license-code {
+            font-family: monospace;
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 3px;
+            margin-top: 5px;
+            word-break: break-all;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .copy-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BP LABO Employee License Codes</h1>
+
+        <div class="warning">
+            <strong>⚠️ Important:</strong> These license codes are for administrative use only.
+            Distribute them securely to your employees. Each code can only be used once per employee.
+        </div>
+
+        <div id="license-codes" class="license-grid">
+            <!-- License codes will be populated by JavaScript -->
+        </div>
+
+        <button id="copy-all-btn" class="copy-btn" style="margin-top: 30px; background: #28a745;">Copy All Codes to Clipboard</button>
+    </div>
+
+    <script type="module">
+        import { EMPLOYEE_WHITELIST, LICENSE_CODE_PATTERNS } from './js/employees.js';
+
+        function generateAllLicenseCodes() {
+            const codes = {};
+            EMPLOYEE_WHITELIST.forEach(employeeId => {
+                codes[employeeId] = LICENSE_CODE_PATTERNS.generate(employeeId);
+            });
+            return codes;
+        }
+
+        function displayLicenseCodes() {
+            const codes = generateAllLicenseCodes();
+            const container = document.getElementById('license-codes');
+
+            Object.entries(codes).forEach(([employeeId, licenseCode]) => {
+                const item = document.createElement('div');
+                item.className = 'license-item';
+
+                item.innerHTML = `
+                    <div class="employee-id">${employeeId}</div>
+                    <div class="license-code">${licenseCode}</div>
+                    <button class="copy-btn" onclick="copyToClipboard('${licenseCode}')">Copy Code</button>
+                `;
+
+                container.appendChild(item);
+            });
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('License code copied to clipboard!');
+            });
+        }
+
+        function copyAllCodes() {
+            const codes = generateAllLicenseCodes();
+            let allCodes = 'BP LABO Employee License Codes:\n';
+            allCodes += '=' .repeat(40) + '\n';
+
+            Object.entries(codes).forEach(([employeeId, licenseCode]) => {
+                allCodes += `${employeeId}: ${licenseCode}\n`;
+            });
+
+            allCodes += '=' .repeat(40) + '\n';
+            allCodes += 'Each employee should receive their unique license code.';
+
+            navigator.clipboard.writeText(allCodes).then(() => {
+                alert('All license codes copied to clipboard!');
+            });
+        }
+
+        // Initialize
+        displayLicenseCodes();
+
+        // Copy all button
+        document.getElementById('copy-all-btn').addEventListener('click', copyAllCodes);
+
+        // Make copyToClipboard global
+        window.copyToClipboard = copyToClipboard;
+    </script>
+</body>
+</html>

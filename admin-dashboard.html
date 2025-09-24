@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BP LABO - Admin Dashboard</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 1600px; margin: 0 auto; }
+        .header { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        h1, h2 { color: #1c1e21; }
+        .btn { padding: 10px 15px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; font-size: 14px; }
+        .btn:disabled { background-color: #ccd0d5; color: #8d949e; cursor: not-allowed; }
+        .btn-primary { background-color: #1877f2; color: white; }
+        .btn-success { background-color: #42b72a; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+        .btn-delete { background-color: #fa383e; color: white; }
+        .btn-sm { font-size: 12px; padding: 5px 10px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .stat-card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 2.5rem; font-weight: 700; color: #1877f2; }
+        .stat-label { color: #606770; font-size: 0.9rem; }
+        .section { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .table-container { overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }
+        /* --- CSS FIX #1: VERTICAL ALIGNMENT --- */
+        .data-table td {
+            vertical-align: middle; /* This is the key fix for aligning rows */
+        }
+        .data-table th { background-color: #f5f6f7; color: #606770; }
+        .status-badge { padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: 600; }
+        .status-active { background-color: #d4edda; color: #155724; }
+        .status-inactive { background-color: #f8d7da; color: #721c24; }
+        .empty-state { text-align: center; padding: 40px; color: #606770; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
+        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 400px; border-radius: 8px; }
+        .form-input, .role-select { width: 100%; padding: 8px; margin-top: 5px; display: inline-block; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: #fff; font-size: 14px; }
+        .role-select:disabled { background-color: #f0f2f5; color: #606770; }
+        .modal-actions { text-align: right; margin-top: 15px;}
+        .loading td, .stat-card.loading { color: #999; }
+        .grid-3-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        @media (max-width: 1200px) { .grid-3-col { grid-template-columns: 1fr; } }
+        .form-inline { display: flex; gap: 10px; align-items: center; }
+        .form-inline input { flex-grow: 1; }
+        /* --- CSS FIX #2: BUTTON ALIGNMENT --- */
+        .actions-cell {
+            display: flex; /* Forces buttons to be side-by-side */
+            align-items: center; /* Vertically aligns them if they have different heights */
+            gap: 5px; /* Adds a small space between the buttons */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>BP LABO Admin Dashboard</h1>
+            <div class="actions">
+                <button id="refresh-btn" class="btn btn-primary">🔄 Refresh All Data</button>
+                <a href="index.html" class="btn btn-secondary">🏠 Back to BP LABO</a>
+            </div>
+        </div>
+
+        <div id="stats-section" class="stats-grid"><div class="stat-card loading">Loading...</div></div>
+
+        <div class="grid-3-col">
+            <div class="section">
+                <div class="section-header">
+                    <h2>🔑 Whitelist</h2>
+                </div>
+                <form class="form-inline" id="add-employee-form">
+                    <input type="text" id="new-employee-id" class="form-input" placeholder="New Employee ID (e.g., IK9999)" required>
+                    <button type="submit" class="btn btn-success">Add</button>
+                </form>
+                <div class="table-container" style="margin-top: 15px;">
+                    <table class="data-table">
+                        <thead><tr><th>Employee ID</th><th>Action</th></tr></thead>
+                        <tbody id="employees-table-body"><tr><td colspan="2" class="loading">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2>🎫 License Codes</h2>
+                    <button id="generate-license-btn" class="btn btn-success">➕ Generate New</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead><tr><th>License Code</th><th>Employee ID</th><th>Status</th><th>Used By</th></tr></thead>
+                        <tbody id="licenses-table-body"><tr><td colspan="4" class="loading">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header"><h2>👥 Registered Users</h2></div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead><tr><th>Username</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="users-table-body"><tr><td colspan="4" class="loading">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="generate-modal" class="modal">
+        <div class="modal-content">
+            <h3>Generate New License Code</h3>
+            <p>Enter an Employee ID from the whitelist.</p>
+            <label for="employee-id">Employee ID:</label>
+            <input type="text" id="employee-id" class="form-input" placeholder="e.g., IK4080">
+            <div class="modal-actions">
+                <button id="generate-confirm" class="btn btn-success">Generate</button>
+                <button class="btn btn-secondary" onclick="closeModal('generate-modal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // --- MODAL CONTROLS ---
+        function openModal(id) { document.getElementById(id).style.display = 'block'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        window.onclick = function(event) { if (event.target.classList.contains('modal')) { event.target.style.display = "none"; } }
+
+        // --- DATA LOADING & DISPLAY ---
+        async function loadSystemStats() {
+            const container = document.getElementById('stats-section');
+            try {
+                const { stats } = await auth.getSystemStats();
+                container.innerHTML = `
+                    <div class="stat-card"><div class="stat-number">${stats.totalUsers}</div><div class="stat-label">Total Users</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.activeUsers}</div><div class="stat-label">Active Users</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.totalLicenses}</div><div class="stat-label">Total Licenses</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.usedLicenses}</div><div class="stat-label">Used Licenses</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.adminUsers}</div><div class="stat-label">Admin Users</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.recentRegistrations}</div><div class="stat-label">New Users (30d)</div></div>
+                `;
+            } catch (error) { container.innerHTML = `<div class="stat-card"><div class="stat-label">Error loading stats.</div></div>`; }
+        }
+
+        async function loadUsers() {
+            const tbody = document.getElementById('users-table-body');
+            try {
+                const { users } = await auth.getAllUsers();
+                const currentUser = auth.getCurrentUser();
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No users registered.</td></tr>'; return;
+                }
+                tbody.innerHTML = users.map(user => {
+                    const isCurrentUser = user.id === currentUser.id;
+                    const roleDropdown = `<select class="role-select" onchange="changeUserRole('${user.id}', this, '${user.role}')" ${isCurrentUser ? 'disabled' : ''}><option value="user" ${user.role === 'user' ? 'selected' : ''}>User</option><option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option></select>`;
+                    
+                    const statusButton = `<button class="btn btn-sm ${user.isActive ? 'btn-secondary' : 'btn-success'}" onclick="toggleUserStatus('${user.id}', ${!user.isActive})" ${isCurrentUser ? 'disabled' : ''}>${user.isActive ? 'Deactivate' : 'Activate'}</button>`;
+                    const deleteButton = `<button class="btn btn-delete btn-sm" onclick="deleteUser('${user.id}', '${user.username}')" ${isCurrentUser ? 'disabled' : ''}>Delete</button>`;
+                    
+                    return `<tr>
+                                <td>${user.username}<br><small>${user.email}</small></td>
+                                <td>${roleDropdown}</td>
+                                <td><span class="status-badge ${user.isActive ? 'status-active' : 'status-inactive'}">${user.isActive ? 'Active' : 'Inactive'}</span></td>
+                                <td><div class="actions-cell">${statusButton}${deleteButton}</div></td>
+                            </tr>`;
+                }).join('');
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Error loading users.</td></tr>'; }
+        }
+
+        async function loadLicenseCodes() {
+            const tbody = document.getElementById('licenses-table-body');
+            try {
+                const { licenses } = await auth.getLicenseCodes();
+                if (licenses.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No license codes generated.</td></tr>'; return;
+                }
+                tbody.innerHTML = licenses.map(license => `<tr>
+                                <td>${license.code}</td>
+                                <td>${license.employeeId}</td>
+                                <td><span class="status-badge ${license.isUsed ? 'status-inactive' : 'status-active'}">${license.isUsed ? 'Used' : 'Available'}</span></td>
+                                <td>${license.user ? license.user.username : '---'}</td>
+                            </tr>`).join('');
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Error loading licenses.</td></tr>'; }
+        }
+
+        async function loadWhitelistedEmployees() {
+            const tbody = document.getElementById('employees-table-body');
+            try {
+                const { employees } = await auth.getWhitelistedEmployees();
+                if (employees.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="2" class="empty-state">Whitelist is empty.</td></tr>'; return;
+                }
+                tbody.innerHTML = employees.map(emp => `<tr>
+                                <td>${emp.employeeId}</td>
+                                <td><button class="btn btn-delete btn-sm" onclick="handleDeleteEmployee('${emp.id}', '${emp.employeeId}')">Remove</button></td>
+                            </tr>`).join('');
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="2" class="empty-state">Error loading whitelist.</td></tr>'; }
+        }
+
+        function loadAllData() {
+            loadSystemStats();
+            loadUsers();
+            loadLicenseCodes();
+            loadWhitelistedEmployees();
+        }
+
+        // --- ACTIONS ---
+        async function handleGenerate() {
+            const employeeId = document.getElementById('employee-id').value.trim().toUpperCase();
+            if (!employeeId) { alert('Please enter an Employee ID.'); return; }
+            try {
+                const response = await auth.generateLicenseCodes([employeeId]);
+                if (response.errors && response.errors.length > 0) {
+                    alert(`Error: ${response.errors[0].error}`);
+                } else {
+                    alert(`Successfully generated license: ${response.results[0].licenseCode}`);
+                    closeModal('generate-modal');
+                    document.getElementById('employee-id').value = '';
+                    loadAllData();
+                }
+            } catch (error) { alert(`Failed to generate license: ${error.message}`); }
+        }
+        
+        async function changeUserRole(userId, selectElement, originalRole) {
+            const newRole = selectElement.value;
+            if (confirm(`Change this user's role to "${newRole}"?`)) {
+                try {
+                    await auth.updateUserRole(userId, newRole);
+                    alert('User role updated!');
+                    loadSystemStats();
+                } catch (error) {
+                    alert(`Failed to update role: ${error.message}`);
+                    selectElement.value = originalRole;
+                }
+            } else { selectElement.value = originalRole; }
+        }
+
+        async function toggleUserStatus(userId, newStatus) {
+            const action = newStatus ? 'Activate' : 'Deactivate';
+            if (confirm(`Are you sure you want to ${action} this user?`)) {
+                try {
+                    await auth.updateUserStatus(userId, newStatus);
+                    alert(`User has been ${action.toLowerCase()}d.`);
+                    loadUsers();
+                    loadSystemStats();
+                } catch (error) {
+                    alert(`Failed to ${action} user: ${error.message}`);
+                }
+            }
+        }
+
+        async function deleteUser(userId, username) {
+            if (confirm(`DELETE the user "${username}"?\nThis cannot be undone and their license will be freed.`)) {
+                try {
+                    await auth.deleteUser(userId);
+                    alert(`User "${username}" deleted.`);
+                    loadAllData();
+                } catch (error) { alert(`Failed to delete user: ${error.message}`); }
+            }
+        }
+
+        async function handleAddEmployee(event) {
+            event.preventDefault();
+            const input = document.getElementById('new-employee-id');
+            const employeeId = input.value.trim().toUpperCase();
+            if (!employeeId) { alert('Please enter an Employee ID.'); return; }
+            try {
+                await auth.addWhitelistedEmployee(employeeId);
+                input.value = '';
+                await loadWhitelistedEmployees();
+            } catch (error) { alert(`Error: ${error.message}`); }
+        }
+
+        async function handleDeleteEmployee(employeeId, employeeIdentifier) {
+            if (confirm(`Remove "${employeeIdentifier}" from the whitelist?`)) {
+                try {
+                    await auth.deleteWhitelistedEmployee(employeeId);
+                    await loadWhitelistedEmployees();
+                } catch (error) { alert(`Error: ${error.message}`); }
+            }
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!auth.isLoggedIn() || auth.getCurrentUser().role !== 'admin') {
+                alert('Access Denied. Redirecting to login.');
+                window.location.href = 'login.html';
+                return;
+            }
+            loadAllData();
+            document.getElementById('refresh-btn').addEventListener('click', loadAllData);
+            document.getElementById('generate-license-btn').addEventListener('click', () => openModal('generate-modal'));
+            document.getElementById('generate-confirm').addEventListener('click', handleGenerate);
+            document.getElementById('add-employee-form').addEventListener('submit', handleAddEmployee);
+        });
+    </script>
+</body>
+</html>
