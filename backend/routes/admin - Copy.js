@@ -6,9 +6,8 @@ const { requireAdmin } = require('../middleware/auth');
 const router = express.Router();
 router.use(requireAdmin);
 
-// --- 1. Employee Whitelist Management (NOW WITH AUTO-LICENSE GENERATION) ---
+// --- 1. Employee Whitelist Management ---
 
-// GET all whitelisted employees
 router.get('/employees', async (req, res) => {
   try {
     const employees = await Employee.findAll({ order: [['employeeId', 'ASC']] });
@@ -19,27 +18,14 @@ router.get('/employees', async (req, res) => {
   }
 });
 
-// POST a new employee to the whitelist AND generate their license
 router.post('/employees', async (req, res) => {
   try {
     const { employeeId, name } = req.body;
     if (!employeeId) {
       return res.status(400).json({ message: 'employeeId is required', code: 'INVALID_INPUT' });
     }
-
-    const upperCaseId = employeeId.toUpperCase();
-
-    // Step 1: Add employee to the whitelist
-    const newEmployee = await Employee.create({ employeeId: upperCaseId, name });
-
-    // Step 2: Automatically generate their license code, if it doesn't already exist
-    const existingLicense = await LicenseCode.findOne({ where: { employeeId: upperCaseId } });
-    if (!existingLicense) {
-        const code = LicenseCode.generateForEmployee(upperCaseId);
-        await LicenseCode.create({ code, employeeId: upperCaseId });
-    }
-
-    res.status(201).json({ employee: newEmployee, message: 'Employee added to whitelist and license has been generated.', code: 'EMPLOYEE_CREATED' });
+    const newEmployee = await Employee.create({ employeeId: employeeId.toUpperCase(), name });
+    res.status(201).json({ employee: newEmployee, message: 'Employee added to whitelist.', code: 'EMPLOYEE_CREATED' });
   } catch (error) {
     if (error.name === 'SequelizeUniqueConstraintError') {
       return res.status(409).json({ message: 'Employee ID already exists in the whitelist.', code: 'DUPLICATE_EMPLOYEE_ID' });
@@ -49,7 +35,6 @@ router.post('/employees', async (req, res) => {
   }
 });
 
-// DELETE an employee from the whitelist
 router.delete('/employees/:id', async (req, res) => {
   try {
     const affectedRows = await Employee.destroy({ where: { id: req.params.id } });
@@ -63,41 +48,93 @@ router.delete('/employees/:id', async (req, res) => {
   }
 });
 
-
 // --- 2. License Code Management ---
 
-// GET all generated license codes
+router.post('/license-codes/generate', async (req, res) => {
+  try {
+    const { employeeIds } = req.body;
+    if (!Array.isArray(employeeIds) || employeeIds.length === 0) {
+      return res.status(400).json({ message: 'employeeIds must be a non-empty array', code: 'INVALID_EMPLOYEE_IDS' });
+    }
+
+    const results = [];
+    const errors = [];
+
+    for (const employeeId of employeeIds) {
+      try {
+        const upperCaseId = employeeId.toUpperCase();
+        const employee = await Employee.findOne({ where: { employeeId: upperCaseId } });
+        if (!employee) {
+          errors.push({ employeeId, error: 'Employee ID not in whitelist. Please add it first.' });
+          continue;
+        }
+
+        const existingLicense = await LicenseCode.findOne({ where: { employeeId: upperCaseId } });
+        if (existingLicense) {
+          errors.push({ employeeId, error: 'License code already exists for this employee' });
+          continue;
+        }
+
+        const code = LicenseCode.generateForEmployee(upperCaseId);
+        await LicenseCode.create({ code, employeeId: upperCaseId });
+        results.push({ employeeId, licenseCode: code, status: 'created' });
+      } catch (error) {
+        errors.push({ employeeId, error: error.message });
+      }
+    }
+    res.json({ message: `Generated ${results.length} license codes`, results, errors, code: 'LICENSE_CODES_GENERATED' });
+  } catch (error) {
+    console.error('Generate license codes error:', error);
+    res.status(500).json({ message: 'Failed to generate license codes', code: 'LICENSE_CODES_GENERATE_ERROR' });
+  }
+});
+
 router.get('/license-codes', async (req, res) => {
     try {
-        const { rows: licenses } = await LicenseCode.findAndCountAll({
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 100;
+        const offset = (page - 1) * limit;
+
+        const { rows: licenses, count: totalLicenses } = await LicenseCode.findAndCountAll({
             include: [{ model: User, as: 'user', attributes: ['username'], required: false }],
-            order: [['createdAt', 'DESC']]
+            order: [['createdAt', 'DESC']],
+            offset,
+            limit
         });
-        res.json({ licenses, code: 'LICENSE_CODES_RETRIEVED' });
+
+        res.json({
+            licenses,
+            pagination: { page, limit, total: totalLicenses, pages: Math.ceil(totalLicenses / limit) },
+            code: 'LICENSE_CODES_RETRIEVED'
+        });
     } catch (error) {
         console.error('Get license codes error:', error);
         res.status(500).json({ message: 'Failed to retrieve license codes', code: 'LICENSE_CODES_RETRIEVE_ERROR' });
     }
 });
 
-
 // --- 3. User Account Management ---
 
-// GET all registered users
 router.get('/users', async (req, res) => {
   try {
-    const { rows: users } = await User.findAndCountAll({
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 50;
+    const offset = (page - 1) * limit;
+
+    const { rows: users, count: totalUsers } = await User.findAndCountAll({
       attributes: { exclude: ['password'] },
-      order: [['createdAt', 'DESC']]
+      order: [['createdAt', 'DESC']],
+      offset,
+      limit
     });
-    res.json({ users, code: 'USERS_RETRIEVED' });
+
+    res.json({ users, pagination: { page, limit, total: totalUsers, pages: Math.ceil(totalUsers / limit) }, code: 'USERS_RETRIEVED' });
   } catch (error) {
     console.error('Get users error:', error);
     res.status(500).json({ message: 'Failed to retrieve users', code: 'USERS_RETRIEVE_ERROR' });
   }
 });
 
-// PUT (update) a user's role
 router.put('/users/:id/role', async (req, res) => {
   try {
     const { role } = req.body;
@@ -122,25 +159,6 @@ router.put('/users/:id/role', async (req, res) => {
   }
 });
 
-// PUT (update) a user's status (active/inactive)
-router.put('/users/:id/status', async (req, res) => {
-  try {
-    const { isActive } = req.body;
-    if (typeof isActive !== 'boolean') {
-      return res.status(400).json({ message: 'isActive must be a boolean value', code: 'INVALID_STATUS' });
-    }
-    const [affectedRows] = await User.update({ isActive }, { where: { id: req.params.id } });
-    if (affectedRows === 0) {
-      return res.status(404).json({ message: 'User not found', code: 'USER_NOT_FOUND' });
-    }
-    res.json({ message: `User status updated successfully.`, code: 'USER_STATUS_UPDATED' });
-  } catch (error) {
-    console.error('Update user status error:', error);
-    res.status(500).json({ message: 'Failed to update user status', code: 'USER_STATUS_UPDATE_ERROR' });
-  }
-});
-
-// DELETE a user's account
 router.delete('/users/:id', async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
@@ -160,10 +178,8 @@ router.delete('/users/:id', async (req, res) => {
   }
 });
 
-
 // --- 4. System Statistics ---
 
-// GET all system stats
 router.get('/stats', async (req, res) => {
   try {
     const totalUsers = await User.count();
