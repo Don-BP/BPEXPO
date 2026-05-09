@@ -1,0 +1,168 @@
+/* src/components/CountryPage.css */
+
+.country-page-container {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+  transition: background-image 0.4s ease-in-out;
+}
+
+.page-top-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1100;
+}
+
+.header-page-banner {
+  height: 60px;
+  width: auto;
+  position: absolute;
+  top: 150px;
+  /* Row 3 Position */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.subpage-controls {
+  position: absolute;
+  top: 80px;
+  /* Row 2 Position */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 1050;
+}
+
+.main-content-area {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.subpage-content-wrapper {
+  width: 100%;
+  height: 100%;
+  padding-top: 220px;
+  /* Clears the 3-row header */
+  /* This keeps sub-page content from going under the HUD */
+}
+
+.landing-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 110px 20px 20px 20px;
+  /* Increased top padding to clear HUD, reduced bottom padding */
+  box-sizing: border-box;
+}
+
+.landing-header-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  /* Reduced gap */
+  /* ADDED: Adds some space below the header before the nav buttons start */
+  padding-bottom: 10px;
+  /* Reduced bottom padding */
+}
+
+.header-top-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+  padding-bottom: 10px;
+}
+
+.header-flag {
+  width: 200px;
+  border-radius: 10px;
+  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
+}
+
+.anthem-button {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--accent-color);
+  border: 3px solid white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+
+  /* ================================================================ */
+  /* THE FIX: These properties ensure the icon is centered and the
+  /* entire button area is easily clickable.
+  /* ================================================================ */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  /* Helps with precise vertical alignment of symbols */
+}
+
+.anthem-button:hover {
+  transform: scale(1.1);
+}
+
+.header-name-img {
+  height: 200px;
+  width: auto;
+  max-width: 400px;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
+}
+
+.subpage-nav {
+  display: flex;
+  gap: 10px;
+  /* Reduced gap between buttons */
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ================================================================ */
+/*                         THE FIX IS HERE                          */
+/* The old .nav-button styling is replaced with these new classes.  */
+/* ================================================================ */
+
+/* This makes the <button> element itself invisible */
+.nav-image-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  line-height: 0;
+  /* Helps prevent extra space below the image */
+}
+
+/* This styles the <img> tag inside the button */
+.nav-button-img {
+  height: 100px;
+  /* Adjust the height of all nav buttons here */
+  width: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}

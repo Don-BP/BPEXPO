@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin & Speak - ALT Classroom Games</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header class="game-header header-wheel">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='../index.html'">← Back to Hub</button>
+            <h1>Spin & Speak</h1>
+            <div class="right-actions">
+                <button class="btn-icon" onclick="toggleMute()" title="Sound">🔊</button>
+                <button class="btn-icon" onclick="window.location.href='teacher.html'" title="Teacher Mode">⚙️</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="game-container">
+
+        <div class="wheel-area">
+            <!-- Pointer -->
+            <div class="pointer">▼</div>
+
+            <!-- Wheel -->
+            <canvas id="wheel-canvas" width="500" height="500"></canvas>
+        </div>
+
+        <button class="btn btn-large btn-primary spin-btn" id="spin-btn">SPIN!</button>
+
+        <!-- Result/Task Modal -->
+        <div id="task-modal" class="modal-overlay">
+            <div class="modal center-content">
+                <h2>Challenge!</h2>
+                <div id="task-text" class="task-text">...</div>
+                <div id="task-points" class="task-points"></div>
+                <button class="btn btn-success" onclick="closeModal()">Complete!</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

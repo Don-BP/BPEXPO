@@ -1,0 +1,186 @@
+/* ToolCard.css — matches the HTML teacher tools .tool-card exactly */
+
+.tool-card {
+  position: relative;
+  background-color: white;
+  border-radius: 30px;
+  padding: 1.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 6px solid var(--card-border, #FDD835);
+  box-shadow:
+    0 8px 0 var(--card-shadow, #F9A825),
+    0 15px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.tool-card:not(.fullscreen-mode):hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow:
+    0 12px 0 var(--card-shadow, #F9A825),
+    0 20px 30px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+/* Fullscreen mode — covers the whole viewport */
+.tool-card.fullscreen-mode {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Card header ribbon */
+.tool-card h2 {
+  margin-top: -35px;
+  background: var(--card-header, #EC407A);
+  color: white;
+  padding: 8px 25px;
+  border-radius: 50px;
+  border: 3px solid white;
+  box-shadow: 0 4px 0 var(--card-shadow, #880E4F);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 1.4em;
+  z-index: 5;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Favorite button */
+.favorite-btn {
+  position: absolute !important;
+  top: 10px;
+  left: 14px;
+  z-index: 10;
+  border-radius: 50% !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 1.1em !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
+  line-height: 1 !important;
+  color: #e91e63 !important;
+  text-shadow: none !important;
+  text-transform: none !important;
+  background: linear-gradient(to bottom, #ffffff, #fffde7) !important;
+  border: 3px solid #FDD835 !important;
+  box-shadow: 0 4px 0 #F9A825, 0 4px 8px rgba(0, 0, 0, 0.12) !important;
+  transition: transform 0.1s, box-shadow 0.1s !important;
+}
+
+.favorite-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 0 #F9A825, 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.favorite-btn:active {
+  transform: translateY(3px) !important;
+  box-shadow: 0 1px 0 #F9A825, 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Fullscreen toggle button */
+.tool-fullscreen-btn {
+  position: absolute !important;
+  top: 10px;
+  right: 14px;
+  z-index: 10;
+  border-radius: 50% !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 1em !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
+  line-height: 1 !important;
+  color: #3d6cb5 !important;
+  text-shadow: none !important;
+  text-transform: none !important;
+  background: linear-gradient(to bottom, #ffffff, #fffde7) !important;
+  border: 3px solid #FDD835 !important;
+  box-shadow: 0 4px 0 #F9A825, 0 4px 8px rgba(0, 0, 0, 0.12) !important;
+  transition: transform 0.1s, box-shadow 0.1s !important;
+}
+
+.tool-fullscreen-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 0 #F9A825, 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.tool-fullscreen-btn:active {
+  transform: translateY(3px) !important;
+  box-shadow: 0 1px 0 #F9A825, 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* === Shared cartoony button style used across all tools === */
+.tool-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #8BC34A, #7CB342);
+  border: 2px solid white;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #33691E, 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.1s, box-shadow 0.1s;
+  font-weight: bold;
+  line-height: 1;
+  padding: 0;
+}
+
+.tool-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #33691E, 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tool-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #33691E, 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Color variants */
+.tool-btn-blue   { background: linear-gradient(to bottom, #42A5F5, #1E88E5); box-shadow: 0 4px 0 #0D47A1, 0 4px 8px rgba(0,0,0,0.15); }
+.tool-btn-blue:hover   { box-shadow: 0 6px 0 #0D47A1, 0 6px 12px rgba(0,0,0,0.15); }
+.tool-btn-blue:active  { box-shadow: 0 1px 0 #0D47A1, 0 2px 4px rgba(0,0,0,0.1); }
+
+.tool-btn-red    { background: linear-gradient(to bottom, #EF5350, #E53935); box-shadow: 0 4px 0 #B71C1C, 0 4px 8px rgba(0,0,0,0.15); }
+.tool-btn-red:hover    { box-shadow: 0 6px 0 #B71C1C, 0 6px 12px rgba(0,0,0,0.15); }
+.tool-btn-red:active   { box-shadow: 0 1px 0 #B71C1C, 0 2px 4px rgba(0,0,0,0.1); }
+
+.tool-btn-purple { background: linear-gradient(to bottom, #AB47BC, #8E24AA); box-shadow: 0 4px 0 #4A148C, 0 4px 8px rgba(0,0,0,0.15); }
+.tool-btn-purple:hover { box-shadow: 0 6px 0 #4A148C, 0 6px 12px rgba(0,0,0,0.15); }
+.tool-btn-purple:active{ box-shadow: 0 1px 0 #4A148C, 0 2px 4px rgba(0,0,0,0.1); }
+
+.tool-btn-orange { background: linear-gradient(to bottom, #FFA726, #FB8C00); box-shadow: 0 4px 0 #E65100, 0 4px 8px rgba(0,0,0,0.15); }
+.tool-btn-orange:hover { box-shadow: 0 6px 0 #E65100, 0 6px 12px rgba(0,0,0,0.15); }
+.tool-btn-orange:active{ box-shadow: 0 1px 0 #E65100, 0 2px 4px rgba(0,0,0,0.1); }
+
+/* Tool content area */
+.tool-card-content {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-top: 0.75em;
+}
+
+.tool-card-content.fullscreen {
+  margin-top: 0;
+  height: 100%;
+}

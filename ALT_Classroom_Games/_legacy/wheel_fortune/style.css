@@ -1,0 +1,110 @@
+body {
+    background-color: #fff8e1;
+    /* Light Yellow */
+    overflow: hidden;
+}
+
+.game-container {
+    width: 100%;
+    height: calc(100vh - 80px);
+    /* Fill screen minus header */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Header is handled globally */
+
+
+/* Header handled globally */
+
+.wheel-area {
+    position: relative;
+    margin-bottom: 3rem;
+    filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.2));
+    /* Maximize size */
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+#wheel-canvas {
+    /* Responsive sizing based on viewport */
+    height: 70vh;
+    max-height: 90vw;
+    /* Ensure it fits on mobile width */
+    width: auto;
+    aspect-ratio: 1 / 1;
+    /* Force perfect circle */
+    max-width: 90vw;
+    border-radius: 50%;
+    border: 10px solid white;
+    object-fit: contain;
+}
+
+.pointer {
+    position: absolute;
+    top: -2%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 4rem;
+    color: #c0392b;
+    z-index: 10;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+}
+
+.spin-btn {
+    font-size: 2.5rem;
+    padding: 1.2rem 5rem;
+    border-radius: 50px;
+    /* Pill shape */
+    box-shadow: 0 8px 0 #c0392b;
+    transition: all 0.1s;
+    background: linear-gradient(to bottom, #e74c3c, #c0392b);
+    border: none;
+    color: white;
+    font-weight: 800;
+    letter-spacing: 2px;
+    z-index: 100;
+    margin-bottom: 2rem;
+}
+
+.spin-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.spin-btn:active {
+    transform: translateY(5px);
+    box-shadow: 0 3px 0 #c0392b;
+}
+
+/* Modal specific */
+.task-text {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 2rem 0;
+}
+
+.task-points {
+    font-size: 2rem;
+    color: #f39c12;
+    margin-bottom: 2rem;
+    font-weight: 800;
+}
+
+.center-content {
+    text-align: center;
+}
+
+
+
+.center-content {
+    text-align: center;
+}

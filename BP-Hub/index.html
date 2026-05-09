@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BP LABO - Welcome</title>
+    <link rel="icon" type="image/png" href="assets/bp_favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px;
+            position: relative;
+            background: radial-gradient(rgb(220, 241, 255) 30%, rgba(0, 119, 255, 0.639) 80%);
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assets/main-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2;
+            z-index: -1;
+        }
+
+        .hub-container {
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hub-header {
+            margin-bottom: 60px;
+        }
+
+        .hub-logo {
+            max-width: 500px;
+            width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .hub-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .app-button {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            /* MODIFICATION: Changed to flex for better alignment */
+            flex-direction: column;
+            /* MODIFICATION: Stack items vertically */
+            align-items: center;
+            /* MODIFICATION: Center items horizontally */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-button:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ========== MODIFICATION START: Video Styling ========== */
+        .app-video {
+            width: 180px;
+            /* Or your desired size */
+            height: 180px;
+            border-radius: 50%;
+            /* Makes the video circular */
+            object-fit: cover;
+            /* Ensures video covers the area without distortion */
+            margin-bottom: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            /* Fallback color while video loads */
+        }
+
+        /* ========== MODIFICATION END ========== */
+
+        .app-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .app-description {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        .coming-soon {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .coming-soon:hover {
+            transform: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 10px 15px;
+            z-index: 10;
+        }
+
+        .admin-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .admin-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-greeting {
+            color: white;
+            font-size: 0.9rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .apps-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .app-button {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="user-info">
+        <a href="admin-dashboard.html" class="admin-link" id="admin-link" style="display: none;">Admin</a>
+        <span class="user-greeting" id="user-greeting">Welcome!</span>
+        <button class="logout-btn" id="logout-btn">Logout</button>
+    </div>
+
+    <div class="hub-container">
+        <div class="hub-header">
+            <img src="assets/bp-labo.png" alt="BP LABO Logo" class="hub-logo">
+            <!-- NEW: Login/Register Button for Visitors -->
+            <div style="margin-bottom: 20px;">
+                <a href="login.html" id="register-login-btn"
+                    style="display: none; background: #0077ff; color: white; padding: 15px 40px; border-radius: 30px; text-decoration: none; font-size: 1.2rem; font-weight: bold; box-shadow: 0 0 20px rgba(0, 119, 255, 0.6); transition: all 0.3s ease; border: 2px solid white;">Register
+                    Account / Login</a>
+                <style>
+                    #register-login-btn:hover {
+                        transform: scale(1.05);
+                        box-shadow: 0 0 30px rgba(0, 119, 255, 0.8);
+                        background: #3399ff;
+                    }
+                </style>
+            </div>
+        </div>
+
+        <!-- ========= START: apps-grid SECTION (UPDATE) ========= -->
+        <div class="apps-grid">
+            <!-- BP-WELCOME (New) -->
+            <a href="bp-welcome.html" class="app-button" id="bpwelcome-btn" style="display: flex;">
+                <video src="assets/bp-welcome.mp4" class="app-video" autoplay loop muted playsinline></video>
+                <div class="app-title">BP-Welcome</div>
+                <div class="app-description">
+                    Explore all of our interactive educational tools in one place.
+                </div>
+            </a>
+
+            <!-- BP INSIGHTS -->
+            <a href="blog.html" class="app-button" id="blog-btn">
+                <video src="assets/bp-insights.mp4" class="app-video" autoplay loop muted playsinline></video>
+                <div class="app-title">BP INSIGHTS</div>
+                <div class="app-description">
+                    Educational tips, ALT stories, and fun ways to practice English from our expert staff.
+                </div>
+            </a>
+
+            <!-- BP-TOOLS -->
+            <a href="../bp-tools/index.html" class="app-button" id="bptools-btn">
+                <video src="assets/bp-tools.mp4" class="app-video" autoplay loop muted playsinline></video>
+                <div class="app-title">BP-TOOLS</div>
+                <div class="app-description">
+                    Helpful tools to make your classrooms more interactive.
+                </div>
+            </a>
+
+            <!-- BP-PAY -->
+            <a href="../bp-pay/" class="app-button" id="bppay-btn">
+                <video src="assets/bp-pay.mp4" class="app-video" autoplay loop muted playsinline></video>
+                <div class="app-title">BP-PAY</div>
+                <div class="app-description">
+                    Practice shopping with with virtual currency.
+                </div>
+            </a>
+
+            <!-- BP-EXPO -->
+            <a href="../bp-expo" class="app-button" id="bpexpo-btn">
+                <video src="assets/bp-expo.mp4" class="app-video" autoplay loop muted playsinline></video>
+                <div class="app-title">BP-EXPO</div>
+                <div class="app-description">
+                    Travel the world and discover different countries, cultures, and traditions.
+                </div>
+            </a>
+
+            <!-- BP-ECHO Talk -->
+            <!-- MODIFICATION: Changed id from "bpecho-btn" to "bpecho-talk-btn" to match the script -->
+            <a href="../bp-echo-talk" class="app-button" id="bpecho-talk-btn">
+                <video src="assets/bp-echo-talk.mp4" class="app-video" autoplay loop muted playsinline></video>
+                <div class="app-title">BP-ECHO Talk</div>
+                <div class="app-description">
+                    Practice conversations with an AI teacher and test your pronunciation skills.
+                </div>
+            </a>
+
+            <!-- BP Echo Shout -->
+            <a href="../bp-echo-shout" class="app-button" id="bpecho-shout-btn">
+                <video src="assets/bp-echo-shout.mp4" class="app-video" autoplay loop muted playsinline></video>
+                <div class="app-title">BP-ECHO Shout</div>
+                <div class="app-description">
+                    Test your pronunciation skills in a fast-paced vocabulary game.
+                </div>
+            </a>
+
+            <!-- BP-TANGO -->
+            <a href="../bp-tango" class="app-button" id="bptango-btn">
+                <video src="assets/bp-tango.mp4" class="app-video" autoplay loop muted playsinline></video>
+                <div class="app-title">BP-TANGO</div>
+                <div class="app-description">
+                    Master English vocabulary with interactive, grade-aligned flashcards.
+                </div>
+            </a>
+
+            <!-- BP-PLANNER -->
+            <a href="../bp-planner" class="app-button" id="bpplanner-btn">
+                <video src="assets/bp-planner.mp4" class="app-video" autoplay loop muted playsinline></video>
+                <div class="app-title">BP-PLANNER</div>
+                <div class="app-description">
+                    AI-powered lesson plan builder and curriculum assistant.
+                </div>
+            </a>
+
+            <!-- ALT Classroom Games -->
+            <a href="../ALT_Classroom_Games/dist/index.html" class="app-button" id="alt-games-btn">
+                <video src="assets/bp-welcome.mp4" class="app-video" autoplay loop muted playsinline></video>
+                <div class="app-title">Classroom Games</div>
+                <div class="app-description">
+                    Fun and interactive games for the classroom.
+                </div>
+            </a>
+        </div>
+        <!-- ========= END: apps-grid SECTION (UPDATE) ========= -->
+        <!-- ========= START: SCRIPT TAG ========= -->
+        <script>
+            // IMMEDIATE AUTHENTICATION CHECK - MODIFIED FOR BP-WELCOME & BP-INSIGHTS ACCESS
+            (function () {
+                console.log('=== IMMEDIATE AUTH CHECK (MODIFIED) ===');
+                if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+                    console.log('Redirecting to HTTPS...');
+                    window.location.href = 'https://' + window.location.hostname + window.location.pathname;
+                    return; // Stop execution
+                }
+
+                // We no longer redirect to login.html immediately if no token is found.
+                // We allow the page to load so visitors can see BP-Welcome and BP-Insights.
+
+                const token = localStorage.getItem('bplabo_jwt_token');
+                const userData = localStorage.getItem('bplabo_current_user');
+                console.log('Token exists:', !!token);
+                console.log('User data exists:', !!userData);
+
+                if (token && userData) {
+                    try {
+                        const user = JSON.parse(userData);
+                        console.log('User data valid:', !!user);
+                        if (!user || !user.id) {
+                            console.log('Invalid user data, clearing auth...');
+                            localStorage.removeItem('bplabo_jwt_token');
+                            localStorage.removeItem('bplabo_current_user');
+                        } else {
+                            console.log('Auth data valid, user is logged in.');
+                        }
+                    } catch (error) {
+                        console.log('Error parsing user data, clearing auth...');
+                        localStorage.removeItem('bplabo_jwt_token');
+                        localStorage.removeItem('bplabo_current_user');
+                    }
+                } else {
+                    console.log('No auth data found, user is a visitor.');
+                }
+                console.log('=== AUTH CHECK COMPLETED ===');
+            })();
+
+            // ========= START: index.html SCRIPT TAG - updateUserInterface function ONLY (REPLACEMENT) =========
+            function updateUserInterface() {
+                console.log('Updating user interface based on role...');
+
+                const userGreeting = document.getElementById('user-greeting');
+                const logoutBtn = document.getElementById('logout-btn');
+                const adminLink = document.getElementById('admin-link');
+                const registerLoginBtn = document.getElementById('register-login-btn'); // New Button
+
+                // App Buttons
+                const blogBtn = document.getElementById('blog-btn');
+                const bpWelcomeBtn = document.getElementById('bpwelcome-btn'); // New Button
+                const bpToolsBtn = document.getElementById('bptools-btn');
+                const bpPayBtn = document.getElementById('bppay-btn');
+                const bpExpoBtn = document.getElementById('bpexpo-btn');
+                const bpEchoTalkBtn = document.getElementById('bpecho-talk-btn');
+                const bpEchoShoutBtn = document.getElementById('bpecho-shout-btn');
+                const bpTangoBtn = document.getElementById('bptango-btn');
+                const bpPlannerBtn = document.getElementById('bpplanner-btn');
+                const altGamesBtn = document.getElementById('alt-games-btn');
+
+                const userDataString = localStorage.getItem('bplabo_current_user');
+
+                if (userDataString) {
+                    // --- LOGGED IN USER ---
+                    const userData = JSON.parse(userDataString);
+
+                    userGreeting.textContent = `Welcome, ${userData.username}!`;
+                    userGreeting.style.display = 'inline';
+                    logoutBtn.style.display = 'block';
+                    if (registerLoginBtn) registerLoginBtn.style.display = 'none';
+
+                    const role = userData.role;
+                    console.log('Verifying user role:', role);
+
+                    // Admin Link
+                    if (role === 'admin' || userData.employeeId === 'BPDON' || userData.employeeId === 'BPJOE' || userData.employeeId === 'BPKAHO') {
+                        adminLink.style.display = 'inline-block';
+                    } else {
+                        adminLink.style.display = 'none';
+                    }
+
+                    // BP-Welcome - Visible to everyone
+                    if (bpWelcomeBtn) bpWelcomeBtn.style.display = 'flex';
+
+                    // BP Insights (Blog) - Visibility
+                    if (['admin', 'alt', 'jte', 'user'].includes(role)) {
+                        blogBtn.style.display = 'flex';
+                    } else {
+                        blogBtn.style.display = 'none';
+                    }
+
+                    // BP Tools - Visibility
+                    if (['admin', 'alt', 'jte', 'user'].includes(role)) {
+                        bpToolsBtn.style.display = 'flex';
+                    } else {
+                        bpToolsBtn.style.display = 'none';
+                    }
+
+                    // BP Pay - Visibility
+                    if (['admin', 'alt', 'jte', 'student', 'user'].includes(role)) {
+                        bpPayBtn.style.display = 'flex';
+                    } else {
+                        bpPayBtn.style.display = 'none';
+                    }
+
+                    // BP Expo - Visibility
+                    if (['admin', 'alt', 'jte', 'student', 'user'].includes(role)) {
+                        bpExpoBtn.style.display = 'flex';
+                    } else {
+                        bpExpoBtn.style.display = 'none';
+                    }
+
+                    // BP Echo Talk & Shout - Visibility
+                    if (['admin', 'alt', 'jte', 'student', 'user'].includes(role)) {
+                        bpEchoTalkBtn.style.display = 'flex';
+                        bpEchoShoutBtn.style.display = 'flex';
+                    } else {
+                        bpEchoTalkBtn.style.display = 'none';
+                        bpEchoShoutBtn.style.display = 'none';
+                    }
+
+                    // BP Tango - Visibility
+                    if (['admin', 'alt', 'jte', 'student', 'user'].includes(role)) {
+                        bpTangoBtn.style.display = 'flex';
+                    } else {
+                        bpTangoBtn.style.display = 'none';
+                    }
+
+                    // BP Planner - Visibility
+                    if (['admin', 'alt', 'jte'].includes(role)) {
+                        bpPlannerBtn.style.display = 'flex';
+                    } else {
+                        bpPlannerBtn.style.display = 'none';
+                    }
+
+                    // ALT Classroom Games - Visibility
+                    if (['admin', 'alt', 'jte', 'student', 'user'].includes(role)) {
+                        altGamesBtn.style.display = 'flex';
+                    } else {
+                        altGamesBtn.style.display = 'none';
+                    }
+
+                } else {
+                    // --- VISITOR (NOT LOGGED IN) ---
+                    console.log('User is visitor. Showing limited interface.');
+
+                    userGreeting.textContent = '';
+                    userGreeting.style.display = 'none';
+                    logoutBtn.style.display = 'none';
+                    adminLink.style.display = 'none';
+
+                    if (registerLoginBtn) registerLoginBtn.style.display = 'inline-block';
+
+                    // BP-Welcome - Visible to visitors
+                    if (bpWelcomeBtn) bpWelcomeBtn.style.display = 'flex';
+
+                    // BP Insights - Visible to visitors
+                    if (blogBtn) blogBtn.style.display = 'flex';
+
+                    // Hide everything else
+                    if (bpToolsBtn) bpToolsBtn.style.display = 'none';
+                    if (bpPayBtn) bpPayBtn.style.display = 'none';
+                    if (bpExpoBtn) bpExpoBtn.style.display = 'none';
+                    if (bpEchoTalkBtn) bpEchoTalkBtn.style.display = 'none';
+                    if (bpEchoShoutBtn) bpEchoShoutBtn.style.display = 'none';
+                    if (bpTangoBtn) bpTangoBtn.style.display = 'none';
+                    if (bpPlannerBtn) bpPlannerBtn.style.display = 'none';
+                    if (altGamesBtn) altGamesBtn.style.display = 'none';
+                }
+            }
+            // ========= END: index.html SCRIPT TAG - updateUserInterface function ONLY (REPLACEMENT) =========
+
+            // *** THE FIX: We must call the function to make it run ***
+            document.addEventListener('DOMContentLoaded', function () {
+                // This ensures the page is fully loaded before the script tries to find elements.
+                updateUserInterface();
+
+                // Also, add the logout functionality here.
+                const logoutBtn = document.getElementById('logout-btn');
+                logoutBtn.addEventListener('click', function () {
+                    console.log('Logging out...');
+                    localStorage.removeItem('bplabo_jwt_token');
+                    localStorage.removeItem('bplabo_current_user');
+                    window.location.href = 'login.html';
+                });
+            });
+
+        </script>
+        <!-- ========= END: SCRIPT TAG ========= -->
+
+        <script src="js/auth.js"></script>
+</body>
+
+</html>

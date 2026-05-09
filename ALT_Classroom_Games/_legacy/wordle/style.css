@@ -1,0 +1,345 @@
+:root {
+    --color-correct: #6aaa64;
+    --color-present: #c9b458;
+    --color-absent: #787c7e;
+    --color-default: #ffffff;
+    --color-border: #d3d6da;
+    --color-filled: #878a8c;
+    --key-bg: #d3d6da;
+    --key-text: #000000;
+}
+
+body {
+    background-color: #f7f9fc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+/* Header is handled globally, but here we ensure the game container fills space */
+.game-container {
+    width: 100%;
+    max-width: 800px;
+    /* Increased from 500px */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    /* push keyboard and board apart */
+    padding-bottom: 2rem;
+    flex-grow: 1;
+}
+
+/* Make Board Larger */
+.board-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    width: 100%;
+    padding: 1rem;
+}
+
+#board {
+    display: grid;
+    grid-template-rows: repeat(6, 1fr);
+    grid-gap: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    /* Responsive sizing instead of fixed px */
+    width: 100%;
+    max-width: 400px;
+    /* Larger max width */
+    height: auto;
+    aspect-ratio: 5/6;
+    /* Maintain aspect ratio */
+}
+
+/* Keyboard Tweaks */
+.keyboard-container {
+    width: 100%;
+    max-width: 900px;
+    /* Wider keyboard */
+    padding: 0 1rem 1rem 1rem;
+}
+
+.keyboard-row {
+    margin-bottom: 6px;
+}
+
+.keyboard-row button {
+    height: 60px;
+    /* Taller keys */
+    font-size: 1.3rem;
+    border-radius: 6px;
+    margin: 0 4px;
+}
+
+/* Animations remain the same ... */
+@keyframes pop {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes flip {
+    0% {
+        transform: rotateX(0);
+    }
+
+    50% {
+        transform: rotateX(90deg);
+    }
+
+    100% {
+        transform: rotateX(0);
+    }
+}
+
+.flip {
+    animation: flip 0.6s ease forwards;
+}
+
+.tile {
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--color-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    /* Bigger font */
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: var(--color-default);
+    user-select: none;
+}
+
+/* Message */
+#message-container {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+}
+
+.message {
+    background-color: #333;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Header is handled globally */
+
+
+/* Board */
+.board-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+#board {
+    display: grid;
+    grid-template-rows: repeat(6, 1fr);
+    grid-gap: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    width: 350px;
+    height: 420px;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 5px;
+}
+
+.tile {
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--color-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: var(--color-default);
+    user-select: none;
+    transition: transform 0.1s;
+}
+
+/* Tile States */
+.tile[data-state="active"] {
+    border-color: var(--color-filled);
+    animation: pop 0.1s;
+}
+
+.tile[data-state="correct"] {
+    background-color: var(--color-correct);
+    border-color: var(--color-correct);
+    color: white;
+}
+
+.tile[data-state="present"] {
+    background-color: var(--color-present);
+    border-color: var(--color-present);
+    color: white;
+}
+
+.tile[data-state="absent"] {
+    background-color: var(--color-absent);
+    border-color: var(--color-absent);
+    color: white;
+}
+
+/* Animations */
+@keyframes pop {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.flip {
+    animation: flip 0.5s ease forwards;
+}
+
+@keyframes flip {
+    0% {
+        transform: rotateX(0);
+    }
+
+    50% {
+        transform: rotateX(90deg);
+    }
+
+    100% {
+        transform: rotateX(0);
+    }
+}
+
+/* Keyboard */
+.keyboard-container {
+    padding: 10px;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+    touch-action: manipulation;
+}
+
+.keyboard-row button {
+    font-family: inherit;
+    font-weight: bold;
+    border: 0;
+    padding: 0;
+    margin: 0 3px;
+    height: 58px;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    background-color: var(--key-bg);
+    color: var(--key-text);
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+}
+
+.wide-button {
+    flex: 1.5 !important;
+    font-size: 0.8rem !important;
+}
+
+.spacer-half {
+    flex: 0.5;
+}
+
+/* Message */
+#message-container {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+}
+
+.message {
+    background-color: var(--text-dark);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    margin-bottom: 10px;
+    font-weight: bold;
+    opacity: 0.9;
+}
+
+/* Examples in Modal */
+.example-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.example-row .tile {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+}
+
+/* Responsive */
+@media (max-height: 700px) {
+    #board {
+        width: 300px;
+        height: 360px;
+    }
+
+    .tile {
+        font-size: 1.5rem;
+    }
+
+    .keyboard-row button {
+        height: 45px;
+    }
+}

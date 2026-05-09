@@ -1,0 +1,138 @@
+<h2>Directional Lava Brush — How should it flow?</h2>
+<p class="subtitle">You paint left→right. Which lava effect feels right?</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="streams" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#111;padding:20px;display:flex;align-items:center;justify-content:center;">
+      <canvas id="c1" width="280" height="160"></canvas>
+    </div>
+    <div class="card-body">
+      <h3>A — Flowing Streams</h3>
+      <p>Lava drips/streams extend in the direction of painting. Each particle has a glowing teardrop shape pointing forward — like lava oozing and spreading in the direction you move the brush.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="blobs" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#111;padding:20px;display:flex;align-items:center;justify-content:center;">
+      <canvas id="c2" width="280" height="160"></canvas>
+    </div>
+    <div class="card-body">
+      <h3>B — Directional Blobs</h3>
+      <p>Glowing lava blobs that are elongated/squashed in the direction of painting (like the rainbow band). The faster you paint, the more stretched they look. Scattered perpendicular to the stroke.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Option A — Flowing streams / teardrops in stroke direction
+(function() {
+  const c = document.getElementById('c1');
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#111';
+  ctx.fillRect(0,0,280,160);
+
+  // Simulate painting left → right
+  const direction = { x: 1, y: 0.1 }; // stroke direction
+  const len = Math.hypot(direction.x, direction.y);
+  const tx = direction.x/len, ty = direction.y/len;
+  const nx = -ty, ny = tx;
+
+  const centers = [
+    {x:60,y:80},{x:110,y:85},{x:160,y:78},{x:210,y:83},{x:240,y:80}
+  ];
+
+  centers.forEach(({x,y}) => {
+    const r = 14 + Math.random()*8;
+    // Draw teardrop pointing in stroke direction
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(Math.atan2(ty, tx));
+
+    // Glowing core
+    const gr = ctx.createRadialGradient(r*0.3, 0, 0, 0, 0, r*1.4);
+    gr.addColorStop(0, 'hsl(40,100%,80%)');
+    gr.addColorStop(0.4, 'hsl(20,100%,60%)');
+    gr.addColorStop(1, 'hsl(5,90%,30%)');
+
+    ctx.beginPath();
+    ctx.moveTo(-r*0.6, 0);
+    ctx.bezierCurveTo(-r*0.6, -r*0.6, r*1.2, -r*0.4, r*1.4, 0);
+    ctx.bezierCurveTo(r*1.2, r*0.4, -r*0.6, r*0.6, -r*0.6, 0);
+    ctx.fillStyle = gr;
+    ctx.fill();
+
+    // Hot tip glow
+    const tipGlow = ctx.createRadialGradient(r*1.2, 0, 0, r*1.2, 0, r*0.6);
+    tipGlow.addColorStop(0, 'rgba(255,220,50,0.9)');
+    tipGlow.addColorStop(1, 'rgba(255,100,0,0)');
+    ctx.beginPath();
+    ctx.arc(r*1.2, 0, r*0.6, 0, Math.PI*2);
+    ctx.fillStyle = tipGlow;
+    ctx.fill();
+
+    ctx.restore();
+  });
+
+  // Label
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('→ painting direction', 10, 150);
+})();
+
+// Option B — Elongated blobs perpendicular to stroke
+(function() {
+  const c = document.getElementById('c2');
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#111';
+  ctx.fillRect(0,0,280,160);
+
+  const tx = 1, ty = 0.1;
+  const nm = Math.hypot(tx,ty);
+  const ntx = tx/nm, nty = ty/nm;
+  const nnx = -nty, nny = ntx;
+
+  const blobs = [
+    {x:60,y:80,offN:0},{x:100,y:82,offN:16},{x:140,y:79,offN:-14},
+    {x:180,y:81,offN:10},{x:220,y:80,offN:-8}
+  ];
+
+  blobs.forEach(({x,y,offN}) => {
+    const cx = x + nnx*offN;
+    const cy = y + nny*offN;
+    const rT = 10; // radius in stroke direction
+    const rN = 18; // radius perpendicular (elongated)
+    const hue = 5 + Math.random()*20;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(Math.atan2(nty, ntx)); // align to stroke
+
+    // Outer glow
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rT*2, rN*2, 0, 0, Math.PI*2);
+    const outerGlow = ctx.createRadialGradient(0,0,0,0,0,rN*2);
+    outerGlow.addColorStop(0, 'rgba(255,80,0,0.3)');
+    outerGlow.addColorStop(1, 'rgba(255,80,0,0)');
+    ctx.fillStyle = outerGlow;
+    ctx.fill();
+
+    // Main blob
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rT, rN, 0, 0, Math.PI*2);
+    const gr = ctx.createRadialGradient(0,-rN*0.3,0,0,0,rN);
+    gr.addColorStop(0, `hsl(${hue+30},100%,70%)`);
+    gr.addColorStop(0.5, `hsl(${hue+10},100%,55%)`);
+    gr.addColorStop(1, `hsl(${hue},85%,30%)`);
+    ctx.fillStyle = gr;
+    ctx.fill();
+
+    ctx.restore();
+  });
+
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('→ painting direction', 10, 150);
+})();
+</script>

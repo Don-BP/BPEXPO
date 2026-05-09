@@ -1,0 +1,128 @@
+/* src/components/InfoPopup.css */
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.popup-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.popup-title {
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 900;
+  color: white;
+  text-shadow: 0px 3px 6px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.popup-container {
+  width: 90vw;
+  max-height: 85vh;
+  max-width: 1400px;
+  aspect-ratio: 16 / 9;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  display: flex; /* This remains to center the layout wrapper */
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  container-type: size;
+  container-name: popup-container;
+}
+
+/* New wrapper to hold and position the layout elements. */
+.popup-content-layout-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.popup-content {
+  /* This now positions itself absolutely within the wrapper */
+  position: absolute;
+  top: 50%;
+  left: 3%; /* Give it a little space from the edge */
+  transform: translateY(-50%);
+  width: 55%;
+  height: 90%;
+  display: flex;
+  align-items: center;
+  color: #333;
+}
+
+.popup-content p {
+  font-size: clamp(0.8rem, min(4.5cqw, 7cqh), 2.8rem);
+  font-weight: bold;
+  line-height: 1.5;
+  width: 100%; /* The paragraph fills its container */
+}
+
+.popup-spill-image {
+  position: absolute;
+  /* Revert to a smaller, more decorative size and position */
+  bottom: -5%;
+  right: -2%;
+  height: 50%; /* Smaller, more reasonable height */
+  max-width: 35%; /* Prevent it from getting too wide */
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(5px 7px 8px rgba(0, 0, 0, 0.4));
+  z-index: 5;
+}
+
+/* THE FIX: The .popup-close-btn rule has been removed. */
+
+/* --- LIVE POPUP STYLES (No Changes Here) --- */
+
+.popup-container:not([style*="background-image"]) {
+    aspect-ratio: auto;
+    height: auto;
+}
+
+.live-popup-content-area {
+  width: 90%;
+  margin: 30px auto 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.live-popup-text { font-size: 2rem; font-weight: bold; }
+.live-popup-text.error { color: #c00; }
+.live-popup-time-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; text-align: center; }
+.live-popup-time-grid h3 { font-size: 1.8rem; color: #333; }
+.live-popup-time-grid p.time { font-size: 3rem; font-weight: 900; color: var(--accent-color); margin: 0; }
+.live-popup-time-grid p.date { font-size: 1.2rem; margin: 0; }
+.live-popup-time-grid p.diff { font-size: 1rem; color: #666; }
+.live-popup-weather { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.live-popup-weather .city-name { font-size: 2.5rem; font-weight: bold; color: #444; margin-bottom: 10px; }
+.live-popup-weather .weather-data-row { display: flex; align-items: center; gap: 20px; }
+.live-popup-weather img { width: 150px; height: 150px; filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.2)); }
+.live-popup-weather .weather-details h2 { font-size: 5rem; margin: 0; font-weight: 900; color: var(--accent-color); }
+.live-popup-weather .weather-details .description { font-size: 1.8rem; font-weight: bold; text-transform: capitalize; margin: 0; }
+.live-popup-weather .weather-details .high-low { font-size: 1.5rem; color: #555; margin-top: 5px; }
+.live-popup-content-area.is-crowded { width: 98%; }
+.live-popup-time-grid.is-crowded { grid-template-columns: repeat(6, 1fr); gap: 15px; }
+.live-popup-time-grid.is-crowded h3 { font-size: 1.4rem; }
+.live-popup-time-grid.is-crowded p.time { font-size: 2.3rem; }
+.live-popup-time-grid.is-crowded p.date { font-size: 1rem; line-height: 1.2; }
+.live-popup-time-grid.is-crowded p.diff { font-size: 0.9rem; }

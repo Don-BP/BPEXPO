@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Vocabulary Karuta - Brain Power</title>
+    <link rel="stylesheet" href="../style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            touch-action: manipulation;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1.5rem;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            font-family: var(--font-heading);
+            font-weight: 500;
+            transition: all var(--transition-fast);
+        }
+
+        .controls {
+            text-align: center;
+            padding: var(--space-lg);
+            background: var(--surface);
+            margin: var(--space-md);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .play-button {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--primary) 0%, #FF8787 100%);
+            color: white;
+            border: none;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: var(--space-md);
+        }
+
+        .play-button:active {
+            transform: scale(0.95);
+        }
+
+        .word-display {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin: var(--space-md) 0;
+            min-height: 60px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-md);
+            padding: var(--space-lg);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .vocab-card {
+            aspect-ratio: 1;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-md);
+            border: 3px solid transparent;
+            padding: var(--space-md);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .vocab-card:active {
+            transform: scale(0.95);
+        }
+
+        .vocab-card.correct {
+            background: linear-gradient(135deg, var(--success) 0%, #ABECD6 100%);
+            border-color: #27AE60;
+            animation: correctPulse 0.5s ease-out;
+        }
+
+        .vocab-card.wrong {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2) 0%, rgba(236, 112, 99, 0.2) 100%);
+            border-color: var(--danger);
+            animation: shake 0.3s ease-out;
+        }
+
+        .vocab-card.used {
+            opacity: 0.3;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .card-image {
+            font-size: 3rem;
+            margin-bottom: var(--space-xs);
+        }
+
+        .card-word {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            text-align: center;
+        }
+
+        .scores {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-lg);
+            padding: var(--space-md);
+            flex-wrap: wrap;
+        }
+
+        .player-score {
+            background: var(--surface);
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .player-name {
+            font-family: var(--font-heading);
+            margin-bottom: var(--space-xs);
+        }
+
+        .player-points {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        @keyframes correctPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--space-sm);
+                padding: var(--space-sm);
+            }
+
+            .vocab-card {
+                padding: var(--space-xs);
+            }
+
+            .card-image {
+                font-size: 2rem;
+            }
+
+            .card-word {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <script src="../utils/audio.js"></script>
+</head>
+
+<body>
+    <header class="game-header header-karuta">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='../index.html'">← Back to Hub</button>
+            <h1>Vocabulary Karuta</h1>
+            <div class="right-actions">
+                <button class="btn-icon" onclick="toggleMute()" title="Toggle Sound">🔊</button>
+                <button class="btn-icon" onclick="window.location.href='teacher.html'" title="Teacher Mode">⚙️</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="scores" id="scores"></div>
+
+    <div class="controls">
+        <button class="play-button" id="play-button" onclick="playWord()">🔊</button>
+        <div class="word-display" id="word-display">Tap the speaker to hear a word!</div>
+    </div>
+
+    <div class="cards-grid" id="cards-grid"></div>
+
+    <script src="game.js"></script>
+</body>
+
+</html>

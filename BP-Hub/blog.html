@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BP Insights Blog - BP LABO</title>
+    <link rel="icon" type="image/png" href="assets/bp_favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+            position: relative;
+            background: radial-gradient(rgb(220, 241, 255) 30%, rgba(0, 119, 255, 0.639) 80%);
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assets/main-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-nav {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .header-nav a {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .header-nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .author-filter-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .author-filter-item {
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .author-filter-item:hover,
+        .author-filter-item.active {
+            opacity: 1;
+        }
+
+        .author-filter-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .author-filter-item:hover .author-filter-avatar,
+        .author-filter-item.active .author-filter-avatar {
+            transform: scale(1.1);
+            border-color: #fff;
+        }
+
+        .author-filter-name {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .post-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: white;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .post-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .post-card-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .play-icon-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s;
+        }
+
+        .post-card:hover .play-icon-overlay {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .post-card-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .post-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .post-card-title {
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            flex-grow: 1;
+            margin: 0;
+            color: white;
+            text-decoration: none;
+        }
+
+        .post-card-title:hover {
+            text-decoration: underline;
+        }
+
+        .post-card-meta {
+            text-align: right;
+            font-size: 0.8rem;
+            opacity: 0.8;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .post-card-excerpt {
+            font-size: 1rem;
+            line-height: 1.6;
+            opacity: 0.8;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .post-card-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 15px;
+            text-align: right;
+        }
+
+        .post-tag {
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            z-index: 2;
+        }
+
+        .post-tag:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .stretched-link::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .loading,
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <nav class="header-nav"><a href="index.html">🏠 Back to Hub</a></nav>
+        <header class="header">
+            <h1>BP Insights Blog</h1>
+            <p>Tips, stories, and resources from the Brain Power team.</p>
+        </header>
+
+        <div id="author-filter-bar" class="author-filter-bar"></div>
+        <main id="posts-container" class="posts-grid">
+            <div class="loading">Loading articles...</div>
+        </main>
+    </div>
+
+    <!-- ========= START: SCRIPT SECTION ========= -->
+    <script src="js/auth.js"></script>
+    <script>
+        // --- START: GATEKEEPER SCRIPT ---
+        (function () {
+            // This script runs immediately to protect the page.
+            if (!window.auth || !auth.isLoggedIn()) {
+                console.log('Auth check failed: Not logged in. Redirecting...');
+                window.location.href = 'login.html';
+                return; // Stop further script execution
+            }
+            console.log('Auth check passed. Loading blog...');
+        })();
+        // --- END: GATEKEEPER SCRIPT ---
+
+
+        function sanitizeHTML(text) {
+            if (!text) return '';
+            const temp = document.createElement('div');
+            temp.textContent = text;
+            return temp.innerHTML;
+        }
+
+        function createCleanExcerpt(htmlContent, length = 120) {
+            if (!htmlContent) return '';
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlContent;
+
+            tempDiv.querySelectorAll('figcaption').forEach(caption => caption.remove());
+
+            let text = tempDiv.textContent || tempDiv.innerText || "";
+
+            const urlRegex = /(?:https?|ftp):\/\/[\n\S]+/g;
+            text = text.replace(urlRegex, '');
+
+            text = text.replace(/\s+/g, ' ').trim();
+
+            if (text.length <= length) return text;
+            return text.substring(0, length) + '...';
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const postsContainer = document.getElementById('posts-container');
+            const authorFilterBar = document.getElementById('author-filter-bar');
+
+            const params = new URLSearchParams(window.location.search);
+            let currentFilters = { author: params.get('author'), tag: params.get('tag') };
+
+            function updateURL() {
+                const newParams = new URLSearchParams();
+                if (currentFilters.author) newParams.set('author', currentFilters.author);
+                if (currentFilters.tag) newParams.set('tag', currentFilters.tag);
+                const newUrl = `${window.location.pathname}?${newParams.toString()}`;
+                window.history.pushState({ path: newUrl }, '', newUrl);
+            }
+
+            async function loadAuthors() {
+                try {
+                    const { admins } = await auth.getBlogAdmins();
+                    let authorHtml = `
+                        <a href="blog.html" class="author-filter-item ${!currentFilters.author ? 'active' : ''}" data-author="">
+                            <img src="assets/all-users-avatar.png" alt="All" class="author-filter-avatar">
+                            <div class="author-filter-name">All Posts</div>
+                        </a>
+                    `;
+                    authorHtml += admins.map(admin => `
+                        <a href="#" class="author-filter-item ${currentFilters.author === admin.username ? 'active' : ''}" data-author="${admin.username}">
+                            <img src="${admin.avatarUrl || 'assets/default-avatar.png'}" alt="${admin.username}" class="author-filter-avatar">
+                            <div class="author-filter-name">${admin.username}</div>
+                        </a>
+                    `).join('');
+                    authorFilterBar.innerHTML = authorHtml;
+
+                    authorFilterBar.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const target = e.target.closest('.author-filter-item');
+                        if (target) {
+                            currentFilters.author = target.dataset.author || null;
+                            currentFilters.tag = null;
+                            updateURL();
+                            loadPosts();
+                            document.querySelectorAll('.author-filter-item').forEach(el => el.classList.remove('active'));
+                            target.classList.add('active');
+                        }
+                    });
+
+                } catch (error) {
+                    console.error("Failed to load authors:", error);
+                }
+            }
+
+            async function loadPosts() {
+                postsContainer.innerHTML = `<div class="loading">Loading articles...</div>`;
+                try {
+                    const cleanFilters = Object.fromEntries(Object.entries(currentFilters).filter(([_, v]) => v != null));
+                    const { posts } = await auth.getBlogPosts(cleanFilters);
+                    if (posts.length === 0) {
+                        postsContainer.innerHTML = `<div class="empty-state"><h2>No Posts Found</h2><p>No articles match the current filters. Please check back later!</p></div>`;
+                        return;
+                    }
+
+                    postsContainer.innerHTML = posts.map(post => {
+                        const excerpt = createCleanExcerpt(post.content, 120);
+                        const imageToUse = post.videoThumbnailUrl || post.featuredImageUrl || 'assets/default-post-image.jpg';
+                        const hasVideo = !!post.videoThumbnailUrl;
+                        const authorName = (post.author) ? post.author.username : 'Staff';
+
+                        const imageHtml = `
+                            <div class="post-card-image" style="background-image: url('${imageToUse}')">
+                                ${hasVideo ? '<div class="play-icon-overlay">▶</div>' : ''}
+                            </div>
+                        `;
+
+                        let footerHtml = '';
+                        if (post.tags && post.tags.length > 0) {
+                            const tagsHtml = post.tags.map(tag => `<a href="blog.html?tag=${tag.slug}" class="post-tag">#${sanitizeHTML(tag.name)}</a>`).join('');
+                            footerHtml = `<div class="post-card-footer">${tagsHtml}</div>`;
+                        }
+
+                        return `
+                            <div class="post-card">
+                                ${imageHtml}
+                                <div class="post-card-content">
+                                    <div class="post-card-header">
+                                        <a href="post.html?slug=${post.slug}" class="post-card-title stretched-link">${sanitizeHTML(post.title)}</a>
+                                        <div class="post-card-meta">
+                                            <strong>${sanitizeHTML(authorName)}</strong><br>
+                                            <small>${new Date(post.createdAt).toLocaleDateString()}</small>
+                                        </div>
+                                    </div>
+                                    <p class="post-card-excerpt">${sanitizeHTML(excerpt)}</p>
+                                    ${footerHtml} 
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                } catch (error) {
+                    console.error("Failed to load posts:", error);
+                    postsContainer.innerHTML = `<div class="empty-state"><h2>Error</h2><p>Could not load articles. Please try again later.</p></div>`;
+                }
+            }
+
+            loadAuthors();
+            loadPosts();
+        });
+    </script>
+    <!-- ========= END: SCRIPT SECTION ========= -->
+</body>
+
+</html>

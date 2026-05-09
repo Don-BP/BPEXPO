@@ -1,0 +1,682 @@
+import React, { useState, useEffect, useRef } from 'react';
+
+// --- SYNTHESIZED SOUND EFFECTS ---
+const playSound = (type) => {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  const now = ctx.currentTime;
+  
+  switch (type) {
+    case 'tap':
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(400, now);
+      osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+      osc.start(now);
+      osc.stop(now + 0.1);
+      break;
+    case 'thud':
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
+      gain.gain.setValueAtTime(0.5, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+      osc.start(now);
+      osc.stop(now + 0.2);
+      break;
+    case 'grind':
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(100, now);
+      osc.frequency.linearRampToValueAtTime(80, now + 0.5);
+      gain.gain.setValueAtTime(0.2, now);
+      
+      // Add a little rumble by modulating gain
+      gain.gain.linearRampToValueAtTime(0.4, now + 0.1);
+      gain.gain.linearRampToValueAtTime(0.1, now + 0.3);
+      gain.gain.linearRampToValueAtTime(0.3, now + 0.5);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.6);
+      
+      osc.start(now);
+      osc.stop(now + 0.6);
+      break;
+    case 'forge':
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(200, now);
+      osc.frequency.linearRampToValueAtTime(600, now + 0.4);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.5, now + 0.2);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+      osc.start(now);
+      osc.stop(now + 0.4);
+      break;
+    case 'ding':
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, now); // A5
+      osc.frequency.exponentialRampToValueAtTime(440, now + 1);
+      gain.gain.setValueAtTime(0.6, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 1);
+      
+      // Chime overtone
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(1760, now);
+      const gain2 = ctx.createGain();
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      gain2.gain.setValueAtTime(0.3, now);
+      gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+      osc2.start(now);
+      osc2.stop(now + 1);
+      
+      osc.start(now);
+      osc.stop(now + 1);
+      break;
+    case 'shimmer':
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, now);
+      osc.frequency.linearRampToValueAtTime(1200, now + 1.5);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.2, now + 0.5);
+      gain.gain.linearRampToValueAtTime(0.01, now + 1.5);
+      osc.start(now);
+      osc.stop(now + 1.5);
+      break;
+    case 'vent':
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(100, now);
+      osc.frequency.exponentialRampToValueAtTime(20, now + 0.8);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+      
+      // Noise filter for steam
+      const bufferSize = ctx.sampleRate * 0.8;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      const noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'lowpass';
+      noiseFilter.frequency.value = 1000;
+      noise.connect(noiseFilter);
+      noiseFilter.connect(gain);
+      noise.start(now);
+      
+      osc.start(now);
+      osc.stop(now + 0.8);
+      break;
+  }
+};
+
+// --- ICONS & VISUAL ASSETS (SVG) ---
+const RockIcon = ({ value, className = "" }) => {
+  // Scale calculation: exponential growth so 5 points is massively larger than 1
+  const absVal = Math.abs(value);
+  let scaleMultiplier = 0.6 + Math.pow((Math.max(1, absVal) - 1) / 4, 2) * 2.6; // Ramps up sharply
+  if (absVal === 0) scaleMultiplier = 0.4; // Tiny pebble for 0
+  scaleMultiplier = Math.min(3.5, scaleMultiplier); // Cap at 3.5x to prevent breaking UI entirely
+
+  const dynamicStyle = {
+    transform: `scale(${scaleMultiplier})`,
+    transformOrigin: 'center',
+    transition: 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+  };
+
+  if (value <= 0) {
+    return ( // Void Slag (Cartoony)
+      <svg viewBox="0 0 100 100" className={`w-12 h-12 drop-shadow-xl ${className}`} style={dynamicStyle}>
+        <path d="M50 10 L80 30 L90 70 L60 95 L20 85 L10 40 Z" fill="#2d3436" stroke="#000000" strokeWidth="4" strokeLinejoin="round" />
+        <path d="M40 20 L60 40 L50 80 L30 50 Z" fill="#636e72" />
+        <circle cx="70" cy="50" r="6" fill="#a29bfe" className="animate-pulse" stroke="#000" strokeWidth="2" />
+        <circle cx="30" cy="70" r="4" fill="#a29bfe" className="animate-pulse delay-75" stroke="#000" strokeWidth="2" />
+      </svg>
+    );
+  } else if (value === 1) {
+    return ( // Nugget (Cartoony)
+      <svg viewBox="0 0 100 100" className={`w-10 h-10 drop-shadow-md ${className}`} style={dynamicStyle}>
+        <path d="M50 20 C70 10, 90 40, 80 70 C70 90, 30 90, 20 60 C10 40, 30 30, 50 20" fill="#FFD700" stroke="#E58E26" strokeWidth="4" strokeLinejoin="round" />
+        <path d="M45 25 C60 20, 75 40, 65 60" fill="#FFF3A1" opacity="0.8" />
+      </svg>
+    );
+  } else if (value >= 2 && value <= 4) {
+    return ( // Ore (Cartoony)
+      <svg viewBox="0 0 100 100" className={`w-14 h-14 drop-shadow-lg ${className}`} style={dynamicStyle}>
+        <path d="M20 50 L40 20 L70 30 L80 60 L60 90 L30 80 Z" fill="#95a5a6" stroke="#2d3436" strokeWidth="4" strokeLinejoin="round" />
+        <polygon points="40,20 60,10 55,35" fill="#FFD700" stroke="#E58E26" strokeWidth="4" strokeLinejoin="round" />
+        <polygon points="70,30 95,45 75,55" fill="#FFC312" stroke="#E58E26" strokeWidth="4" strokeLinejoin="round" />
+        <polygon points="60,90 85,95 70,75" fill="#FFD700" stroke="#E58E26" strokeWidth="4" strokeLinejoin="round" />
+        <polygon points="30,80 15,90 25,65" fill="#FFC312" stroke="#E58E26" strokeWidth="4" strokeLinejoin="round" />
+      </svg>
+    );
+  } else {
+    return ( // Big Jackpot Diamond (Cartoony)
+      <svg viewBox="0 0 100 100" className={`w-20 h-20 drop-shadow-2xl ${className}`} style={dynamicStyle}>
+        <polygon points="50,10 90,40 50,95 10,40" fill="#FFD700" stroke="#E58E26" strokeWidth="4" strokeLinejoin="round" />
+        <polygon points="50,10 90,40 50,45" fill="#FFF3A1" />
+        <polygon points="50,10 10,40 50,45" fill="#FFC312" />
+        <polygon points="10,40 50,95 50,45" fill="#F39C12" />
+        <polygon points="90,40 50,95 50,45" fill="#E67E22" />
+      </svg>
+    );
+  }
+};
+
+const MedalIcon = ({ className = "" }) => (
+  // Styled like the big yellow stars from the image
+  <svg viewBox="0 0 100 100" className={`drop-shadow-lg ${className}`}>
+    <path d="M50 5 L62 35 L95 35 L68 55 L78 85 L50 68 L22 85 L32 55 L5 35 L38 35 Z" fill="#FFD700" stroke="#E58E26" strokeWidth="4" strokeLinejoin="round" />
+    <path d="M50 15 L59 38 L82 38 L62 52 L70 74 L50 60 L30 74 L38 52 L18 38 L41 38 Z" fill="#FFF3A1" opacity="0.6" />
+  </svg>
+);
+
+const MysteryChest = ({ phase }) => {
+  return (
+    <div className={`relative ${phase === 'idle' ? 'animate-bounce-slow' : phase === 'shaking' ? 'animate-violent-shake' : 'scale-0 transition-transform duration-300'}`}>
+      <div className={`absolute -top-12 left-1/2 -translate-x-1/2 text-6xl font-black text-white text-outline-purple drop-shadow-xl ${phase === 'shaking' ? 'animate-spin' : 'animate-pulse'}`}>
+        ?
+      </div>
+      <svg viewBox="0 0 100 100" className="w-32 h-32 drop-shadow-2xl">
+        <rect x="10" y="40" width="80" height="50" rx="8" fill="#9C88FF" stroke="#3c2f80" strokeWidth="4" strokeLinejoin="round" />
+        <path d="M10 40 C 10 5, 90 5, 90 40 Z" fill="#00d2d3" stroke="#3c2f80" strokeWidth="4" strokeLinejoin="round" />
+        <rect x="40" y="30" width="20" height="25" rx="4" fill="#c8d6e5" stroke="#3c2f80" strokeWidth="4" strokeLinejoin="round" />
+        <circle cx="50" cy="45" r="4" fill="#3c2f80" />
+      </svg>
+    </div>
+  );
+};
+
+const colorThemes = [
+  { bg: "bg-[#4CB5F5]", border: "border-[#1E73BE]", shadow: "shadow-[0_8px_0_#1E73BE] md:shadow-[0_12px_0_#1E73BE]", hoverShadow: "hover:shadow-[0_6px_0_#1E73BE] md:hover:shadow-[0_10px_0_#1E73BE]" }, // 0: Blue
+  { bg: "bg-[#ff6b81]", border: "border-[#ff4757]", shadow: "shadow-[0_8px_0_#ff4757] md:shadow-[0_12px_0_#ff4757]", hoverShadow: "hover:shadow-[0_6px_0_#ff4757] md:hover:shadow-[0_10px_0_#ff4757]" }, // 1: Red
+  { bg: "bg-[#2ED573]", border: "border-[#1e8449]", shadow: "shadow-[0_8px_0_#1e8449] md:shadow-[0_12px_0_#1e8449]", hoverShadow: "hover:shadow-[0_6px_0_#1e8449] md:hover:shadow-[0_10px_0_#1e8449]" }, // 2: Green
+  { bg: "bg-[#ffa502]", border: "border-[#e67e22]", shadow: "shadow-[0_8px_0_#e67e22] md:shadow-[0_12px_0_#e67e22]", hoverShadow: "hover:shadow-[0_6px_0_#e67e22] md:hover:shadow-[0_10px_0_#e67e22]" }, // 3: Orange
+  { bg: "bg-[#9C88FF]", border: "border-[#5f27cd]", shadow: "shadow-[0_8px_0_#5f27cd] md:shadow-[0_12px_0_#5f27cd]", hoverShadow: "hover:shadow-[0_6px_0_#5f27cd] md:hover:shadow-[0_10px_0_#5f27cd]" }, // 4: Purple
+  { bg: "bg-[#1dd1a1]", border: "border-[#01a3a4]", shadow: "shadow-[0_8px_0_#01a3a4] md:shadow-[0_12px_0_#01a3a4]", hoverShadow: "hover:shadow-[0_6px_0_#01a3a4] md:hover:shadow-[0_10px_0_#01a3a4]" }, // 5: Teal
+  { bg: "bg-[#ff7f50]", border: "border-[#d35400]", shadow: "shadow-[0_8px_0_#d35400] md:shadow-[0_12px_0_#d35400]", hoverShadow: "hover:shadow-[0_6px_0_#d35400] md:hover:shadow-[0_10px_0_#d35400]" }, // 6: Coral
+  { bg: "bg-[#ff9ff3]", border: "border-[#f368e0]", shadow: "shadow-[0_8px_0_#f368e0] md:shadow-[0_12px_0_#f368e0]", hoverShadow: "hover:shadow-[0_6px_0_#f368e0] md:hover:shadow-[0_10px_0_#f368e0]" }  // 7: Pink
+];
+
+// --- MAIN APPLICATION ---
+export default function App() {
+  const [teams, setTeams] = useState([
+    { id: 1, name: "Red Dragons", medals: 0, moldPoints: 0, animPhase: 'idle', rockVal: 0, colorIdx: 1 },
+    { id: 2, name: "Blue Falcons", medals: 0, moldPoints: 0, animPhase: 'idle', rockVal: 0, colorIdx: 0 },
+    { id: 3, name: "Green Turtles", medals: 0, moldPoints: 0, animPhase: 'idle', rockVal: 0, colorIdx: 2 }
+  ]);
+  
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedTeamId, setSelectedTeamId] = useState(null);
+  const [mysteryState, setMysteryState] = useState({ active: false, phase: 'idle', value: 0 }); 
+  const [offeredPoints, setOfferedPoints] = useState(1);
+  
+  const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+  const addTeam = () => {
+    if (teams.length >= 8) return;
+    const newId = Math.max(0, ...teams.map(t => t.id)) + 1;
+    
+    // Find next unused color
+    const usedColors = teams.map(t => t.colorIdx);
+    let nextColor = 0;
+    for (let i = 0; i < 8; i++) {
+      if (!usedColors.includes(i)) {
+        nextColor = i;
+        break;
+      }
+    }
+
+    setTeams([...teams, { id: newId, name: `Team ${newId}`, medals: 0, moldPoints: 0, animPhase: 'idle', rockVal: 0, colorIdx: nextColor }]);
+    playSound('tap');
+  };
+
+  const removeTeam = (id, e) => {
+    e.stopPropagation();
+    setTeams(teams.filter(t => t.id !== id));
+    playSound('tap');
+  };
+
+  const triggerMysterySequence = async (targetTeamId) => {
+    setIsProcessing(true);
+    setSelectedTeamId(null);
+    
+    const isPositive = Math.random() > 0.3;
+    // Allows 1-5 for positive, and -5 to 0 for negative/coal
+    let val = isPositive ? Math.floor(Math.random() * 5) + 1 : Math.floor(Math.random() * 6) - 5;
+
+    setMysteryState({ active: true, phase: 'idle', value: 0 });
+    playSound('tap');
+    await wait(200); // Much faster wind-up
+
+    // Shake
+    setMysteryState(prev => ({ ...prev, phase: 'shaking' }));
+    playSound('shimmer');
+    await wait(600); // Much faster shake
+
+    // Burst Reveal
+    setMysteryState(prev => ({ ...prev, phase: 'revealed', value: val }));
+    playSound('ding');
+    await wait(1000); // Faster reveal time
+
+    setMysteryState({ active: false, phase: 'idle', value: 0 });
+    await processPoints(targetTeamId, val);
+  };
+
+  const processPoints = async (targetTeamId, points) => {
+    setIsProcessing(true);
+    setSelectedTeamId(null); 
+    
+    // 1. Rock Drop Phase
+    updateTeamState(targetTeamId, { animPhase: 'dropping', rockVal: points });
+    playSound('thud');
+    await wait(600); // Slightly faster drop
+
+    const team = teams.find(t => t.id === targetTeamId);
+    let currentMold = team.moldPoints;
+    let currentMedals = team.medals;
+
+    // 2. Grinding & Sequential Filling Phase
+    if (points > 0) {
+      updateTeamState(targetTeamId, { animPhase: 'grinding' });
+      
+      for (let i = 0; i < points; i++) {
+        playSound('grind'); // Re-trigger sound slightly for each point
+        currentMold++;
+        updateTeamState(targetTeamId, { moldPoints: currentMold });
+        playSound('tap');
+        
+        await wait(250); // Delay between filling each bar
+
+        if (currentMold >= 5) {
+          // Interrupt to forge medal
+          updateTeamState(targetTeamId, { animPhase: 'forging', moldPoints: 5 });
+          playSound('forge');
+          await wait(600); 
+          playSound('ding'); 
+          currentMedals++;
+          currentMold = 0;
+          
+          updateTeamState(targetTeamId, { animPhase: 'idle', moldPoints: 0, medals: currentMedals });
+          await wait(800); // Wait to see the medal
+
+          // Resume grinding if there are points left
+          if (i < points - 1) {
+            updateTeamState(targetTeamId, { animPhase: 'grinding' });
+          }
+        }
+      }
+    } else if (points <= 0) {
+      // Draining Phase (Coal/Slag)
+      updateTeamState(targetTeamId, { animPhase: 'venting' });
+      
+      let drainCount = Math.abs(points) || 1; // Ensure it grinds at least once if 0
+      
+      for (let i = 0; i < drainCount; i++) {
+        playSound('grind');
+        if (i === 0 && points < 0) playSound('vent'); // Play vent on first tick if actually negative
+        
+        if (currentMold > 0 && points < 0) {
+          currentMold--;
+          updateTeamState(targetTeamId, { moldPoints: currentMold });
+        }
+        await wait(250);
+      }
+    }
+
+    // 3. Final Commit
+    updateTeamState(targetTeamId, { 
+      animPhase: 'settling', 
+      moldPoints: currentMold, 
+      medals: currentMedals 
+    });
+    
+    await wait(300);
+    updateTeamState(targetTeamId, { animPhase: 'idle', rockVal: 0 });
+    setIsProcessing(false);
+  };
+
+  const updateTeamState = (id, updates) => {
+    setTeams(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
+  };
+
+  // Compute dynamic grid rows/columns based on team count to prevent scrolling
+  const getGridConfig = (count) => {
+    if (count === 0) return { cols: 1, rows: 1 };
+    if (count <= 4) return { cols: count, rows: 1 };
+    if (count <= 6) return { cols: 3, rows: 2 };
+    return { cols: 4, rows: 2 };
+  };
+  const gridConfig = getGridConfig(teams.length);
+
+  return (
+    <div className="h-screen w-screen bg-[#D0F0FF] text-[#333] font-cartoon bg-sunburst overflow-hidden relative flex flex-col">
+      
+      {/* Header */}
+      <header className="flex justify-between items-center p-2 md:p-4 relative z-10 shrink-0">
+        <div className="flex items-center gap-2 md:gap-3 bg-[#FFECA1] border-4 border-[#F2A900] py-1 px-4 md:py-2 md:px-6 rounded-full shadow-[0_4px_0_#F2A900] md:shadow-[0_6px_0_#F2A900]">
+          <MedalIcon className="w-8 h-8 md:w-10 md:h-10" />
+          <h1 className="text-xl md:text-3xl font-black tracking-wider text-[#D9534F] uppercase drop-shadow-sm">Gold Rush</h1>
+        </div>
+        <button 
+          onClick={addTeam}
+          disabled={teams.length >= 8 || isProcessing}
+          className="bg-[#2ED573] hover:bg-[#26ae60] text-white text-lg md:text-xl font-black py-2 px-6 md:py-3 md:px-8 rounded-full shadow-[0_4px_0_#1e8449] md:shadow-[0_6px_0_#1e8449] active:shadow-[0_0px_0_#1e8449] active:translate-y-2 border-4 border-[#1e8449] transition-all disabled:opacity-50"
+        >
+          + Add Team
+        </button>
+      </header>
+
+      {/* Main Board - Flex-1 and dynamic Grid ensures it fits without scrolling */}
+      <main 
+        className="flex-1 w-full max-w-[1800px] mx-auto p-2 md:p-4 grid gap-2 md:gap-4 relative z-10 min-h-0"
+        style={{ 
+          gridTemplateColumns: `repeat(${gridConfig.cols}, minmax(0, 1fr))`, 
+          gridTemplateRows: `repeat(${gridConfig.rows}, minmax(0, 1fr))` 
+        }}
+      >
+        {teams.map(team => (
+          <TeamCard 
+            key={team.id} 
+            team={team} 
+            onClick={() => {
+              if(!isProcessing) {
+                playSound('tap');
+                setOfferedPoints(Math.floor(Math.random() * 3) + 1); // Generates 1, 2, or 3
+                setSelectedTeamId(team.id);
+              }
+            }}
+            onRemove={(e) => removeTeam(team.id, e)}
+          />
+        ))}
+      </main>
+
+      {/* Point Selection Modal */}
+      {selectedTeamId && !isProcessing && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-40 p-4" onClick={() => setSelectedTeamId(null)}>
+          <div 
+            className="bg-[#4CB5F5] border-4 border-[#1E73BE] p-4 md:p-8 rounded-[2.5rem] shadow-[0_15px_0_#1E73BE,0_20px_40px_rgba(0,0,0,0.4)] w-full max-w-2xl max-h-[90vh] flex flex-col animate-pop-in relative"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex gap-4 md:gap-8 flex-1 min-h-[14rem] md:min-h-[18rem]">
+              {/* Left: Guaranteed Points */}
+              <button
+                onClick={() => { playSound('tap'); processPoints(selectedTeamId, offeredPoints); }}
+                className="flex-1 bg-[#FFECA1] hover:bg-[#FFDF70] border-4 border-[#F2A900] flex flex-col items-center justify-center rounded-3xl shadow-[0_8px_0_#F2A900] md:shadow-[0_10px_0_#F2A900] active:shadow-[0_0px_0_#F2A900] active:translate-y-2 transition-all p-4"
+              >
+                <span className="text-6xl md:text-8xl font-black text-[#D9534F] text-outline-red">+{offeredPoints}</span>
+                <RockIcon value={offeredPoints} className="w-16 h-16 md:w-24 md:h-24 mt-4 drop-shadow-xl" />
+              </button>
+
+              {/* Right: Mystery */}
+              <button
+                onClick={() => triggerMysterySequence(selectedTeamId)}
+                className="flex-1 bg-[#9C88FF] hover:bg-[#8c7ae6] border-4 border-[#5f27cd] flex flex-col items-center justify-center rounded-3xl shadow-[0_8px_0_#5f27cd] md:shadow-[0_10px_0_#5f27cd] active:shadow-[0_0px_0_#5f27cd] active:translate-y-2 transition-all group overflow-hidden relative p-4"
+              >
+                <div className="absolute inset-0 bg-white/20 w-full h-full transform -translate-x-full group-hover:animate-sweep"></div>
+                <span className="text-6xl md:text-8xl font-black text-white text-outline-purple drop-shadow-md relative z-10 group-hover:animate-pulse">?</span>
+                <svg viewBox="0 0 100 100" className="w-20 h-20 md:w-28 md:h-28 drop-shadow-2xl mt-2 relative z-10 group-hover:animate-bounce-slow">
+                  <rect x="10" y="40" width="80" height="50" rx="8" fill="#00d2d3" stroke="#3c2f80" strokeWidth="4" strokeLinejoin="round" />
+                  <path d="M10 40 C 10 5, 90 5, 90 40 Z" fill="#ff9ff3" stroke="#3c2f80" strokeWidth="4" strokeLinejoin="round" />
+                  <rect x="40" y="30" width="20" height="25" rx="4" fill="#c8d6e5" stroke="#3c2f80" strokeWidth="4" strokeLinejoin="round" />
+                  <circle cx="50" cy="45" r="4" fill="#3c2f80" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mystery Sequence Overlay */}
+      {mysteryState.active && (
+        <div className="fixed inset-0 bg-black/60 flex flex-col items-center justify-center z-50">
+          <MysteryChest phase={mysteryState.phase} />
+          {mysteryState.phase === 'revealed' && (
+            <div className="absolute flex flex-col items-center animate-burst-up">
+              <RockIcon value={mysteryState.value} className="w-32 h-32 md:w-40 md:h-40 mb-4" />
+              <div className={`text-6xl md:text-8xl font-black text-outline-thick drop-shadow-2xl ${mysteryState.value > 0 ? 'text-[#FFD700]' : 'text-[#ff4757]'}`}>
+                {mysteryState.value > 0 ? `+${mysteryState.value}` : mysteryState.value}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* --- CSS ANIMATIONS & STYLES --- */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;800&display=swap');
+
+        .font-cartoon { font-family: 'Fredoka', sans-serif; }
+        
+        .bg-sunburst {
+          background: repeating-conic-gradient(
+            from 0deg,
+            #D0F0FF 0deg 15deg,
+            #E1F5FF 15deg 30deg
+          );
+        }
+
+        /* Clean, crisp text outlines instead of webkit-stroke */
+        .text-outline-blue { text-shadow: 0 3px 0 #1E73BE, 3px 0 0 #1E73BE, -3px 0 0 #1E73BE, 0 -3px 0 #1E73BE, 2px 2px 0 #1E73BE, -2px -2px 0 #1E73BE, 2px -2px 0 #1E73BE, -2px 2px 0 #1E73BE, 0 5px 0 #1E73BE; }
+        .text-outline-red { text-shadow: 0 3px 0 #F2A900, 3px 0 0 #F2A900, -3px 0 0 #F2A900, 0 -3px 0 #F2A900, 2px 2px 0 #F2A900, -2px -2px 0 #F2A900, 2px -2px 0 #F2A900, -2px 2px 0 #F2A900; }
+        .text-outline-purple { text-shadow: 0 3px 0 #5f27cd, 3px 0 0 #5f27cd, -3px 0 0 #5f27cd, 0 -3px 0 #5f27cd, 2px 2px 0 #5f27cd, -2px -2px 0 #5f27cd, 2px -2px 0 #5f27cd, -2px 2px 0 #5f27cd; }
+        .text-outline-thick { text-shadow: 0 4px 0 #2d3436, 4px 0 0 #2d3436, -4px 0 0 #2d3436, 0 -4px 0 #2d3436, 3px 3px 0 #2d3436, -3px -3px 0 #2d3436, 3px -3px 0 #2d3436, -3px 3px 0 #2d3436, 0 8px 0 #2d3436; }
+
+        @keyframes sweep {
+          0% { transform: translateX(-100%) skewX(-15deg); }
+          100% { transform: translateX(200%) skewX(-15deg); }
+        }
+        @keyframes pop-in {
+          0% { transform: scale(0.8); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes bounce-slow {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        @keyframes violent-shake {
+          0%, 100% { transform: translateX(0) scale(1.5); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-10px) rotate(-3deg) scale(1.5); }
+          20%, 40%, 60%, 80% { transform: translateX(10px) rotate(3deg) scale(1.5); }
+        }
+        @keyframes burst-up {
+          0% { transform: translateY(100px) scale(0); opacity: 0; }
+          50% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+          100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        
+        /* Machine Animations - Adjusted Y translations to fit squished layout */
+        .anim-dropping .rock-drop {
+          animation: drop-arc 0.6s cubic-bezier(0.5, 0, 1, 1) forwards;
+          opacity: 1;
+        }
+        @keyframes drop-arc {
+          0% { transform: translateY(-100px) scale(1); opacity: 0; }
+          10% { opacity: 1; }
+          100% { transform: translateY(20px) scale(0.5); opacity: 0; }
+        }
+
+        .anim-grinding .grinder-gear, .anim-venting .grinder-gear { animation: spin-fast 1s linear infinite; }
+        .anim-grinding .machine-body, .anim-venting .machine-body { animation: machine-shake 0.1s linear infinite; }
+        @keyframes spin-fast { 100% { transform: rotate(360deg); } }
+        @keyframes machine-shake { 
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(2px) translateY(2px); }
+        }
+
+        /* Gold Dust Particles */
+        .particle-layer { position: absolute; inset: 0; z-index: 25; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+        .anim-grinding .particle-layer, .anim-venting .particle-layer { opacity: 1; }
+        .dust { position: absolute; width: 8px; height: 8px; border-radius: 50%; border: 2px solid #E58E26; top: 40%; left: 50%; opacity: 0; }
+        .dust-gold { background: #FFD700; }
+        .dust-slag { background: #2d3436; border-color: #000; }
+
+        .anim-grinding .d1 { animation: dust-fall 0.4s linear infinite; margin-left: -12px; }
+        .anim-grinding .d2 { animation: dust-fall 0.3s linear infinite 0.1s; margin-left: 4px; }
+        .anim-grinding .d3 { animation: dust-fall 0.5s linear infinite 0.2s; margin-left: -4px; }
+        .anim-grinding .d4 { animation: dust-fall 0.4s linear infinite 0.3s; margin-left: 12px; }
+        
+        .anim-venting .d1 { animation: dust-fall 0.4s linear infinite; margin-left: -12px; }
+        .anim-venting .d2 { animation: dust-fall 0.3s linear infinite 0.1s; margin-left: 4px; }
+        .anim-venting .d3 { animation: dust-fall 0.5s linear infinite 0.2s; margin-left: -4px; }
+        .anim-venting .d4 { animation: dust-fall 0.4s linear infinite 0.3s; margin-left: 12px; }
+
+        @keyframes dust-fall {
+          0% { transform: translateY(0) scale(1); opacity: 1; }
+          100% { transform: translateY(150px) scale(0.2); opacity: 0; }
+        }
+
+        .anim-forging .pot-slam { animation: slam 0.6s ease-in forwards; }
+        .anim-forging .medal-eject { animation: medal-shoot 1.5s ease-out forwards; }
+        @keyframes slam {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.1) translateY(8px); }
+        }
+        @keyframes medal-shoot {
+          0% { transform: translateY(30px) scale(0.5) rotate(0); opacity: 0; }
+          20% { opacity: 1; }
+          50% { transform: translateY(-80px) scale(1.2) rotate(720deg); }
+          100% { transform: translateY(0) scale(1) rotate(1440deg); opacity: 1; }
+        }
+
+        .anim-venting .mold-fluid { animation: fluid-vent 1.2s ease-in-out forwards; }
+        @keyframes fluid-vent {
+          0%, 100% { filter: saturate(1); }
+          20%, 80% { filter: saturate(0) brightness(0.4); }
+        }
+
+        .medal-count-pulse { animation: medal-pulse 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes medal-pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.4); }
+          100% { transform: scale(1); }
+        }
+      `}} />
+    </div>
+  );
+}
+
+// --- TEAM CARD COMPONENT (Handles local animations) ---
+const TeamCard = ({ team, onClick, onRemove }) => {
+  const theme = colorThemes[team.colorIdx % colorThemes.length];
+
+  return (
+    <div 
+      onClick={onClick}
+      className={`relative ${theme.bg} border-4 ${theme.border} rounded-[1.5rem] md:rounded-[2rem] p-2 md:p-4 flex flex-col items-center cursor-pointer transition-transform hover:scale-[1.03] ${theme.shadow} ${theme.hoverShadow} hover:translate-y-1 group anim-${team.animPhase} h-full min-h-0`}
+    >
+      <button 
+        onClick={onRemove}
+        className="absolute -top-3 -right-3 w-8 h-8 md:w-10 md:h-10 bg-white border-4 border-[#ff4757] text-[#ff4757] rounded-full opacity-0 group-hover:opacity-100 hover:bg-[#ff4757] hover:text-white transition-all flex items-center justify-center font-black text-lg md:text-xl shadow-md z-50"
+      >
+        Å~
+      </button>
+
+      {/* Team Info (White text, dark crisp outline) */}
+      <h3 className="text-lg md:text-2xl font-black mb-1 md:mb-2 w-full text-center truncate text-white text-outline-thick shrink-0">
+        {team.name}
+      </h3>
+      
+      {/* Medal Rack (Score) */}
+      <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-3 bg-[#FFECA1] border-4 border-[#F2A900] py-1 px-3 md:py-2 md:px-5 rounded-full shadow-md shrink-0">
+        <MedalIcon className="w-5 h-5 md:w-7 md:h-7 -ml-2 md:-ml-3" />
+        <span className={`text-xl md:text-3xl font-black text-[#D9534F] tracking-tighter leading-none ${team.animPhase === 'settling' ? 'medal-count-pulse text-outline-red' : ''}`}>
+          {team.medals}
+        </span>
+      </div>
+
+      {/* --- THE POINT FORGE (Flex constrained to prevent overflow) --- */}
+      <div className="relative w-full flex-1 flex flex-col items-center justify-end machine-body mt-auto min-h-0 pb-1 md:pb-2">
+        
+        {/* Falling Rock Layer */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 z-20 opacity-0 rock-drop pointer-events-none">
+           {team.animPhase === 'dropping' && <RockIcon value={team.rockVal} className="w-10 h-10 md:w-16 md:h-16" />}
+        </div>
+
+        {/* Ejecting Medal Layer */}
+        <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 z-30 opacity-0 medal-eject pointer-events-none">
+          {team.animPhase === 'forging' && <MedalIcon className="w-14 h-14 md:w-20 md:h-20" />}
+        </div>
+
+        {/* Cartoony Grinder (Top) - Dynamically scales with available space */}
+        <div className="relative z-10 h-[45%] min-h-0 w-[60%] max-w-[14rem] flex justify-center items-end">
+          <svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMax meet" className="w-full h-full drop-shadow-md">
+            {/* Funnel */}
+            <path d="M10 5 L90 5 L70 45 L30 45 Z" fill="#b2bec3" stroke="#2d3436" strokeWidth="4" strokeLinejoin="round" />
+            <rect x="30" y="45" width="40" height="15" fill="#636e72" stroke="#2d3436" strokeWidth="4" rx="2" />
+            
+            {/* Internal Gears (Thick outlines) */}
+            <g className="grinder-gear" style={{transformOrigin: '40px 25px'}}>
+              <circle cx="40" cy="25" r="14" fill="#ff7675" stroke="#2d3436" strokeWidth="4" />
+              <line x1="20" y1="25" x2="60" y2="25" stroke="#2d3436" strokeWidth="4" />
+              <line x1="40" y1="5" x2="40" y2="45" stroke="#2d3436" strokeWidth="4" />
+            </g>
+            <g className="grinder-gear" style={{transformOrigin: '60px 30px', animationDirection: 'reverse'}}>
+              <circle cx="60" cy="30" r="12" fill="#74b9ff" stroke="#2d3436" strokeWidth="4" />
+              <line x1="45" y1="15" x2="75" y2="45" stroke="#2d3436" strokeWidth="4" />
+              <line x1="45" y1="45" x2="75" y2="15" stroke="#2d3436" strokeWidth="4" />
+            </g>
+          </svg>
+        </div>
+
+        {/* Gold Dust / Slag Particles */}
+        <div className="particle-layer">
+          <div className={`dust d1 ${team.rockVal < 0 || team.animPhase === 'venting' ? 'dust-slag' : 'dust-gold'}`}></div>
+          <div className={`dust d2 ${team.rockVal < 0 || team.animPhase === 'venting' ? 'dust-slag' : 'dust-gold'}`}></div>
+          <div className={`dust d3 ${team.rockVal < 0 || team.animPhase === 'venting' ? 'dust-slag' : 'dust-gold'}`}></div>
+          <div className={`dust d4 ${team.rockVal < 0 || team.animPhase === 'venting' ? 'dust-slag' : 'dust-gold'}`}></div>
+        </div>
+
+        {/* The Glass Bowl (Bottom) - Dynamically scales with available space */}
+        <div className="relative pot-slam h-[55%] min-h-0 w-[80%] max-w-[18rem] flex justify-center items-start mt-1">
+          <svg viewBox="0 0 100 85" preserveAspectRatio="xMidYMin meet" className="w-full h-full drop-shadow-lg z-0">
+            <defs>
+              <clipPath id={`bowl-clip-${team.id}`}>
+                <path d="M 25 30 C 10 85, 90 85, 75 30 Z" />
+              </clipPath>
+            </defs>
+
+            {/* Back Rim/Opening */}
+            <ellipse cx="50" cy="30" rx="25" ry="8" fill="#a4b0be" stroke="#2f3542" strokeWidth="4" />
+
+            {/* Bowl Interior & Liquid */}
+            <g clipPath={`url(#bowl-clip-${team.id})`}>
+              {/* Empty dark interior */}
+              <rect x="0" y="0" width="100" height="100" fill="#2d3436" opacity="0.8" />
+              
+              {/* The Liquid Gold - Translates Y based on moldPoints (0 to 5) */}
+              <g 
+                className={`transition-transform duration-300 ease-out ${team.animPhase === 'venting' ? 'mold-fluid' : ''}`} 
+                style={{ transform: `translateY(${(1 - (team.moldPoints / 5)) * 52}px)` }}
+              >
+                {/* Liquid body */}
+                <rect x="0" y="30" width="100" height="70" fill="#F39C12" />
+                {/* Liquid surface ellipse */}
+                <ellipse cx="50" cy="30" rx="35" ry="8" fill="#FFD700" />
+                
+                {/* Bubbles for juiciness */}
+                <circle cx="35" cy="45" r="4" fill="#FFF3A1" opacity="0.7" />
+                <circle cx="65" cy="55" r="3" fill="#FFF3A1" opacity="0.7" />
+                <circle cx="50" cy="65" r="5" fill="#FFF3A1" opacity="0.7" />
+              </g>
+            </g>
+
+            {/* Glass Front Outline */}
+            <path d="M 25 30 C 10 85, 90 85, 75 30" fill="none" stroke="#2f3542" strokeWidth="4" strokeLinecap="round" />
+            
+            {/* Front Rim Lip */}
+            <path d="M 25 30 C 25 38, 75 38, 75 30" fill="none" stroke="#2f3542" strokeWidth="4" />
+
+            {/* Glass Glare (curved line on the left side) */}
+            <path d="M 32 45 C 32 60, 40 70, 48 72" fill="none" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" opacity="0.6" />
+          </svg>
+        </div>
+
+      </div>
+    </div>
+  );
+};8

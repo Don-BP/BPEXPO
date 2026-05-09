@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw & Guess - ALT Classroom Games</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header class="game-header header-pictionary">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='../index.html'">← Back to Hub</button>
+            <h1>Draw & Guess</h1>
+            <div class="right-actions">
+                <button class="btn-icon" onclick="toggleMute()" title="Sound">🔊</button>
+                <button class="btn-icon" onclick="window.location.href='teacher.html'" title="Teacher Mode">⚙️</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="game-container">
+
+        <!-- Topic Section -->
+        <div class="topic-box"
+            style="display: flex; align-items: center; gap: 1rem; justify-content: center; margin-bottom: 1rem;">
+            <span class="label">Draw this:</span>
+            <div id="secret-word" class="blur">CAT</div>
+            <button class="btn-xs" onclick="toggleWord()">👁️</button>
+            <button class="btn btn-primary" onclick="newWord()">🔄 New Word</button>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="canvas-container">
+            <canvas id="draw-canvas" width="800" height="600"></canvas>
+        </div>
+
+        <!-- Tools -->
+        <div class="toolbar">
+            <div class="colors">
+                <div class="color-btn active" style="background: black;" data-color="black"></div>
+                <div class="color-btn" style="background: red;" data-color="red"></div>
+                <div class="color-btn" style="background: blue;" data-color="blue"></div>
+                <div class="color-btn" style="background: green;" data-color="green"></div>
+                <div class="color-btn" style="background: orange;" data-color="orange"></div>
+            </div>
+            <div class="actions">
+                <button class="btn-tool" onclick="setEraser()">🧽</button>
+                <button class="btn-tool" onclick="clearCanvas()">🗑️</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

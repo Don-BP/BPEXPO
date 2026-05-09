@@ -1,0 +1,11 @@
+Model Information:
+* title:	Vivinsect
+* source:	https://sketchfab.com/3d-models/vivinsect-2a80ef7b3df44b1cb9d760a7d5d4969c
+* author:	OmegaRay (https://sketchfab.com/dragonomega24)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Vivinsect" (https://sketchfab.com/3d-models/vivinsect-2a80ef7b3df44b1cb9d760a7d5d4969c) by OmegaRay (https://sketchfab.com/dragonomega24) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

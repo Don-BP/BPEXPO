@@ -1,0 +1,275 @@
+/* === Flashcards Tool === */
+
+.flashcards-tool {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* ── Hub nav bar (stacked rows) ── */
+
+.fc-bar-hub {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45em;
+  margin-bottom: 0.6em;
+  flex-shrink: 0;
+}
+
+.fc-hub-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+}
+
+.fc-cat-row {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: #555;
+}
+
+/* ── Fullscreen nav bar (single row) ── */
+
+.fc-bar-fullscreen {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  padding: 0.6em 0.75em 0.5em;
+  flex-shrink: 0;
+}
+
+.fc-cat-label {
+  font-size: 0.85em;
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
+}
+
+/* ── Category select ── */
+
+.fc-select {
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 2px solid #FDD835;
+  font-size: 0.85em;
+  font-family: inherit;
+  background: white;
+  flex-grow: 1;
+  max-width: 220px;
+}
+
+/* ── Button variants (extend tool-btn base from ToolCard.css) ── */
+
+.fc-arrow-btn {
+  width: 44px !important;
+  height: 44px !important;
+  font-size: 1.2em !important;
+  border-radius: 50% !important;
+  flex-shrink: 0;
+}
+
+.fc-pill-btn {
+  border-radius: 50px !important;
+  padding: 0 20px !important;
+  height: 44px !important;
+  font-size: 0.82em !important;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.fc-medal-btn {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  font-size: 1.3em !important;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.fc-icon-btn {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  font-size: 1em !important;
+  flex-shrink: 0;
+}
+
+/* Smaller buttons in fullscreen (more room for the card) */
+.flashcards-tool.fullscreen-mode .fc-arrow-btn {
+  width: 36px !important;
+  height: 36px !important;
+  font-size: 1em !important;
+}
+
+.flashcards-tool.fullscreen-mode .fc-pill-btn {
+  height: 36px !important;
+  padding: 0 14px !important;
+  font-size: 0.78em !important;
+}
+
+/* ── Single card display ── */
+
+.flashcard-display-container {
+  width: 100%;
+  flex-grow: 1;
+  min-height: 150px;
+  position: relative;
+  display: flex;
+  box-sizing: border-box;
+}
+
+.flashcards-tool.fullscreen-mode .flashcard-display-container {
+  padding: 0 1em 1em;
+  font-size: 1.4em;
+}
+
+.flashcard-display {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.flashcard-face {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: 2px dashed #EC407A;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1em;
+  padding: 10px;
+  text-align: center;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  background: white;
+}
+
+.flashcard-face.active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 2;
+}
+
+.flashcard-face img {
+  max-width: 100%;
+  max-height: 78%;
+  object-fit: contain;
+  min-height: 0;
+}
+
+.flashcards-tool.fullscreen-mode .flashcard-face img {
+  max-height: 80%;
+}
+
+.fc-card-text {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  font-size: 3em;
+  font-weight: bold;
+  line-height: 1.1;
+  word-break: break-word;
+}
+
+.flashcards-tool.fullscreen-mode .fc-card-text {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  font-size: clamp(3rem, 10vh, 9rem);
+  line-height: 1.1;
+}
+
+.fc-empty-label {
+  color: #999;
+  font-weight: normal;
+  font-size: 0.9em;
+}
+
+/* ── Grid view ── */
+
+.flashcard-grid-view {
+  flex-grow: 1;
+  min-height: 150px;
+  display: grid;
+  gap: 8px;
+  padding: 4px;
+  overflow: hidden;
+}
+
+.flashcards-tool.fullscreen-mode .flashcard-grid-view {
+  padding: 12px;
+  gap: 10px;
+}
+
+/* 3D flip cards */
+
+.flashcard-grid-item {
+  background: transparent;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.fgi-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flashcard-grid-item.is-flipped .fgi-inner {
+  transform: rotateY(180deg);
+}
+
+.fgi-front,
+.fgi-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.fgi-front {
+  border: 2px solid #EC407A;
+  background-color: white;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.fgi-front img {
+  max-width: 100%;
+  max-height: 75%;
+  object-fit: contain;
+  margin-bottom: 4px;
+  min-height: 0;
+  max-width: none;
+}
+
+.fgi-front div {
+  font-weight: bold;
+  word-break: break-word;
+  font-size: clamp(0.6em, 2vw, 1em);
+}
+
+.fgi-back {
+  background-color: #EC407A;
+  transform: rotateY(180deg);
+  background-size: cover;
+  background-position: center;
+  border: 2px solid white;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}

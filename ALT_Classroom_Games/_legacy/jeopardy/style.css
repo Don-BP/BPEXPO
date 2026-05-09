@@ -1,0 +1,12 @@
+/* Daily Double Modal Styles */
+#daily-double-modal .modal {
+    background: linear-gradient(135deg, #000080 0%, #0000FF 100%);
+    color: white;
+    border: 4px solid #FFD700;
+}
+
+#daily-double-modal input {
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+    border: none;
+}

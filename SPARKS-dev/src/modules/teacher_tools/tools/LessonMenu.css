@@ -1,0 +1,585 @@
+/* LessonMenu.css — ported from public/teacher_tools/css/tools/lesson-menu.css */
+/* CSS variable values come from the Fruity Rush palette in style.css */
+
+/* === Tool container === */
+.lesson-menu-tool {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.lesson-menu-tool.fullscreen-mode {
+  background-color: #FFFDE7;
+  height: 100%;
+}
+
+/* === Compact (card) view === */
+.lesson-menu-tool:not(.fullscreen-mode) .lm-display-area {
+  flex-grow: 1;
+  min-height: 250px;
+  overflow-y: auto;
+}
+
+/* === Fullscreen layout === */
+.lm-fullscreen-view {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Controls panel */
+#lm-controls-panel {
+  flex: 0 0 360px;
+  background-color: #fff;
+  border-right: 2px solid #e0e0e0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: flex-basis 0.4s ease-in-out, padding 0.4s ease-in-out, border-width 0.4s ease-in-out;
+}
+
+.lm-fullscreen-view.panel-collapsed #lm-controls-panel {
+  flex-basis: 0;
+  padding-left: 0;
+  padding-right: 0;
+  border-right-width: 0;
+}
+
+/* Panel toggle button */
+#lm-panel-toggle-btn {
+  position: absolute;
+  top: 50%;
+  left: 360px;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  width: 25px;
+  height: 60px;
+  padding: 0;
+  margin: 0;
+  font-size: 1.5em;
+  border-radius: 0 8px 8px 0;
+  border: 1px solid #ccc;
+  border-left: none;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.lm-fullscreen-view.panel-collapsed #lm-panel-toggle-btn {
+  left: 0;
+}
+
+/* Controls content */
+.lm-controls-content {
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+  min-width: 330px;
+}
+
+.lm-controls-content > h4 {
+  margin: 0;
+  color: #EC407A;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5em;
+}
+
+/* Collapsible sections */
+.lm-collapsible-section {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+}
+
+.lm-collapsible-section summary {
+  font-weight: bold;
+  padding: 10px;
+  cursor: pointer;
+  color: #EC407A;
+  list-style: revert;
+}
+
+/* Save/Load */
+.lm-save-load-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+  padding: 10px;
+}
+
+.lm-save-load-controls select,
+.lm-save-load-controls input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+}
+
+.lm-button-group {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.lm-button-group button,
+.lm-button-group .button-like-label {
+  width: 44px;
+  height: 44px;
+  font-size: 1.3em;
+  padding: 0;
+  margin: 0;
+}
+
+.lm-button-group button:nth-child(1) { background: linear-gradient(to bottom, #66BB6A, #43A047) !important; box-shadow: 0 4px 0 #1B5E20, 0 4px 8px rgba(0,0,0,0.15) !important; }
+.lm-button-group button:nth-child(2) { background: linear-gradient(to bottom, #EF5350, #E53935) !important; box-shadow: 0 4px 0 #B71C1C, 0 4px 8px rgba(0,0,0,0.15) !important; }
+.lm-button-group button:nth-child(3) { background: linear-gradient(to bottom, #42A5F5, #1E88E5) !important; box-shadow: 0 4px 0 #0D47A1, 0 4px 8px rgba(0,0,0,0.15) !important; }
+.lm-button-group .button-like-label  { background: linear-gradient(to bottom, #AB47BC, #8E24AA) !important; box-shadow: 0 4px 0 #4A148C, 0 4px 8px rgba(0,0,0,0.15) !important; }
+
+/* Add activities */
+.lm-add-activities-content {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+
+.lm-activity-buttons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75em;
+}
+
+.lm-activity-item-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.lm-activity-item {
+  display: grid;
+  gap: 10px;
+  align-items: center;
+  grid-template-columns: 160px 70px 40px;
+  justify-content: start;
+}
+
+.lm-custom-activity-wrapper .lm-activity-item {
+  grid-template-columns: 1fr 70px 40px 40px;
+}
+
+.lm-activity-item > * {
+  margin: 0;
+  height: 40px;
+}
+
+.lm-activity-item > button:first-child {
+  background-color: #3498db;
+  color: #fff;
+  text-align: left;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-family: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lm-activity-item > button:first-child:hover {
+  background-color: #2980b9;
+}
+
+.lm-time-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  font-family: inherit;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.lm-notes-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background-color: #95a5a6;
+  color: #fff;
+  font-size: 1.2em;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.lm-notes-toggle-btn:hover {
+  background-color: #7f8c8d;
+}
+
+.lm-custom-activity-wrapper input[type="text"] {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px;
+  min-width: 0;
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+#lm-add-custom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 1.5em;
+  background-color: #2ecc71;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#lm-add-custom-btn:hover {
+  background-color: #27ae60;
+}
+
+.lm-notes-input {
+  width: 100%;
+  min-height: 70px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.lm-custom-activity-wrapper {
+  border-top: 1px dashed #ccc;
+  padding-top: 1.5em;
+}
+
+.lm-custom-activity-wrapper > h4 {
+  margin: 0 0 0.5em;
+  color: #EC407A;
+  border: none;
+  padding: 0;
+}
+
+.lm-total-time-display {
+  border-top: 2px solid #FFFDE7;
+  padding-top: 1em;
+}
+
+.lm-total-time-display h4 {
+  text-align: center;
+  margin: 0;
+  font-size: 1.2em;
+  color: #3E2723;
+}
+
+.lm-total-time-value {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+
+/* === Display area (both views) === */
+.lm-display-area {
+  --menu-item-font-size: 2.5rem;
+  background-color: #fff;
+  border-radius: 24px;
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  background-image: url('/teacher_tools/assets/lesson-menu/lesson-bg.png');
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+.lesson-menu-tool.fullscreen-mode .lm-display-area {
+  height: 100%;
+  border-radius: 0;
+  flex: 1;
+}
+
+/* Placeholder */
+.lm-placeholder {
+  margin: auto;
+  text-align: center;
+  color: #666;
+  font-size: 1.2em;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* === Menu items === */
+.lm-menu-item {
+  font-size: var(--menu-item-font-size);
+  background-color: rgba(253, 253, 253, 0.9);
+  border: 2px solid #EC407A;
+  color: #3E2723;
+  padding: 0.5em 1em;
+  border-radius: 10px;
+  font-weight: bold;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 0.5em 1em;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white;
+  user-select: none;
+  transition: padding-bottom 0.3s ease-out;
+  cursor: pointer;
+}
+
+/* Activity background images */
+.lm-menu-item[data-activity="greeting"]  { background-image: url('/teacher_tools/assets/lesson-menu/greeting.png'); }
+.lm-menu-item[data-activity="warmup"]    { background-image: url('/teacher_tools/assets/lesson-menu/warmup.png'); }
+.lm-menu-item[data-activity="demo"]      { background-image: url('/teacher_tools/assets/lesson-menu/demo.png'); }
+.lm-menu-item[data-activity="practice"]  { background-image: url('/teacher_tools/assets/lesson-menu/practice.png'); }
+.lm-menu-item[data-activity="activity"]  { background-image: url('/teacher_tools/assets/lesson-menu/activity.png'); }
+.lm-menu-item[data-activity="speaking"]  { background-image: url('/teacher_tools/assets/lesson-menu/speaking.png'); }
+.lm-menu-item[data-activity="listening"] { background-image: url('/teacher_tools/assets/lesson-menu/listening.png'); }
+.lm-menu-item[data-activity="game"]      { background-image: url('/teacher_tools/assets/lesson-menu/game.png'); }
+.lm-menu-item[data-activity="quiz"]      { background-image: url('/teacher_tools/assets/lesson-menu/quiz.png'); }
+.lm-menu-item[data-activity="review"]    { background-image: url('/teacher_tools/assets/lesson-menu/review.png'); }
+.lm-menu-item[data-activity="custom"]    { background-image: url('/teacher_tools/assets/lesson-menu/custom.png'); }
+
+/* Add animation */
+@keyframes flyInAndBounce {
+  from { opacity: 0; transform: translateX(-100px) scale(0.8); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.lm-menu-item.animate-in {
+  animation: flyInAndBounce 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Item parts */
+.lm-item-drag-handle {
+  cursor: grab;
+  color: #aaa;
+  text-shadow: 1px 1px 1px white;
+  position: relative;
+  z-index: 2;
+}
+
+.lm-item-drag-handle:active { cursor: grabbing; }
+
+.lm-item-text {
+  grid-column: 2;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.lm-item-time {
+  grid-column: 3;
+  font-size: 0.7em;
+  color: #555;
+  background-color: rgba(240, 240, 240, 0.8);
+  padding: 0.2em 0.6em;
+  border-radius: 5px;
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
+}
+
+.lm-item-controls {
+  grid-column: 4;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.lm-item-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #aaa;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 0;
+  line-height: 1;
+  text-shadow: 1px 1px 1px white;
+  transition: color 0.2s;
+  flex-shrink: 0;
+  border-radius: 5px;
+  width: 36px;
+  height: 36px;
+  font-size: 1.4em;
+  padding: 0;
+}
+
+.lm-item-notes-btn:hover { color: #EC407A; }
+.lm-item-check-btn:hover { color: #5cb85c; }
+.lm-item-delete:hover    { color: #d9534f; }
+
+/* Drag states */
+.lm-menu-item.dragging  { opacity: 0.5; background-color: #d4e3f3; }
+.lm-menu-item.drag-over { border-top: 3px dashed #FF9800; }
+
+/* Stamp (cleared state) */
+.lm-item-stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  height: auto;
+  max-width: 100px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-15deg) scale(1.5);
+  transition: opacity 0.3s ease-in-out, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1;
+}
+
+.lm-menu-item.cleared .lm-item-stamp {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(-15deg) scale(1);
+}
+
+.lm-menu-item.cleared::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.lm-menu-item.cleared .lm-item-text,
+.lm-menu-item.cleared .lm-item-time {
+  opacity: 0.6;
+}
+
+/* Notes */
+.lm-item-notes {
+  grid-column: 1 / -1;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, padding 0.4s ease-out, margin 0.4s ease-out;
+  padding: 0 1em;
+  margin-top: 0;
+  font-size: 0.6em;
+  color: #333;
+  font-weight: normal;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 5px;
+  white-space: pre-wrap;
+}
+
+.lm-menu-item.notes-visible .lm-item-notes {
+  max-height: 500px;
+  padding: 0.8em 1em;
+  margin-top: 0.8em;
+  border-top: 2px dashed #ccc;
+}
+
+/* === Card (non-fullscreen) overrides === */
+.lesson-menu-tool:not(.fullscreen-mode) .lm-menu-item {
+  font-size: 1rem;
+  padding: 0.3em 0.6em;
+  gap: 0.4em;
+}
+
+.lesson-menu-tool:not(.fullscreen-mode) .lm-item-controls {
+  gap: 3px;
+}
+
+.lesson-menu-tool:not(.fullscreen-mode) .lm-item-controls button {
+  width: 28px;
+  height: 28px;
+  font-size: 1.1em;
+}
+
+/* Drag handle and delete hidden in card view */
+.lesson-menu-tool:not(.fullscreen-mode) .lm-item-drag-handle { display: none; }
+
+/* === Fullscreen desktop controls gap === */
+@media (min-width: 769px) {
+  .lesson-menu-tool.fullscreen-mode .lm-item-controls {
+    gap: 12px;
+  }
+}
+
+/* === Mobile === */
+@media (max-width: 768px) {
+  .lm-fullscreen-view {
+    flex-direction: row;
+  }
+
+  #lm-controls-panel {
+    flex-basis: 360px;
+    min-width: 0;
+    max-height: 100%;
+    border-right-width: 2px;
+    border-bottom: none;
+  }
+
+  #lm-panel-toggle-btn {
+    left: 360px;
+    height: 50px;
+    width: 28px;
+  }
+
+  .lm-display-area {
+    padding: 1em;
+  }
+
+  .lesson-menu-tool.fullscreen-mode .lm-menu-item {
+    font-size: 1.3rem;
+    padding: 0.4em 0.8em;
+    gap: 0.5em;
+  }
+
+  .lesson-menu-tool.fullscreen-mode .lm-item-controls {
+    gap: 4px;
+  }
+
+  .lesson-menu-tool.fullscreen-mode .lm-item-controls button {
+    width: 32px;
+    height: 32px;
+    font-size: 1.2em;
+  }
+
+  .lesson-menu-tool.fullscreen-mode .lm-item-drag-handle {
+    font-size: 1.3rem;
+  }
+
+  .lesson-menu-tool:not(.fullscreen-mode) .lm-item-controls button {
+    width: 26px;
+    height: 26px;
+    font-size: 1em;
+  }
+}

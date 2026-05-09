@@ -1,0 +1,26 @@
+The "Team Captain" Routine (How to Operate)
+This is the final piece. You have the files. Here is the exact sequence to run the "Virtual Engineering Team" in Antigravity.
+1. The "Morning" Sync
+Open Antigravity.
+Edit .agent/rules/project_context.md -> Ensure the goal is current.
+Check Global_Manifest.md -> Ensure no stale tasks are listed.
+2. The 3-Tab Split (Parallelism)
+You open 3 separate Agent sessions ("Tabs") in Antigravity/Terminal.
+Tab 1: The Architect (Layer 1)
+Role: Only creates Plans.
+Command: /plan "Fix the login bug"
+Output: Generates directives/fix-login.md.
+Once the plan is generated, Tab 1 is free to plan the next task.
+Tab 2: The Engineer (Layer 2/3)
+Role: Executes the Plans.
+Command: /run directives/fix-login.md
+Behavior: It reads the directive, writes the script, runs it, fixes errors, and updates lessons_learned.md.
+Tab 3: The QA / Auditor
+Role: Runs verification loops.
+Command: Manually tell it: "Run execution/verify_browser.py --url localhost:3000 --selector .login-success continuously every 1 minute and alert me if it fails."
+3. The Commit Strategy
+Because your "Memory" (lessons_learned.md) and "Manifest" (Global_Manifest.md) are files, commit them to Git.
+git add .agent/rules/lessons_learned.md Global_Manifest.md
+git commit -m "Update project memory"
+This ensures that if you switch computers, your AI team remembers its past mistakes.
+Setup Complete. You now have the full file system, the primed templates, the verification tools, and the operating manual.

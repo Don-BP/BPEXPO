@@ -1,0 +1,841 @@
+/* === Classroom Timer Tool === */
+
+.classroom-timer-tool {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  box-sizing: border-box;
+}
+
+/* ── Layout container ── */
+
+.timer-layout-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+  min-height: 0;
+}
+
+/* ── Controls panel ── */
+
+.timer-controls-panel {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px 15px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.timer-display {
+  font-size: 4em;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  margin: 0 0 0.2em;
+  font-variant-numeric: tabular-nums;
+}
+
+.preset-timers {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+.custom-timer-setter {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.timer-custom-input {
+  width: 65px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  text-align: center;
+  font-size: 1em;
+}
+
+.timer-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.timer-theme-selector {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.timer-theme-selector select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+}
+
+.timer-controls button,
+.preset-timers button {
+  min-width: 60px;
+  padding: 10px 20px;
+  border-radius: 50px;
+  background: linear-gradient(to bottom, #8BC34A, #7CB342);
+  border: 2px solid white;
+  color: white;
+  font-weight: bold;
+  font-size: 1em;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #33691E, 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.1s, box-shadow 0.1s;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.timer-controls button:hover,
+.preset-timers button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #33691E, 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.timer-controls button:active,
+.preset-timers button:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #33691E, 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.timer-controls button.reset-btn {
+  background: linear-gradient(to bottom, #FFA726, #FB8C00);
+  box-shadow: 0 4px 0 #E65100, 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.timer-controls button.reset-btn:hover {
+  box-shadow: 0 6px 0 #E65100, 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.timer-controls button.reset-btn:active {
+  box-shadow: 0 1px 0 #E65100, 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Visual container ── */
+
+.timer-visual-container {
+  width: 100%;
+  margin-top: 0.5em;
+  min-height: 200px;
+  flex-grow: 1;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 16px;
+  background-color: #aae0ff;
+  border: 3px solid #81d4fa;
+}
+
+.timer-theme {
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.timer-theme.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ── Fullscreen layout ── */
+
+.classroom-timer-tool.fullscreen-mode .timer-controls-panel {
+  width: auto;
+  max-width: none;
+}
+
+.classroom-timer-tool.fullscreen-mode .preset-timers {
+  flex-wrap: wrap;
+}
+
+.classroom-timer-tool.fullscreen-mode .timer-display {
+  font-size: 8em;
+  margin: 0.5em 0;
+}
+
+/* Side-by-side layout (water-drip, flower, marbles, pug) */
+.classroom-timer-tool.fullscreen-mode .timer-layout-container.side-by-side-theme-active {
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  gap: 2em;
+}
+
+.classroom-timer-tool.fullscreen-mode .side-by-side-theme-active .timer-controls-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-shrink: 0;
+  width: 280px;
+  background-color: #FFF9C4;
+  padding: 1.5em 1.5em;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.classroom-timer-tool.fullscreen-mode .side-by-side-theme-active .timer-display {
+  font-size: 4.5em;
+  margin: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.classroom-timer-tool.fullscreen-mode .side-by-side-theme-active .preset-timers {
+  padding: 15px 0;
+  flex-grow: 0;
+}
+
+.classroom-timer-tool.fullscreen-mode .side-by-side-theme-active .timer-visual-container {
+  flex-grow: 1;
+  margin: 1em 1em 1em 0;
+  border-radius: 16px;
+}
+
+/* Shark theme — stacked grid layout */
+.classroom-timer-tool.fullscreen-mode .timer-layout-container.is-shark-theme {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 1fr 1fr;
+  height: 100%;
+  width: 100%;
+}
+
+.classroom-timer-tool.fullscreen-mode .is-shark-theme .timer-controls-panel {
+  grid-row: 1;
+  grid-column: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #FFF9C4;
+  padding: 1em;
+  gap: 2vh;
+  flex-wrap: nowrap;
+}
+
+.classroom-timer-tool.fullscreen-mode .is-shark-theme .timer-controls-panel > * {
+  flex-shrink: 0;
+}
+
+.classroom-timer-tool.fullscreen-mode .is-shark-theme .timer-display {
+  margin: 0;
+  flex-shrink: 1;
+  min-height: 0;
+  font-size: clamp(4em, 15vh, 8em);
+}
+
+.classroom-timer-tool.fullscreen-mode .is-shark-theme .preset-timers,
+.classroom-timer-tool.fullscreen-mode .is-shark-theme .custom-timer-setter,
+.classroom-timer-tool.fullscreen-mode .is-shark-theme .timer-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 0;
+}
+
+.classroom-timer-tool.fullscreen-mode .is-shark-theme .timer-visual-container {
+  grid-row: 2;
+  grid-column: 1;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Bar theme ── */
+
+.timer-theme-bar.active {
+  align-items: flex-start;
+  padding-top: 1em;
+}
+
+.timer-progress-bar {
+  width: 90%;
+  height: 35px;
+  background-color: #1B5E20;
+  border-radius: 50px;
+  border: 4px solid #FDD835;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto;
+}
+
+.timer-progress {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #7CB342, #33691E);
+  transition: width 0.5s linear;
+  position: relative;
+  border-radius: 50px 0 0 50px;
+}
+
+.timer-progress::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.2;
+  background-image: linear-gradient(45deg,
+    rgba(255,255,255,.25) 25%, transparent 25%, transparent 50%,
+    rgba(255,255,255,.25) 50%, rgba(255,255,255,.25) 75%, transparent 75%, transparent);
+  background-size: 20px 20px;
+  z-index: 1;
+}
+
+.timer-progress::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.1) 100%);
+  border-radius: 50px 50px 0 0;
+  z-index: 2;
+}
+
+/* ── Water Drip & Marbles — shared scene ── */
+
+.water-drip-scene,
+.marbles-scene {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e0f7fa;
+  position: relative;
+}
+
+#marbles-container,
+.marbles-container {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  overflow: hidden;
+}
+
+.water-jar-overlay,
+.marbles-jar-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* Default (fullscreen): physics container is 300x420, unscaled, centered */
+  transform: translate(-50%, -50%);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.water-jar-overlay {
+  width: 318px;
+  height: 445px;
+  background-image: url('/teacher_tools/assets/water-drip/water-jar.png');
+}
+
+.marbles-jar-overlay {
+  width: 300px;
+  height: 400px;
+  background-image: url('/teacher_tools/assets/marbles_timer/jar.png');
+}
+
+/* Card view: translate first (centers at 100% unscaled), then scale shrinks toward center */
+.classroom-timer-tool:not(.fullscreen-mode) .water-jar-overlay,
+.classroom-timer-tool:not(.fullscreen-mode) .marbles-jar-overlay {
+  transform: translate(-50%, -50%) scale(0.5);
+}
+
+/* Water drip container (managed by JS) */
+.classroom-timer-tool .water-drip-container-inner {
+  position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
+  margin: auto;
+  overflow: hidden;
+}
+
+/* ── Physics particles ── */
+
+.physics-particle {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.physics-particle.water {
+  background-color: #3498db;
+  box-shadow: inset 0 0 3px rgba(255,255,255,0.3);
+}
+
+.physics-particle.is-dripping {
+  animation: drip-fall 1.2s ease-in forwards;
+  z-index: 11;
+}
+
+@keyframes drip-fall {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: translateY(200px) scale(0.5); }
+}
+
+.physics-particle.marble {
+  background-size: cover;
+}
+
+.physics-particle.marble.removing {
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+  transform: scale(0) !important;
+  opacity: 0;
+}
+
+/* ── Growing Flower theme ── */
+
+.timer-theme-flower.active {
+  background-color: #aae0ff;
+}
+
+.flower-scene {
+  width: 100%; height: 100%;
+  background: transparent;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  transform: scale(var(--flower-scene-scale, 1.0));
+  transform-origin: bottom center;
+  transition: transform 0.3s ease-out;
+}
+
+.flower-pot {
+  width: 120px; height: 100px;
+  position: absolute;
+  bottom: 10px;
+  z-index: 2;
+}
+
+.flower-stem {
+  width: 20px;
+  height: 0;
+  background: #5cb85c;
+  position: absolute;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 10px 10px 0 0;
+  transition: height 1s linear;
+  z-index: 1;
+}
+
+.leaf {
+  width: 120px; height: 84px;
+  max-width: none; /* override Tailwind Preflight img max-width: 100% */
+  position: absolute;
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.leaf1 { bottom: 30%; left: -105px; transform-origin: bottom right; }
+.leaf2 { bottom: 50%; right: -105px; transform-origin: bottom left; }
+
+.flower-head {
+  width: 250px; height: 250px;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, 50%) scale(0);
+  transform-origin: center center;
+  z-index: 3;
+  transition: transform 1.5s ease-out, opacity 1.5s ease-out;
+  opacity: 0;
+}
+
+.flower-center {
+  width: 45px; height: 45px;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+.petal {
+  width: 112px; height: 112px;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform-origin: center center;
+  opacity: 0;
+  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease-in-out;
+}
+
+.p1 { --angle: 0deg; }
+.p2 { --angle: 60deg; }
+.p3 { --angle: 120deg; }
+.p4 { --angle: 180deg; }
+.p5 { --angle: 240deg; }
+.p6 { --angle: 300deg; }
+
+/* ── Shark Chase theme ── */
+
+.shark-scene {
+  width: 100%; height: 100%;
+  background-color: #00bfff;
+  position: relative;
+  overflow: hidden;
+}
+
+.shark-water {
+  width: 100%; height: 60%;
+  position: absolute;
+  bottom: -10%; left: 0;
+  background: url('/teacher_tools/assets/shark_timer/water.png') repeat-x;
+  background-size: auto 100%;
+  animation: wave-move 10s linear infinite, water-wave 1.8s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes wave-move {
+  from { background-position-x: 0; }
+  to   { background-position-x: 500px; }
+}
+
+@keyframes water-wave {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+.shark-swimmer,
+.shark { transform: scale(0.6); transform-origin: center bottom; }
+
+.classroom-timer-tool.fullscreen-mode .shark-swimmer,
+.classroom-timer-tool.fullscreen-mode .shark { transform: scale(1); }
+
+.shark-swimmer {
+  width: 150px; height: 75px;
+  position: absolute;
+  bottom: 30%;
+  background: url('/teacher_tools/assets/shark_timer/swimmer-sprite.png') no-repeat;
+  background-size: 300px 75px;
+  animation: swimmer-swim 1s steps(2) infinite, swimmer-bob 2.5s ease-in-out infinite;
+  transition: left 1s linear;
+  z-index: 1;
+}
+
+@keyframes swimmer-swim { to { background-position-x: -300px; } }
+
+@keyframes swimmer-bob {
+  0%   { transform: translateX(-4px); }
+  50%  { transform: translateX(4px); }
+  100% { transform: translateX(-4px); }
+}
+
+.shark {
+  width: 225px; height: 112px;
+  position: absolute;
+  bottom: 20%;
+  background: url('/teacher_tools/assets/shark_timer/shark-sprite.png') no-repeat;
+  background-size: 450px 112px;
+  animation: shark-chomp 0.8s steps(2) infinite, shark-lunge 1.8s ease-in-out infinite;
+  transition: left 1s linear;
+  z-index: 1;
+}
+
+@keyframes shark-chomp { to { background-position-x: -450px; } }
+
+@keyframes shark-lunge {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+.shark-hug {
+  width: 300px; height: 220px;
+  position: absolute;
+  bottom: 10%; left: 18%;
+  background: url('/teacher_tools/assets/shark_timer/hug.png') no-repeat center;
+  background-size: contain;
+  transition: transform 0.5s, opacity 0.5s;
+  z-index: 3;
+  overflow: visible;
+  transform: translateX(-50%) scale(0);
+  visibility: hidden;
+  opacity: 0;
+}
+
+.classroom-timer-tool:not(.fullscreen-mode) .shark-hug {
+  transform-origin: center bottom;
+}
+
+.classroom-timer-tool.fullscreen-mode .shark-hug {
+  transform-origin: center center;
+}
+
+.shark-hug.visible {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+  animation: titter 0.3s infinite;
+}
+
+.classroom-timer-tool:not(.fullscreen-mode) .shark-hug.visible {
+  transform: translateX(-50%) scale(0.6);
+}
+
+@keyframes titter {
+  0%   { transform: translateX(-50%) scale(1) rotate(0deg); }
+  25%  { transform: translateX(-51%) scale(1) rotate(-1deg); }
+  50%  { transform: translateX(-50%) scale(1) rotate(0deg); }
+  75%  { transform: translateX(-49%) scale(1) rotate(1deg); }
+  100% { transform: translateX(-50%) scale(1) rotate(0deg); }
+}
+
+.heart-particle {
+  position: absolute;
+  width: 20px; height: 20px;
+  opacity: 0;
+  animation: heart-float 2s ease-out forwards;
+  filter: drop-shadow(0 0 3px hotpink);
+}
+
+.heart-particle::before,
+.heart-particle::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 10px;
+  width: 10px; height: 16px;
+  background: hotpink;
+  border-radius: 10px 10px 0 0;
+  transform: rotate(-45deg);
+  transform-origin: 0 100%;
+}
+
+.heart-particle::after {
+  left: 0;
+  transform: rotate(45deg);
+  transform-origin: 100% 100%;
+}
+
+@keyframes heart-float {
+  0%   { transform: translateY(0) scale(0.5); opacity: 1; }
+  100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
+}
+
+/* ── Pug Snack Time theme ── */
+
+.pug-scene {
+  width: 100%; height: 100%;
+  background-color: #fdf2e2;
+  position: relative;
+  overflow: hidden;
+}
+
+.pug-dog {
+  width: 120px; height: 120px;
+  position: absolute;
+  transition: left 0.8s ease-in-out, bottom 0.8s ease-in-out;
+  z-index: 2;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.pug-food-item {
+  width: 50px; height: 50px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.classroom-timer-tool.fullscreen-mode .pug-dog {
+  width: 180px; height: 180px;
+}
+
+.classroom-timer-tool.fullscreen-mode .pug-food-item {
+  width: 80px; height: 80px;
+}
+
+/* ── Extreme Countdown theme ── */
+
+.timer-theme-extreme.active {
+  overflow: hidden;
+}
+
+.extreme-scene {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #0f172a;
+  transition: background-color 0.3s ease;
+}
+
+@keyframes extreme-shake-anim {
+  0%   { transform: translate(var(--extreme-shake-intensity, 0px), var(--extreme-shake-intensity, 0px)); }
+  25%  { transform: translate(calc(var(--extreme-shake-intensity, 0px) * -1), calc(var(--extreme-shake-intensity, 0px) * 0.5)); }
+  50%  { transform: translate(calc(var(--extreme-shake-intensity, 0px) * 0.7), calc(var(--extreme-shake-intensity, 0px) * -1)); }
+  75%  { transform: translate(calc(var(--extreme-shake-intensity, 0px) * -0.5), var(--extreme-shake-intensity, 0px)); }
+  100% { transform: translate(var(--extreme-shake-intensity, 0px), var(--extreme-shake-intensity, 0px)); }
+}
+
+.extreme-shaking {
+  animation: extreme-shake-anim 0.1s infinite linear;
+}
+
+@keyframes extreme-fall {
+  0%   { transform: translateY(0) rotate(0deg) scale(0.5); opacity: 0; }
+  15%  { opacity: 1; }
+  100% { transform: translateY(125vh) rotate(1080deg) scale(1.3); opacity: 0.6; }
+}
+
+.extreme-emoji {
+  position: absolute;
+  top: -10%;
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  pointer-events: none;
+  z-index: 10;
+  user-select: none;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+  animation: extreme-fall 2.8s linear forwards;
+}
+
+.extreme-flash-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+  transition: opacity 0.05s;
+}
+
+.extreme-theme-indicator {
+  position: absolute;
+  bottom: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.35);
+  font-size: clamp(0.45rem, 1.2vw, 0.7rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  z-index: 20;
+  white-space: nowrap;
+}
+
+.extreme-status {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #22d3ee;
+  font-size: clamp(0.6rem, 2vw, 1.2rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  z-index: 20;
+  white-space: nowrap;
+  animation: extreme-pulse 1s ease-in-out infinite;
+}
+
+@keyframes extreme-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.extreme-status--urgent { color: white; }
+
+.extreme-status--legendary {
+  color: #000;
+  font-size: clamp(0.8rem, 2.5vw, 1.5rem);
+  animation: none;
+}
+
+.extreme-boom {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #000;
+  font-size: clamp(2.5rem, 12vw, 7rem);
+  font-weight: 900;
+  font-style: italic;
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  text-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+}
+
+.extreme-boom.visible { opacity: 1; }
+
+/* ── Mobile ── */
+
+@media (max-width: 768px) {
+  .classroom-timer-tool.fullscreen-mode .timer-layout-container.side-by-side-theme-active {
+    flex-direction: column;
+    padding: 1em;
+    gap: 1em;
+  }
+
+  .classroom-timer-tool.fullscreen-mode .side-by-side-theme-active .timer-controls-panel {
+    flex-shrink: 0;
+    margin-bottom: 0.5em;
+    width: 100%;
+  }
+
+  .classroom-timer-tool.fullscreen-mode .side-by-side-theme-active .timer-visual-container {
+    flex-grow: 1;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+  }
+
+  .classroom-timer-tool.fullscreen-mode .timer-display {
+    font-size: 5em;
+    margin: 0.1em 0;
+  }
+
+  .classroom-timer-tool.fullscreen-mode .side-by-side-theme-active .preset-timers {
+    padding: 0;
+  }
+
+  .classroom-timer-tool.fullscreen-mode .pug-dog {
+    width: 120px; height: 120px;
+  }
+
+  .classroom-timer-tool.fullscreen-mode .pug-food-item {
+    width: 50px; height: 50px;
+  }
+}

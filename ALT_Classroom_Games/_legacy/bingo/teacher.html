@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Mode - Digital Bingo</title>
+    <link rel="stylesheet" href="../style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        .teacher-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-lg);
+        }
+
+        .editor-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+            display: block;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            font-family: monospace;
+            font-size: 1.1rem;
+            resize: vertical;
+        }
+
+        .help-text {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="game-header header-bingo">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='index.html'">← Back to Game</button>
+            <h1>⚙️ Teacher Mode - Digital Bingo</h1>
+        </div>
+    </header>
+
+    <div class="teacher-container">
+        <!-- Editor Section -->
+        <div class="editor-card">
+            <h2>Custom Bingo Words</h2>
+            <p class="help-text">Enter at least 16 words/numbers separated by commas or new lines. <br>Recommended: 24+
+                words for better randomization.</p>
+
+            <textarea id="word-input" class="modal-textarea" placeholder="Cat, Dog, Fish, Bird..."></textarea>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                <span id="word-count" style="font-weight: bold; color: var(--primary);">0 words loaded</span>
+                <div>
+                    <button class="btn btn-secondary" onclick="clearWords()">Reset to Default</button>
+                    <button class="btn btn-primary" onclick="saveWords()">💾 Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'bingo_custom_words';
+
+        function init() {
+            loadWords();
+            document.getElementById('word-input').addEventListener('input', updateCount);
+        }
+
+        function loadWords() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const words = JSON.parse(saved);
+                document.getElementById('word-input').value = words.join(', ');
+            }
+            updateCount();
+        }
+
+        function saveWords() {
+            const raw = document.getElementById('word-input').value;
+            const words = raw.split(/[\n,]+/).map(w => w.trim()).filter(w => w.length > 0);
+
+            if (words.length < 16) {
+                alert(`You only have ${words.length} words. Bingo needs at least 16 items for a 4x4 grid.`);
+                return;
+            }
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(words));
+            alert('Bingo words saved! Select "Custom" in the game menu.');
+            updateCount();
+        }
+
+        function clearWords() {
+            if (confirm("Delete custom bingo list?")) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.getElementById('word-input').value = '';
+                updateCount();
+                alert('Custom list deleted.');
+            }
+        }
+
+        function updateCount() {
+            const raw = document.getElementById('word-input').value;
+            const words = raw.split(/[\n,]+/).map(w => w.trim()).filter(w => w.length > 0);
+            const count = words.length;
+            const el = document.getElementById('word-count');
+            el.textContent = `${count} words`;
+
+            if (count < 16) {
+                el.style.color = '#e74c3c'; // red
+            } else {
+                el.style.color = '#2ecc71'; // green
+            }
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

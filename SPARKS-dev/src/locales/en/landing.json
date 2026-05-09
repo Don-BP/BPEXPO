@@ -1,0 +1,38 @@
+{
+  "hero": {
+    "headline": "Your entire classroom toolkit, in one app.",
+    "subheadline": "20+ interactive tools, an AI lesson planner, and a vocabulary system — built for teachers who want to spend less time prepping and more time teaching.",
+    "trustLine": "No credit card required. Free tools, forever."
+  },
+  "pillars": {
+    "tools": {
+      "title": "Tools & Games",
+      "subtitle": "20+ live classroom tools. No student devices needed.",
+      "bullets": ["Name Picker & Scoreboard", "Beat Chant & Snakes & Ladders", "Whiteboard, Timer & 16 more"]
+    },
+    "wordbox": {
+      "title": "Word Box",
+      "subtitle": "Grade-aligned vocabulary built for your classroom.",
+      "bullets": ["9 free vocabulary categories", "Custom word sets", "Song library"]
+    },
+    "buildlink": {
+      "title": "Build & Link",
+      "subtitle": "AI lesson plans in seconds, tuned to your textbook.",
+      "bullets": ["Gemini-powered generation", "Pinecone activity bank", "PDF export"]
+    }
+  },
+  "teaser": {
+    "freeTitle": "Free",
+    "proTitle": "Pro",
+    "freeFeatures": "9 always-free tools · 9 Word Box categories · 3 AI lesson plans to try · No credit card",
+    "proFeatures": "Everything unlocked · Save everything · 500 Sparks/month · Full history & export · No ads · Song library",
+    "cta": "See full comparison →"
+  },
+  "footer": {
+    "home": "Home",
+    "pricing": "Pricing",
+    "login": "Login",
+    "contact": "Contact",
+    "copyright": "© 2026 SPARKS Teacher Tools. All rights reserved."
+  }
+}

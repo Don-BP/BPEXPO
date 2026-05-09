@@ -1,0 +1,41 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Force HTTPS redirect
+  RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP_HOST} !^localhost$
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Proxy /api/* requests to Node.js server
+  RewriteCond %{REQUEST_URI} ^/api/
+  RewriteRule ^api/(.*)$ http://localhost:3001/api/$1 [P,L]
+
+  # =========================================================================
+  # Single-Page Application Routing
+  # =========================================================================
+
+  # Rule for BP PLANNER App
+  RewriteCond %{REQUEST_URI} ^/bp-planner/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /bp-planner/index.html [L]
+
+  # Rule for BP EXPO App
+  RewriteCond %{REQUEST_URI} ^/bp-expo/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /bp-expo/index.html [L]
+
+  # Rule for BP PAY App
+  RewriteCond %{REQUEST_URI} ^/bp-pay/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /bp-pay/index.html [L]
+
+  # Rule for the Main Hub App (The final catch-all)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+
+</IfModule>

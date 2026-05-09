@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tornado Game - Brain Power</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Audio Utility -->
+    <script src="../utils/audio.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="game-header header-tornado">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='../index.html'">← Back to Hub</button>
+            <h1>Tornado Game</h1>
+            <div class="right-actions">
+                <button class="btn-icon" onclick="toggleMute()" title="Toggle Sound">🔊</button>
+                <button class="btn-icon" onclick="window.location.href='teacher.html'" title="Teacher Mode">⚙️</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Game Setup Screen -->
+    <div id="setup-screen" class="screen active">
+        <div class="container text-center">
+            <h2 class="mb-lg">Game Setup</h2>
+
+            <div class="setup-card">
+                <h3>Select Question Set</h3>
+                <select id="question-set-select" class="input-select">
+                    <option value="default">Default Questions (Sample)</option>
+                </select>
+            </div>
+
+            <div class="setup-card">
+                <h3>Number of Teams</h3>
+                <div class="team-buttons">
+                    <button class="btn btn-accent team-count-btn active" data-teams="2">2 Teams</button>
+                    <button class="btn btn-accent team-count-btn" data-teams="3">3 Teams</button>
+                    <button class="btn btn-accent team-count-btn" data-teams="4">4 Teams</button>
+                </div>
+            </div>
+
+            <div class="setup-card">
+                <h3>Grid Size</h3>
+                <div class="grid-buttons">
+                    <button class="btn btn-primary grid-size-btn" data-size="4">4x4 (16 squares)</button>
+                    <button class="btn btn-primary grid-size-btn active" data-size="5">5x5 (25 squares)</button>
+                    <button class="btn btn-primary grid-size-btn" data-size="6">6x6 (36 squares)</button>
+                </div>
+            </div>
+
+            <button class="btn btn-large btn-primary mt-lg" onclick="startGame()">Start Game</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+        <!-- Score Display -->
+        <div class="scores-container container">
+            <div id="teams-scores" class="teams-scores"></div>
+            <div class="current-turn">
+                <span id="current-team-display">Team 1's Turn</span>
+            </div>
+        </div>
+
+        <!-- Game Grid -->
+        <div class="container">
+            <div id="game-grid" class="game-grid"></div>
+        </div>
+    </div>
+
+    <!-- Question Modal -->
+    <div id="question-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="question-title">Question</h2>
+                <button class="modal-close" onclick="closeQuestionModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="question-text" class="question-text"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" onclick="answerCorrect()">✓ Correct</button>
+                <button class="btn btn-danger" onclick="answerWrong()">✗ Wrong</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tornado Modal -->
+    <div id="tornado-modal" class="modal-overlay">
+        <div class="modal tornado-modal">
+            <div class="tornado-animation">
+                <div class="tornado-icon">🌪️</div>
+                <h2 class="tornado-text">TORNADO!</h2>
+                <p id="tornado-message" class="tornado-message"></p>
+            </div>
+            <button class="btn btn-primary mt-lg" onclick="closeTornadoModal()">Continue</button>
+        </div>
+    </div>
+
+    <!-- Special Squares Modal (Bonus/Penalty/Switch) -->
+    <div id="special-modal" class="modal-overlay">
+        <div class="modal special-modal">
+            <div class="special-animation">
+                <div class="special-icon" id="special-icon">+5</div>
+                <h2 class="special-title" id="special-title">Bonus!</h2>
+                <p id="special-message" class="special-message"></p>
+            </div>
+            <button class="btn btn-primary mt-ml" onclick="closeSpecialModal()">Continue</button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameover-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🎉 Game Over!</h2>
+            </div>
+            <div class="modal-body text-center">
+                <h3 id="winner-announcement" style="font-size: 2rem; color: var(--primary);"></h3>
+                <div id="final-scores" class="final-scores mt-md"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="window.location.reload()">Play Again</button>
+                <button class="btn btn-secondary" onclick="window.location.href='../index.html'">Back to Hub</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+
+</html>

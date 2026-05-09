@@ -1,0 +1,7 @@
+public/assets/avatar-1/avatar-1-profile.mp4
+
+For example:
+idle-1.mp4
+
+Same with talking:
+talking-1.mp4

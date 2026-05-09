@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Mode - Karuta</title>
+    <link rel="stylesheet" href="../style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        .teacher-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-lg);
+        }
+
+        .editor-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+        }
+
+        .cards-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+        }
+
+        .card-editor-item {
+            background: var(--background);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            border: 2px solid var(--border);
+        }
+
+        .remove-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            width: 100%;
+            margin-top: var(--space-xs);
+        }
+
+        .saved-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .saved-item {
+            background: var(--background);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="game-header" style="background: linear-gradient(135deg, var(--secondary) 0%, #6EDDD5 100%);">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='index.html'">← Back to Game</button>
+            <h1>⚙️ Teacher Mode - Karuta</h1>
+        </div>
+    </header>
+
+    <div class="teacher-container">
+        <!-- Editor -->
+        <div class="editor-card">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
+                <div style="flex: 1; margin-right: var(--space-md);">
+                    <label class="form-label">Set Name</label>
+                    <input type="text" id="set-name" class="form-input" placeholder="e.g. Unit 3 - Colors">
+                </div>
+                <div>
+                    <button class="btn btn-secondary" onclick="newSet()">New</button>
+                    <button class="btn btn-primary" onclick="saveSet()">💾 Save Set</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-accent" onclick="addCard()">+ Add Card</button>
+            </div>
+
+            <div id="cards-list" class="cards-list">
+                <!-- Cards will go here -->
+            </div>
+        </div>
+
+        <!-- Saved Sets -->
+        <div class="editor-card">
+            <h2>Saved Vocabulary Sets</h2>
+            <div id="saved-list" class="saved-list"></div>
+        </div>
+
+        <!-- Import/Export -->
+        <div class="editor-card">
+            <h2>Import / Export</h2>
+            <div class="form-group">
+                <textarea id="json-io" class="form-input" rows="4" placeholder="Paste JSON here..."></textarea>
+            </div>
+            <button class="btn btn-secondary" onclick="exportSets()">Export All</button>
+            <button class="btn btn-accent" onclick="importSets()">Import</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSet = {
+            id: null,
+            name: '',
+            items: []
+        };
+
+        function init() {
+            newSet();
+            loadSavedList();
+        }
+
+        function renderEditor() {
+            const list = document.getElementById('cards-list');
+            list.innerHTML = '';
+
+            // If empty, add a few blank cards to start
+            if (currentSet.items.length === 0) {
+                // Optional: currentSet.items.push({word: '', emoji: ''});
+            }
+
+            currentSet.items.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'card-editor-item';
+                div.innerHTML = `
+                    <div>
+                        <label style="font-size:0.8rem">Word</label>
+                        <input class="form-input" value="${item.word}" placeholder="Word" onchange="updateItem(${index}, 'word', this.value)">
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem">Emoji/Image</label>
+                        <input class="form-input" value="${item.emoji}" placeholder="Emoji" onchange="updateItem(${index}, 'emoji', this.value)">
+                    </div>
+                    <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function addCard() {
+            currentSet.items.push({ word: '', emoji: '❓' });
+            renderEditor();
+        }
+
+        function removeItem(index) {
+            currentSet.items.splice(index, 1);
+            renderEditor();
+        }
+
+        function updateItem(index, field, value) {
+            currentSet.items[index][field] = value;
+        }
+
+        function getSavedSets() {
+            const saved = localStorage.getItem('karuta_sets');
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        function saveSet() {
+            const name = document.getElementById('set-name').value.trim();
+            if (!name) return alert('Please enter a set name');
+            if (currentSet.items.length < 1) return alert('Add at least one card');
+
+            const id = currentSet.id || name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            currentSet.id = id;
+            currentSet.name = name;
+
+            const sets = getSavedSets();
+            sets[id] = currentSet;
+            localStorage.setItem('karuta_sets', JSON.stringify(sets));
+
+            loadSavedList();
+            alert('Set saved!');
+        }
+
+        function loadSavedList() {
+            const sets = getSavedSets();
+            const list = document.getElementById('saved-list');
+            list.innerHTML = '';
+
+            Object.keys(sets).forEach(key => {
+                if (key === 'default') return;
+                const set = sets[key];
+                const div = document.createElement('div');
+                div.className = 'saved-item';
+                div.innerHTML = `
+                    <strong>${set.name} (${set.items.length} cards)</strong>
+                    <div>
+                        <button class="btn btn-accent" onclick="loadSet('${key}')">Edit</button>
+                        <button class="btn btn-primary" onclick="playSet('${key}')">Play</button>
+                        <button class="btn btn-danger" onclick="deleteSet('${key}')">Delete</button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function loadSet(id) {
+            const sets = getSavedSets();
+            if (sets[id]) {
+                currentSet = JSON.parse(JSON.stringify(sets[id]));
+                document.getElementById('set-name').value = currentSet.name;
+                renderEditor();
+            }
+        }
+
+        function playSet(id) {
+            window.location.href = `index.html?set=${id}`;
+        }
+
+        function deleteSet(id) {
+            if (!confirm('Delete this set?')) return;
+            const sets = getSavedSets();
+            delete sets[id];
+            localStorage.setItem('karuta_sets', JSON.stringify(sets));
+            loadSavedList();
+            if (currentSet.id === id) newSet();
+        }
+
+        function newSet() {
+            currentSet = {
+                id: null,
+                name: '',
+                items: [
+                    { word: '', emoji: '' },
+                    { word: '', emoji: '' },
+                    { word: '', emoji: '' },
+                    { word: '', emoji: '' }
+                ]
+            };
+            document.getElementById('set-name').value = '';
+            renderEditor();
+        }
+
+        function exportSets() {
+            const sets = getSavedSets();
+            document.getElementById('json-io').value = JSON.stringify(sets, null, 2);
+        }
+
+        function importSets() {
+            try {
+                const data = JSON.parse(document.getElementById('json-io').value);
+                const current = getSavedSets();
+                const merged = { ...current, ...data };
+                localStorage.setItem('karuta_sets', JSON.stringify(merged));
+                loadSavedList();
+                alert('Import successful!');
+            } catch (e) {
+                alert('Invalid JSON');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>

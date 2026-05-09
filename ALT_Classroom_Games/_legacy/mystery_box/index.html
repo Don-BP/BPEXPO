@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystery Box - Brain Power</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../global_setup.css">
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <script src="../utils/audio.js"></script>
+</head>
+
+<body>
+    <header class="game-header header-mystery">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='../index.html'">← Back to Hub</button>
+            <h1>🎁 Mystery Box</h1>
+            <div class="right-actions">
+                <button class="btn-icon" onclick="toggleMute()" title="Toggle Sound">🔊</button>
+                <button class="btn-icon" onclick="window.location.href='teacher.html'" title="Teacher Mode">⚙️</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Setup Screen -->
+    <div id="setup-screen" class="screen active">
+        <div class="container text-center">
+            <h2 class="mb-lg">Game Setup</h2>
+
+            <div class="setup-card">
+                <h3>Question Set</h3>
+                <select id="game-set-select" class="input-select">
+                    <!-- Options populated by JS -->
+                </select>
+            </div>
+
+            <div class="setup-card">
+                <h3>Grid Size</h3>
+                <div class="grid-buttons">
+                    <button class="btn btn-primary grid-size-btn" data-size="9"
+                        onclick="selectGridSize(9, this)">3×3</button>
+                    <button class="btn btn-primary grid-size-btn active" data-size="16"
+                        onclick="selectGridSize(16, this)">4×4</button>
+                    <button class="btn btn-primary grid-size-btn" data-size="25"
+                        onclick="selectGridSize(25, this)">5×5</button>
+                </div>
+            </div>
+
+            <div class="setup-card">
+                <h3>Number of Teams</h3>
+                <div class="team-buttons">
+                    <button class="btn btn-accent team-count-btn active" data-teams="2" onclick="selectTeams(2, this)">2
+                        Teams</button>
+                    <button class="btn btn-accent team-count-btn" data-teams="3" onclick="selectTeams(3, this)">3
+                        Teams</button>
+                    <button class="btn btn-accent team-count-btn" data-teams="4" onclick="selectTeams(4, this)">4
+                        Teams</button>
+                </div>
+            </div>
+
+            <button class="btn btn-large btn-primary mt-lg" onclick="startGame()">Start Game!</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen game-screen">
+        <div class="container">
+            <div class="score-board" id="score-board">
+                <!-- Team scores generated here -->
+            </div>
+
+            <div class="turn-indicator">
+                <span id="current-team-display">Team 1's Turn</span>
+            </div>
+
+            <div class="box-grid" id="box-grid">
+                <!-- Boxes generated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Reward Modal -->
+    <div id="reward-modal" class="modal-overlay">
+        <div class="modal text-center">
+            <h2 id="reward-title" style="font-size: 2.5rem; margin-bottom: 1rem;">Reward!</h2>
+            <div id="reward-icon" style="font-size: 5rem; margin-bottom: 1rem;">🎁</div>
+            <p id="reward-description" style="font-size: 1.5rem; margin-bottom: 2rem;">You found 500 points!</p>
+            <button class="btn btn-primary" onclick="closeRewardModal()">Awesome!</button>
+        </div>
+    </div>
+
+    <!-- Question Modal if using questions -->
+    <div id="question-modal" class="modal-overlay">
+        <div class="modal text-center">
+            <h2>Question</h2>
+            <p id="question-text" style="font-size: 1.5rem; margin: 2rem 0;">What is...?</p>
+            <div style="display:flex; justify-content:center; gap:1rem;">
+                <button class="btn btn-success" onclick="answerCorrect()">Correct</button>
+                <button class="btn btn-danger" onclick="answerWrong()">Wrong</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+
+</html>

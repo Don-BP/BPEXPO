@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* 
+   Prevents users from dragging images to their desktop to save them.
+   Combined with the Right-Click block in App.js, this offers good basic protection.
+*/
+img {
+  /* Use webkit prefix which works in Chrome/Safari/Edge */
+  -webkit-user-drag: none;
+
+  /* Keep these for older browsers if needed, or remove if causing warnings */
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+
+  /* user-drag: none; <--- REMOVED this line to fix yellow underline warning */
+
+  pointer-events: auto;
+}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Management - BP LABO Admin</title>
+    <link rel="icon" type="image/png" href="assets/bp_favicon.png">
+    <link rel="stylesheet" href="admin-styles.css"> <!-- We will create this file next -->
+</head>
+<body>
+    <div class="container">
+        <div class="header"><h1>BP LABO Admin Dashboard</h1><div class="actions"><a href="index.html" class="btn btn-secondary">🏠 Back to BP LABO</a></div></div>
+        
+        <!-- Admin Tabs Navigation -->
+        <nav class="admin-tabs">
+            <a href="admin-dashboard.html" class="tab-link">User Management</a>
+            <a href="admin-blog.html" class="tab-link active">Blog Management</a>
+        </nav>
+
+        <!-- Blog Management Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>📖 Blog Posts</h2>
+                <a href="admin-post-editor.html" class="btn btn-success">Create New Post</a>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Title</th><th>Author</th><th>Status</th><th>Last Updated</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="blog-posts-table-body">
+                        <tr><td colspan="5" class="loading">Loading posts...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="js/auth.js"></script>
+    <script>
+        async function loadBlogPosts() {
+            const tbody = document.getElementById('blog-posts-table-body');
+            try {
+                const { posts } = await auth.adminGetPosts();
+                if (posts.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No blog posts found. Create one!</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = posts.map(post => {
+                    const statusClass = post.status === 'published' ? 'status-published' : 'status-draft';
+                    return `
+                        <tr>
+                            <td>${post.title}</td>
+                            <td>${post.author ? post.author.username : 'N/A'}</td>
+                            <td><span class="status-badge ${statusClass}">${post.status}</span></td>
+                            <td>${new Date(post.updatedAt).toLocaleString()}</td>
+                            <td class="actions-cell">
+                                <a href="admin-post-editor.html?id=${post.id}" class="btn btn-secondary btn-sm">Edit</a>
+                                <button class="btn btn-delete btn-sm" onclick="handleDeletePost(${post.id}, '${post.title.replace(/'/g, "\\'")}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Error loading posts.</td></tr>';
+            }
+        }
+        async function handleDeletePost(postId, postTitle) {
+            if (confirm(`Are you sure you want to DELETE the post "${postTitle}"?\nThis action cannot be undone.`)) {
+                try {
+                    await auth.adminDeletePost(postId);
+                    alert('Post deleted successfully.');
+                    loadBlogPosts();
+                } catch (error) {
+                    alert(`Failed to delete post: ${error.message}`);
+                }
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!auth.isLoggedIn() || auth.getCurrentUser().role !== 'admin') {
+                alert('Access Denied. Redirecting to login.');
+                window.location.href = 'login.html';
+                return;
+            }
+            loadBlogPosts();
+        });
+    </script>
+</body>
+</html>

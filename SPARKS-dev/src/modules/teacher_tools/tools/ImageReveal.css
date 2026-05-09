@@ -1,0 +1,197 @@
+/* === Image Reveal Tool === */
+
+.image-reveal-tool {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* ── Hub nav bar (stacked rows) ── */
+
+.ir-bar-hub {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45em;
+  margin-bottom: 0.4em;
+  flex-shrink: 0;
+}
+
+.ir-hub-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  flex-wrap: wrap;
+}
+
+/* ── Fullscreen nav bar (single row) ── */
+
+.ir-bar-fullscreen {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  padding: 0.5em 0.75em;
+  flex-shrink: 0;
+}
+
+/* ── Labels ── */
+
+.ir-label {
+  font-size: 0.88em;
+  font-weight: 700;
+  color: #555;
+  white-space: nowrap;
+}
+
+/* ── Selects ── */
+
+.ir-select {
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 2px solid #FDD835;
+  font-size: 0.85em;
+  font-family: inherit;
+  background: white;
+}
+
+.ir-num-input {
+  width: 56px;
+  padding: 5px 6px;
+  border-radius: 8px;
+  border: 2px solid #FDD835;
+  font-size: 0.85em;
+  font-family: inherit;
+  text-align: center;
+}
+
+/* ── Button variants (extend tool-btn) ── */
+
+.ir-pill-btn {
+  border-radius: 50px !important;
+  padding: 0 18px !important;
+  height: 44px !important;
+  font-size: 0.82em !important;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.ir-icon-btn {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  font-size: 1.2em !important;
+  padding: 0 !important;
+  flex-shrink: 0;
+}
+
+.image-reveal-tool.fullscreen-mode .ir-pill-btn {
+  height: 36px !important;
+  padding: 0 14px !important;
+  font-size: 0.8em !important;
+}
+
+.image-reveal-tool.fullscreen-mode .ir-icon-btn {
+  width: 36px !important;
+  height: 36px !important;
+  font-size: 1em !important;
+}
+
+/* ── File upload button ── */
+
+.ir-upload-label {
+  cursor: pointer;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+}
+
+.ir-file-input {
+  display: none;
+}
+
+/* ── Status bar ── */
+
+.ir-status-bar {
+  color: #d9534f;
+  font-weight: bold;
+  min-height: 1.4em;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95em;
+  flex-shrink: 0;
+  text-align: center;
+  padding: 0 2px;
+}
+
+.ir-seq-status {
+  font-size: 0.85em;
+  color: #888;
+  font-weight: 600;
+}
+
+/* ── Game area ── */
+
+.ir-game-area {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 0;
+}
+
+.image-reveal-tool.fullscreen-mode .ir-game-area {
+  padding: 0 0.75em 0.75em;
+}
+
+.ir-image-container {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+}
+
+.ir-image-container img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ── Tile grid ── */
+
+.ir-grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+}
+
+.ir-grid-tile {
+  background-color: #EC407A;
+  border: 2px solid white;
+  cursor: pointer;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.ir-grid-tile:hover {
+  background-color: #d81b60;
+}
+
+.ir-grid-tile.revealed {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ir-hint {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+}

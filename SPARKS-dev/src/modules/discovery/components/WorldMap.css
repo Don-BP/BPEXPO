@@ -1,0 +1,150 @@
+/* src/components/WorldMap.css */
+
+.world-map-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: #001f54;
+  /* Fallback color while image loads */
+}
+
+.map-viewport {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: grab;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.map-viewport:active {
+  cursor: grabbing;
+}
+
+.map-draggable-area {
+  width: 7000px;
+  /* Must match the original image width */
+  height: 3814px;
+  /* Must match the original image height */
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  transform-origin: center;
+  flex-shrink: 0;
+  /* Prevents the map from shrinking inside the flex container */
+}
+
+.map-title-img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* transform is handled by Framer Motion */
+  height: 100px;
+  width: auto;
+  z-index: 100;
+  pointer-events: none;
+  /* Make sure it doesn't interfere with dragging */
+}
+
+.flag-link {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  z-index: 100;
+
+  /* This first transform centers the flag's pin-point on its coordinate */
+  transform: translate(-50%, -50%);
+
+  /* ========================================================================= */
+  /* THE FIX: GLOBAL FLAG POSITION FINE-TUNING
+  /* Adjust these values to shift ALL flags at once.
+  /* Negative values move flags UP and LEFT.
+  /* Positive values move flags DOWN and RIGHT.
+  /* ========================================================================= */
+  margin-left: -2%;
+  /* FINE-TUNE X-AXIS POSITIONING HERE */
+  margin-top: -6%;
+  /* FINE-TUNE Y-AXIS POSITIONING HERE */
+}
+
+.flag-button-img {
+  width: 60px;
+  height: 40px;
+  object-fit: cover;
+  border: 4px solid white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease;
+}
+
+.flag-link:hover .flag-button-img {
+  transform: scale(1.15);
+}
+
+.country-name-label {
+  margin-top: 10px;
+  background-color: rgba(42, 42, 42, 0.8);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.2s ease;
+  opacity: 0.8;
+}
+
+/* --- Zoom Controls --- */
+.zoom-controls {
+  /* ========================================================================= */
+  /* THE FIX #1: Changed from 'absolute' to 'fixed'.
+  /* This positions the controls relative to the browser viewport, ensuring
+  /* they are always visible in the corner, regardless of device or orientation.
+  /* ========================================================================= */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.zoom-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid white;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
+
+  /* ========================================================================= */
+  /* THE FIX #2: Added a padding reset and re-confirmed the robust sizing rules.
+  /* This combination is highly effective against iOS rendering quirks.
+  /* ========================================================================= */
+  padding: 0;
+  /* Resets any default browser padding on the button. */
+  aspect-ratio: 1 / 1;
+  /* Enforces a perfect square shape. */
+  flex-shrink: 0;
+  /* Prevents the flex container from squishing the button. */
+}
+
+.zoom-btn:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
+}

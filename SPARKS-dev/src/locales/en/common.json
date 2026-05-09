@@ -1,0 +1,12 @@
+{
+  "nav": {
+    "startFree": "Start Free",
+    "seePricing": "See Pricing",
+    "goPro": "Go Pro",
+    "login": "Login"
+  },
+  "language": {
+    "en": "EN",
+    "ja": "日本語"
+  }
+}

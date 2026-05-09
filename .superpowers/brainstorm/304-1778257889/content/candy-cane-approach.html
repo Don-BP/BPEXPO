@@ -1,0 +1,138 @@
+<h2>Candy Cane Brush — Which approach?</h2>
+<p class="subtitle">Both follow the paint path. Pick the one that looks like what you have in mind.</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="ribbon" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a2e;padding:20px;display:flex;align-items:center;justify-content:center;">
+      <canvas id="c1" width="280" height="160"></canvas>
+    </div>
+    <div class="card-body">
+      <h3>A — Twisted Ribbon</h3>
+      <p>A red-and-white ribbon that twists around the stroke path like a barber pole. The stripes rotate as the direction changes. Drawn as alternating angled wedges perpendicular to the stroke direction.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="spiral" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a2e;padding:20px;display:flex;align-items:center;justify-content:center;">
+      <canvas id="c2" width="280" height="160"></canvas>
+    </div>
+    <div class="card-body">
+      <h3>B — Spiral Wrap</h3>
+      <p>The stripe spirals tightly around the path like thread on a spool. As you paint, the number of wraps you see depends on brush size. Works like a helical candy cane twist viewed from the side.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Draw Option A — Twisted Ribbon (barber pole style along a curved path)
+(function() {
+  const c = document.getElementById('c1');
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(0,0,280,160);
+
+  // Draw a curved path
+  const pts = [];
+  for(let t=0; t<=1; t+=0.02) {
+    pts.push({
+      x: 20 + t * 240,
+      y: 80 + Math.sin(t * Math.PI * 1.5) * 40
+    });
+  }
+
+  const W = 28; // stroke width
+  const stripeLen = 18; // length of one stripe cycle
+
+  ctx.save();
+  let dist = 0;
+  for(let i=1; i<pts.length; i++) {
+    const p0 = pts[i-1], p1 = pts[i];
+    const dx = p1.x - p0.x, dy = p1.y - p0.y;
+    const len = Math.hypot(dx,dy);
+    const nx = -dy/len, ny = dx/len; // normal
+    const tx = dx/len, ty = dy/len; // tangent
+
+    // color based on position along path
+    const phase = (dist % stripeLen) / stripeLen;
+    const col = phase < 0.5 ? '#e8253e' : '#ffffff';
+
+    ctx.beginPath();
+    ctx.moveTo(p0.x + nx*W/2, p0.y + ny*W/2);
+    ctx.lineTo(p1.x + nx*W/2, p1.y + ny*W/2);
+    ctx.lineTo(p1.x - nx*W/2, p1.y - ny*W/2);
+    ctx.lineTo(p0.x - nx*W/2, p0.y - ny*W/2);
+    ctx.closePath();
+    ctx.fillStyle = col;
+    ctx.fill();
+
+    dist += len;
+  }
+  ctx.restore();
+
+  // Add diagonal stripe overlay to show "twist"
+  ctx.save();
+  ctx.globalAlpha = 0.0; // hidden — concept illustrated by alternating blocks above
+  ctx.restore();
+})();
+
+// Draw Option B — Spiral Wrap (helical)
+(function() {
+  const c = document.getElementById('c2');
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(0,0,280,160);
+
+  const pts = [];
+  for(let t=0; t<=1; t+=0.01) {
+    pts.push({
+      x: 20 + t * 240,
+      y: 80 + Math.sin(t * Math.PI * 1.5) * 40
+    });
+  }
+
+  const W = 28;
+  const spiralPitch = 14; // pixels per full wrap
+
+  // Draw base (white)
+  ctx.save();
+  ctx.lineWidth = W;
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x, pts[i].y);
+  ctx.stroke();
+  ctx.restore();
+
+  // Draw red helical stripe on top
+  let dist = 0;
+  for(let i=1; i<pts.length; i++) {
+    const p0 = pts[i-1], p1 = pts[i];
+    const dx = p1.x - p0.x, dy = p1.y - p0.y;
+    const len = Math.hypot(dx,dy);
+    const nx = -dy/len, ny = dx/len;
+
+    // Sine wave mapped to normal direction = helix illusion
+    const phase0 = (dist % spiralPitch) / spiralPitch * Math.PI * 2;
+    const phase1 = ((dist+len) % spiralPitch) / spiralPitch * Math.PI * 2;
+    const s0 = Math.sin(phase0), s1 = Math.sin(phase1);
+
+    // Only draw the "top" arc of the helix (visible stripe)
+    if(s0 > -0.3 && s1 > -0.3) {
+      const sw = Math.abs(s0) * W * 0.45 + 2;
+      ctx.beginPath();
+      ctx.moveTo(p0.x + nx * s0 * W*0.45, p0.y + ny * s0 * W*0.45);
+      ctx.lineTo(p1.x + nx * s1 * W*0.45, p1.y + ny * s1 * W*0.45);
+      ctx.strokeStyle = '#e8253e';
+      ctx.lineWidth = sw;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+    }
+
+    dist += len;
+  }
+})();
+</script>

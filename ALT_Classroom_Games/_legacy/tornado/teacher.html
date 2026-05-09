@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Mode - Tornado Game</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        .teacher-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-lg);
+        }
+
+        .editor-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+            color: var(--text-dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: border-color var(--transition-fast);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .question-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            max-height: 400px;
+            overflow-y: auto;
+            padding: var(--space-sm);
+            background: var(--background);
+            border-radius: var(--radius-md);
+        }
+
+        .question-item {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+            padding: var(--space-sm);
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--primary);
+        }
+
+        .question-text {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .btn-remove {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: opacity var(--transition-fast);
+        }
+
+        .btn-remove:hover {
+            opacity: 0.8;
+        }
+
+        .saved-sets {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .set-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md);
+            background: var(--background);
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border);
+        }
+
+        .set-info {
+            flex: 1;
+        }
+
+        .set-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .set-meta {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: var(--space-xs);
+        }
+
+        .set-actions {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        .success-message {
+            padding: var(--space-md);
+            background: var(--success);
+            color: var(--text-dark);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="game-header">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='index.html'">← Back to Game</button>
+            <h1>⚙️ Teacher Mode - Tornado Game</h1>
+        </div>
+    </header>
+
+    <div class="teacher-container">
+        <div id="success-message" class="success-message">
+            ✓ Question set saved successfully!
+        </div>
+
+        <!-- Create/Edit Question Set -->
+        <div class="editor-card">
+            <h2>Create New Question Set</h2>
+
+            <div class="form-group">
+                <label class="form-label">Question Set Name</label>
+                <input type="text" id="set-name" class="form-input" placeholder="e.g., Grade 5 Vocabulary">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Add Question</label>
+                <input type="text" id="new-question" class="form-input" placeholder="Enter your question here">
+                <button class="btn btn-accent mt-sm" onclick="addQuestion()">+ Add Question</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Questions (<span id="question-count">0</span>)</label>
+                <div id="question-list" class="question-list">
+                    <p style="text-align: center; color: var(--text-light); padding: var(--space-lg);">
+                        No questions added yet. Add your first question above!
+                    </p>
+                </div>
+            </div>
+
+            <button class="btn btn-large btn-primary" onclick="saveQuestionSet()">💾 Save Question Set</button>
+        </div>
+
+        <!-- Saved Question Sets -->
+        <div class="editor-card">
+            <h2>Saved Question Sets</h2>
+            <div id="saved-sets" class="saved-sets"></div>
+        </div>
+
+        <!-- Import/Export -->
+        <div class="editor-card">
+            <h2>Import / Export</h2>
+            <p style="color: var(--text-light); margin-bottom: var(--space-md);">
+                Copy the JSON below to backup your questions, or paste JSON to import questions from another device.
+            </p>
+
+            <div class="form-group">
+                <label class="form-label">JSON Data</label>
+                <textarea id="json-data" class="form-input" rows="6" placeholder='{"setName": [], ...}'></textarea>
+            </div>
+
+            <div style="display: flex; gap: var(--space-sm);">
+                <button class="btn btn-secondary" onclick="exportData()">📤 Export to JSON</button>
+                <button class="btn btn-accent" onclick="importData()">📥 Import from JSON</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestions = [];
+
+        function loadSavedSets() {
+            const saved = localStorage.getItem('tornado_question_sets');
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        function saveSets(sets) {
+            localStorage.setItem('tornado_question_sets', JSON.stringify(sets));
+        }
+
+        function addQuestion() {
+            const input = document.getElementById('new-question');
+            const question = input.value.trim();
+
+            if (!question) {
+                alert('Please enter a question');
+                return;
+            }
+
+            currentQuestions.push(question);
+            input.value = '';
+            renderQuestions();
+        }
+
+        function removeQuestion(index) {
+            currentQuestions.splice(index, 1);
+            renderQuestions();
+        }
+
+        function renderQuestions() {
+            const list = document.getElementById('question-list');
+            const count = document.getElementById('question-count');
+
+            count.textContent = currentQuestions.length;
+
+            if (currentQuestions.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: var(--space-lg);">No questions added yet. Add your first question above!</p>';
+                return;
+            }
+
+            list.innerHTML = currentQuestions.map((q, index) => `
+                <div class="question-item">
+                    <span class="question-text">${index + 1}. ${q}</span>
+                    <button class="btn-remove" onclick="removeQuestion(${index})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function saveQuestionSet() {
+            const name = document.getElementById('set-name').value.trim();
+
+            if (!name) {
+                alert('Please enter a name for this question set');
+                return;
+            }
+
+            if (currentQuestions.length === 0) {
+                alert('Please add at least one question');
+                return;
+            }
+
+            const sets = loadSavedSets();
+            const key = name.toLowerCase().replace(/\s+/g, '_');
+
+            sets[key] = {
+                name: name,
+                questions: [...currentQuestions],
+                gridSize: 5,
+                tornadoCount: 3
+            };
+
+            saveSets(sets);
+
+            // Show success message
+            const msg = document.getElementById('success-message');
+            msg.classList.add('show');
+            setTimeout(() => msg.classList.remove('show'), 3000);
+
+            // Clear form
+            document.getElementById('set-name').value = '';
+            currentQuestions = [];
+            renderQuestions();
+            renderSavedSets();
+        }
+
+        function renderSavedSets() {
+            const sets = loadSavedSets();
+            const container = document.getElementById('saved-sets');
+
+            const keys = Object.keys(sets).filter(k => k !== 'default');
+
+            if (keys.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: var(--space-lg);">No saved question sets yet.</p>';
+                return;
+            }
+
+            container.innerHTML = keys.map(key => {
+                const set = sets[key];
+                return `
+                    <div class="set-item">
+                        <div class="set-info">
+                            <div class="set-name">${set.name}</div>
+                            <div class="set-meta">${set.questions.length} questions</div>
+                        </div>
+                        <div class="set-actions">
+                            <button class="btn btn-accent" onclick="loadSet('${key}')">Edit</button>
+                            <button class="btn-remove" onclick="deleteSet('${key}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadSet(key) {
+            const sets = loadSavedSets();
+            const set = sets[key];
+
+            document.getElementById('set-name').value = set.name;
+            currentQuestions = [...set.questions];
+            renderQuestions();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteSet(key) {
+            if (!confirm('Are you sure you want to delete this question set?')) {
+                return;
+            }
+
+            const sets = loadSavedSets();
+            delete sets[key];
+            saveSets(sets);
+            renderSavedSets();
+        }
+
+        function exportData() {
+            const sets = loadSavedSets();
+            const json = JSON.stringify(sets, null, 2);
+            document.getElementById('json-data').value = json;
+        }
+
+        function importData() {
+            const json = document.getElementById('json-data').value.trim();
+
+            if (!json) {
+                alert('Please paste JSON data to import');
+                return;
+            }
+
+            try {
+                const imported = JSON.parse(json);
+
+                // Merge with existing
+                const existing = loadSavedSets();
+                const merged = { ...existing, ...imported };
+
+                saveSets(merged);
+                renderSavedSets();
+
+                alert('Questions imported successfully!');
+                document.getElementById('json-data').value = '';
+            } catch (e) {
+                alert('Invalid JSON data. Please check the format.');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestions();
+            renderSavedSets();
+        });
+
+        // Allow Enter key to add question
+        document.getElementById('new-question').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addQuestion();
+            }
+        });
+    </script>
+</body>
+
+</html>

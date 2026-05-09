@@ -1,0 +1,45 @@
+Place these files in the /public/assets/backgrounds/ directory.
+main_background.png
+Used for: The Pronunciation Challenge Main Menu and the Final Stats screen.
+setup-bg.png
+Used for: The Game Setup screen where the player chooses a category and word count.
+game-play-bg.png
+Used for: The main gameplay screen where the player speaks the words.
+2. Menu and UI Button Images
+Place these files in the /public/assets/menu-buttons/ directory.
+start-button-shout.png
+Used for: The new "Pronunciation Challenge" start button on the main Welcome Screen.
+button_start.png
+Used for: The "Start" button on the Pronunciation Challenge Main Menu.
+button_character.png
+Used for: The "Customize Character" button on the Pronunciation Challenge Main Menu.
+button_settings.png
+Used for: The "Settings" button on the Pronunciation Challenge Main Menu.
+button_play.png
+Used for: The "Play" button on the Game Setup screen.
+3. Game-Specific Images
+Create a new folder at /public/assets/images/ and place all of the following files inside it.
+Category Selection Images:
+category_food.png
+category_animals.png
+category_sports.png
+Vocabulary Word Images:
+word_apple.png
+word_banana.png
+word_pizza.png
+word_cookie.png
+word_carrot.png
+word_cat.png
+word_dog.png
+word_fish.png
+word_lion.png
+word_bird.png
+word_soccer.png
+word_baseball.png
+word_tennis.png
+word_golf.png
+word_skiing.png
+Character Customization Images:
+character_base.png
+accessory_hat.png
+accessory_glasses.png

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Plinko Extreme</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #050505;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: white;
+            user-select: none;
+            touch-action: none;
+        }
+        
+        #ui-top-hint {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .hint-text {
+            font-size: 10px;
+            color: #ffcc00;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: 0.6;
+            animation: pulse 2s infinite;
+        }
+
+        #score-container {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            text-align: right;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        #title-container {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            text-align: left;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        #bonus-container {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .stats-box {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 { 
+            margin: 0; 
+            font-size: 18px; 
+            color: #ffcc00; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-label { font-size: 10px; color: #aaa; text-transform: uppercase; }
+        .score-val { font-size: 32px; font-weight: 900; color: #fff; line-height: 1; margin-top: 2px; }
+        
+        .bonus-label { font-size: 10px; color: #ffd700; text-transform: uppercase; font-weight: bold; }
+        .bonus-progress { font-size: 18px; font-weight: 900; color: #fff; }
+        
+        #legend-bar {
+            position: absolute;
+            bottom: 85px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .legend {
+            display: flex;
+            gap: 12px;
+            background: rgba(0,0,0,0.4);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 10px;
+            backdrop-filter: blur(4px);
+        }
+
+        .legend-item { display: flex; align-items: center; gap: 5px; color: #ccc; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+        #point-labels-container {
+            position: absolute;
+            bottom: 125px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            width: 80%;
+            max-width: 600px;
+            pointer-events: none;
+            justify-content: space-between;
+            z-index: 50;
+        }
+
+        .point-label {
+            flex: 1;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 900;
+            color: #ffcc00;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.6);
+        }
+        
+        #msg-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 200;
+        }
+
+        .point-popup {
+            font-size: 84px;
+            font-weight: 900;
+            animation: scorePop 1.2s cubic-bezier(0.17, 0.89, 0.32, 1.28) forwards;
+            text-shadow: 0 0 20px currentColor, 0 0 10px black;
+        }
+
+        .bonus-popup {
+            font-size: 42px;
+            color: #ffd700;
+            font-weight: 900;
+            animation: bonusPop 1s ease-out forwards;
+            text-shadow: 0 0 15px #ffd700, 0 0 5px black;
+        }
+
+        @keyframes scorePop {
+            0% { transform: scale(0.5) translateY(50px); opacity: 0; }
+            20% { transform: scale(1.2) translateY(0); opacity: 1; }
+            100% { transform: scale(1) translateY(-150px); opacity: 0; }
+        }
+
+        @keyframes bonusPop {
+            0% { transform: scale(0.8) translateY(0); opacity: 0; }
+            50% { transform: scale(1.1) translateY(-20px); opacity: 1; }
+            100% { transform: scale(1) translateY(-40px); opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+    <div id="ui-top-hint">
+        <div class="hint-text">Tap top area to drop</div>
+    </div>
+
+    <div id="bonus-container">
+        <div class="stats-box">
+            <div class="bonus-label">Party Bonus Hits</div>
+            <div id="bonus-display" class="bonus-progress">0 / 15</div>
+        </div>
+    </div>
+
+    <div id="title-container">
+        <div class="stats-box">
+            <h1>Neon Plinko</h1>
+            <div style="font-size: 9px; color: #666; margin-top: 2px;">VIBRANT PHYSICS</div>
+        </div>
+    </div>
+
+    <div id="score-container">
+        <div class="stats-box">
+            <div class="score-label">Total Points</div>
+            <div id="score-display" class="score-val">0</div>
+        </div>
+    </div>
+
+    <div id="point-labels-container">
+        <div class="point-label">1</div>
+        <div class="point-label">2</div>
+        <div class="point-label">3</div>
+        <div class="point-label">4</div>
+        <div class="point-label">5</div>
+        <div class="point-label">4</div>
+        <div class="point-label">3</div>
+        <div class="point-label">2</div>
+        <div class="point-label">1</div>
+    </div>
+
+    <div id="legend-bar">
+        <div class="legend">
+            <div class="legend-item"><div class="dot" style="background: #ccc;"></div> Normal</div>
+            <div class="legend-item"><div class="dot" style="background: #00ffff;"></div> Spring</div>
+            <div class="legend-item"><div class="dot" style="background: #ffd700; box-shadow: 0 0 5px #ffd700;"></div> Party</div>
+        </div>
+    </div>
+
+    <div id="msg-container"></div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const BOARD_WIDTH = 12;
+        const BOARD_HEIGHT = 18;
+        const PEG_RADIUS = 0.15;
+        const BALL_RADIUS = 0.38; 
+        const SLOTS_COUNT = 9;
+        const SLOT_VALUES = [1, 2, 3, 4, 5, 4, 3, 2, 1]; 
+        const BONUS_HIT_REQUIREMENT = 15; // NEW REQUIREMENT
+        
+        const COLORS = {
+            standard: 0xaaaaaa,
+            spring: 0x00ffff,
+            confetti: 0xffd700,
+            board: 0x0d0d0d,
+            wall: 0x222222,
+            wallEdge: 0x444444
+        };
+
+        let scene, camera, renderer, world;
+        let balls = [];
+        let pegs = [];
+        let walls = [];
+        let particles = [];
+        let score = 0;
+        let yellowPegHits = 0; 
+        let lastDropTime = 0;
+        const DROP_COOLDOWN = 400; 
+
+        const ballMaterial = new CANNON.Material("ballMaterial");
+        const pegMaterial = new CANNON.Material("pegMaterial");
+        const wallMaterial = new CANNON.Material("wallMaterial");
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x050505);
+
+            camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0, 24);
+            camera.lookAt(0, -1, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.LinearToneMapping;
+            renderer.toneMappingExposure = 1.0;
+            document.body.appendChild(renderer.domElement);
+
+            world = new CANNON.World();
+            world.gravity.set(0, -9.8, 0); 
+            world.broadphase = new CANNON.NaiveBroadphase();
+
+            const contactMat = new CANNON.ContactMaterial(ballMaterial, pegMaterial, {
+                restitution: 0.85, 
+                friction: 0.02
+            });
+            world.addContactMaterial(contactMat);
+
+            const wallContactMat = new CANNON.ContactMaterial(ballMaterial, wallMaterial, {
+                restitution: 0.95, 
+                friction: 0.05
+            });
+            world.addContactMaterial(wallContactMat);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+            scene.add(ambientLight);
+
+            const pointLight = new THREE.PointLight(0xffffff, 1.0, 70);
+            pointLight.position.set(0, 5, 15);
+            pointLight.castShadow = true;
+            scene.add(pointLight);
+
+            createBoard();
+            createPegs();
+            createSlots();
+
+            window.addEventListener('resize', onWindowResize, false);
+            window.addEventListener('pointerdown', onPointerDown);
+            window.addEventListener('pointermove', onPointerMove);
+
+            animate();
+        }
+
+        function createBoard() {
+            const boardGeo = new THREE.BoxGeometry(BOARD_WIDTH, BOARD_HEIGHT, 0.5);
+            const boardMat = new THREE.MeshPhongMaterial({ color: COLORS.board, shininess: 5 });
+            const boardMesh = new THREE.Mesh(boardGeo, boardMat);
+            boardMesh.position.set(0, 0, -0.6);
+            boardMesh.receiveShadow = true;
+            scene.add(boardMesh);
+
+            const boardBody = new CANNON.Body({
+                mass: 0,
+                shape: new CANNON.Box(new CANNON.Vec3(BOARD_WIDTH/2, BOARD_HEIGHT/2, 0.25)),
+                material: wallMaterial
+            });
+            boardBody.position.set(0, 0, -0.6);
+            world.addBody(boardBody);
+
+            const wallThickness = 1.0;
+            const wallHeight = BOARD_HEIGHT * 1.5; 
+            const wallDepth = 4.0; 
+
+            const wallGeo = new THREE.BoxGeometry(wallThickness, wallHeight, wallDepth);
+            
+            [-1, 1].forEach(side => {
+                const wallMat = new THREE.MeshPhongMaterial({ 
+                    color: COLORS.wall, 
+                    shininess: 40,
+                    emissive: COLORS.wall,
+                    emissiveIntensity: 0.1
+                });
+                const wallMesh = new THREE.Mesh(wallGeo, wallMat);
+                const xPos = (BOARD_WIDTH / 2 + wallThickness / 2) * side;
+                wallMesh.position.set(xPos, 0, 0.4);
+                wallMesh.receiveShadow = true;
+                wallMesh.castShadow = true;
+                scene.add(wallMesh);
+
+                const edgeGeo = new THREE.BoxGeometry(0.1, wallHeight, 0.1);
+                const edgeMat = new THREE.MeshBasicMaterial({ color: COLORS.wallEdge });
+                const edge = new THREE.Mesh(edgeGeo, edgeMat);
+                edge.position.set(-wallThickness/2 * side, 0, wallDepth/2);
+                wallMesh.add(edge);
+
+                const body = new CANNON.Body({
+                    mass: 0,
+                    shape: new CANNON.Box(new CANNON.Vec3(wallThickness/2, wallHeight/2, wallDepth/2)),
+                    material: wallMaterial
+                });
+                body.position.copy(wallMesh.position);
+                body.isEdgeWall = true; 
+                world.addBody(body);
+
+                walls.push({ mesh: wallMesh, body: body });
+            });
+        }
+
+        function createPegs() {
+            const rows = 10; 
+            const spacingY = 1.45;
+            const startY = BOARD_HEIGHT / 2 - 2.8;
+            const outerX = 5.75;
+            const usableWidth = outerX * 2;
+            const spacingX = usableWidth / 8;
+
+            for (let r = 0; r < rows; r++) {
+                const isEven = r % 2 === 0;
+                const cols = isEven ? 9 : 8;
+                const startX = isEven ? -usableWidth / 2 : -usableWidth / 2 + spacingX / 2;
+
+                for (let c = 0; c < cols; c++) {
+                    const x = startX + c * spacingX;
+                    const y = startY - r * spacingY;
+                    
+                    let type = 'standard';
+                    const rand = Math.random();
+                    if (rand < 0.15) type = 'spring';
+                    else if (rand < 0.60) type = 'confetti'; 
+
+                    addPeg(x, y, type);
+                }
+            }
+        }
+
+        function addPeg(x, y, type) {
+            const color = COLORS[type];
+            const geo = new THREE.CylinderGeometry(PEG_RADIUS, PEG_RADIUS, 1.2, 16);
+            const mat = new THREE.MeshPhongMaterial({ 
+                color: color, 
+                emissive: color, 
+                emissiveIntensity: type === 'standard' ? 0.05 : 0.6 
+            });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.rotation.x = Math.PI / 2;
+            mesh.position.set(x, y, 0);
+            mesh.castShadow = true;
+            scene.add(mesh);
+
+            const body = new CANNON.Body({
+                mass: 0,
+                shape: new CANNON.Sphere(PEG_RADIUS),
+                material: pegMaterial
+            });
+            body.position.set(x, y, 0);
+            body.pegType = type;
+            world.addBody(body);
+
+            pegs.push({ mesh, body, type, initialEmissive: mat.emissiveIntensity });
+        }
+
+        function createSlots() {
+            const slotWidth = BOARD_WIDTH / SLOTS_COUNT;
+            const yPos = -BOARD_HEIGHT / 2 + 1;
+
+            for (let i = 0; i <= SLOTS_COUNT; i++) {
+                const x = -BOARD_WIDTH / 2 + i * slotWidth;
+                
+                const divGeo = new THREE.BoxGeometry(0.12, 3.2, 1.5);
+                const divMat = new THREE.MeshPhongMaterial({ color: 0x333333 });
+                const divMesh = new THREE.Mesh(divGeo, divMat);
+                divMesh.position.set(x, yPos - 0.6, 0.2);
+                scene.add(divMesh);
+
+                const divBody = new CANNON.Body({
+                    mass: 0,
+                    shape: new CANNON.Box(new CANNON.Vec3(0.06, 1.6, 0.75)),
+                    material: wallMaterial
+                });
+                divBody.position.copy(divMesh.position);
+                world.addBody(divBody);
+            }
+
+            const floorBody = new CANNON.Body({
+                mass: 0,
+                shape: new CANNON.Box(new CANNON.Vec3(BOARD_WIDTH/2, 0.5, 2)),
+                material: wallMaterial
+            });
+            floorBody.position.set(0, -BOARD_HEIGHT/2 - 0.5, 0);
+            world.addBody(floorBody);
+        }
+
+        function spawnBall(x) {
+            const now = Date.now();
+            if (now - lastDropTime < DROP_COOLDOWN) return;
+            lastDropTime = now;
+
+            const clampedX = Math.max(-BOARD_WIDTH/2 + 0.6, Math.min(BOARD_WIDTH/2 - 0.6, x));
+            
+            const ballHue = Math.random();
+            const ballColor = new THREE.Color().setHSL(ballHue, 1.0, 0.5);
+            const emissiveColor = new THREE.Color().setHSL(ballHue, 1.0, 0.6);
+
+            const ballGeo = new THREE.SphereGeometry(BALL_RADIUS, 24, 24);
+            const ballMat = new THREE.MeshStandardMaterial({ 
+                color: ballColor, 
+                metalness: 0.1, 
+                roughness: 0.1,
+                emissive: emissiveColor,
+                emissiveIntensity: 4.0 
+            });
+            const mesh = new THREE.Mesh(ballGeo, ballMat);
+            mesh.castShadow = true;
+            scene.add(mesh);
+
+            const ballLight = new THREE.PointLight(emissiveColor, 2.5, 8);
+            mesh.add(ballLight);
+
+            const body = new CANNON.Body({
+                mass: 1.5,
+                shape: new CANNON.Sphere(BALL_RADIUS),
+                material: ballMaterial,
+                linearDamping: 0.15 
+            });
+            body.position.set(clampedX, BOARD_HEIGHT/2 - 0.5, 0);
+            body.velocity.set((Math.random() - 0.5) * 0.5, -1.0, 0);
+            world.addBody(body);
+
+            const ballObj = { 
+                mesh, 
+                body, 
+                dead: false,
+                lastMoveTime: now,
+                lastX: clampedX,
+                lastY: BOARD_HEIGHT/2 - 0.5,
+                color: emissiveColor
+            };
+            
+            body.addEventListener("collide", (e) => {
+                if (ballObj.dead) return;
+                const target = e.contact.bi === body ? e.contact.bj : e.contact.bi;
+                
+                if (target.pegType) {
+                    handlePegCollision(ballObj, target);
+                } else if (target.isEdgeWall) {
+                    handleWallCollision(target);
+                }
+            });
+
+            balls.push(ballObj);
+        }
+
+        function handlePegCollision(ballObj, pegBody) {
+            const type = pegBody.pegType;
+            pulsePeg(pegBody);
+
+            if (type === 'spring') {
+                const dir = ballObj.body.position.vsub(pegBody.position);
+                dir.normalize();
+                ballObj.body.velocity.vadd(dir.mult(18), ballObj.body.velocity);
+            }
+
+            if (type === 'confetti') {
+                createConfetti(pegBody.position);
+                incrementYellowCounter();
+            }
+        }
+
+        function incrementYellowCounter() {
+            yellowPegHits++;
+            if (yellowPegHits >= BONUS_HIT_REQUIREMENT) {
+                yellowPegHits = 0;
+                addBonusScore(1);
+            }
+            document.getElementById('bonus-display').innerText = `${yellowPegHits} / ${BONUS_HIT_REQUIREMENT}`;
+        }
+
+        function resetYellowCounter() {
+            yellowPegHits = 0;
+            document.getElementById('bonus-display').innerText = `0 / ${BONUS_HIT_REQUIREMENT}`;
+        }
+
+        function handleWallCollision(wallBody) {
+            const wall = walls.find(w => w.body === wallBody);
+            if (wall) {
+                wall.mesh.material.emissiveIntensity = 2.0;
+                setTimeout(() => {
+                    if (wall.mesh) wall.mesh.material.emissiveIntensity = 0.1;
+                }, 100);
+            }
+        }
+
+        function createTrail(pos, color) {
+            const geo = new THREE.SphereGeometry(BALL_RADIUS * 0.75, 8, 8);
+            const mat = new THREE.MeshBasicMaterial({ 
+                color: color,
+                transparent: true,
+                opacity: 0.7,
+                blending: THREE.AdditiveBlending 
+            });
+            const p = new THREE.Mesh(geo, mat);
+            p.position.copy(pos);
+            
+            particles.push({ 
+                mesh: p, 
+                vel: new THREE.Vector3(0, 0, 0), 
+                life: 0.8, 
+                initialLife: 0.8,
+                isTrail: true 
+            });
+            scene.add(p);
+        }
+
+        function pulsePeg(pegBody) {
+            const peg = pegs.find(p => p.body === pegBody);
+            if (peg) {
+                peg.mesh.scale.set(1.8, 1.8, 1.8);
+                peg.mesh.material.emissiveIntensity = 3.0;
+                setTimeout(() => {
+                    if (peg.mesh) {
+                        peg.mesh.scale.set(1, 1, 1);
+                        peg.mesh.material.emissiveIntensity = peg.initialEmissive;
+                    }
+                }, 100);
+            }
+        }
+
+        function createConfetti(pos) {
+            const count = 100; 
+            const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff, 0xffffff];
+            const geo = new THREE.PlaneGeometry(0.2, 0.2);
+            
+            for (let i = 0; i < count; i++) {
+                const mat = new THREE.MeshBasicMaterial({ 
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    side: THREE.DoubleSide,
+                    transparent: true
+                });
+                const p = new THREE.Mesh(geo, mat);
+                p.position.set(pos.x, pos.y, pos.z + 0.5);
+                p.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+                
+                const vel = new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.35,
+                    Math.random() * 0.4 + 0.2,
+                    (Math.random() - 0.5) * 0.25
+                );
+                
+                particles.push({ 
+                    mesh: p, 
+                    vel, 
+                    life: 2.0 + Math.random(), 
+                    isConfetti: true, 
+                    rotVel: new THREE.Vector3(Math.random()*0.3, Math.random()*0.3, Math.random()*0.3)
+                });
+                scene.add(p);
+            }
+        }
+
+        function removeBall(ballObj) {
+            if (ballObj.dead) return;
+            ballObj.dead = true;
+            scene.remove(ballObj.mesh);
+            world.remove(ballObj.body);
+        }
+
+        function onPointerDown(event) {
+            if (event.clientY > window.innerHeight * 0.35) return;
+            const x = (event.clientX / window.innerWidth) * 2 - 1;
+            const worldX = x * (BOARD_WIDTH / 2);
+            spawnBall(worldX);
+        }
+
+        function onPointerMove(event) {
+            const x = (event.clientX / window.innerWidth) * 2 - 1;
+            const y = (event.clientY / window.innerHeight) * 2 - 1;
+            camera.position.x = THREE.MathUtils.lerp(camera.position.x, x * 1.5, 0.05);
+            camera.position.y = THREE.MathUtils.lerp(camera.position.y, -y * 1.5, 0.05);
+            camera.lookAt(0, -1, 0);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            world.step(1 / 60);
+
+            const now = Date.now();
+
+            for (let i = balls.length - 1; i >= 0; i--) {
+                const b = balls[i];
+                if (b.dead) {
+                    balls.splice(i, 1);
+                    continue;
+                }
+
+                b.body.position.z = 0;
+                b.body.velocity.z = 0;
+
+                b.mesh.position.copy(b.body.position);
+                b.mesh.quaternion.copy(b.body.quaternion);
+
+                createTrail(b.mesh.position, b.color);
+
+                const distSq = Math.pow(b.body.position.x - b.lastX, 2) + Math.pow(b.body.position.y - b.lastY, 2);
+                if (distSq > 0.005) { 
+                    b.lastX = b.body.position.x;
+                    b.lastY = b.body.position.y;
+                    b.lastMoveTime = now;
+                } else if (now - b.lastMoveTime > 5000) {
+                    createConfetti(b.body.position);
+                    resetYellowCounter(); 
+                    removeBall(b);
+                    continue;
+                }
+
+                if (b.body.position.y < -BOARD_HEIGHT / 2 + 0.65) {
+                    const slotIndex = Math.floor((b.body.position.x + BOARD_WIDTH/2) / (BOARD_WIDTH / SLOTS_COUNT));
+                    const points = SLOT_VALUES[Math.min(SLOTS_COUNT - 1, Math.max(0, slotIndex))];
+                    addScore(points, b.color);
+                    resetYellowCounter(); 
+                    removeBall(b);
+                }
+
+                if (Math.abs(b.body.position.x) > BOARD_WIDTH || b.body.position.y < -BOARD_HEIGHT) {
+                    resetYellowCounter(); 
+                    removeBall(b);
+                }
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.mesh.position.add(p.vel);
+                
+                if (p.isConfetti) {
+                    p.vel.y -= 0.009; 
+                    p.vel.x *= 0.99;
+                    p.mesh.rotation.x += p.rotVel.x;
+                    p.mesh.rotation.y += p.rotVel.y;
+                    p.mesh.rotation.z += p.rotVel.z;
+                    p.life -= 0.015;
+                    p.mesh.material.opacity = Math.min(1, p.life * 2);
+                } else if (p.isTrail) {
+                    p.life -= 0.02; 
+                    const lifeRatio = p.life / p.initialLife;
+                    p.mesh.scale.setScalar(lifeRatio);
+                    p.mesh.material.opacity = lifeRatio * 0.7;
+                } else {
+                    p.vel.multiplyScalar(0.98);
+                    p.life -= 0.015;
+                    p.mesh.material.opacity = Math.min(1, p.life * 2);
+                }
+                
+                if (p.life <= 0) {
+                    scene.remove(p.mesh);
+                    particles.splice(i, 1);
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        function addScore(points, color) {
+            score += points;
+            document.getElementById('score-display').innerText = score.toLocaleString();
+            
+            if (points > 0) {
+                const popup = document.createElement('div');
+                popup.className = 'point-popup';
+                popup.innerText = `+${points}`;
+                popup.style.color = `#${color.getHexString()}`;
+                document.getElementById('msg-container').appendChild(popup);
+                setTimeout(() => popup.remove(), 1200);
+            }
+        }
+
+        function addBonusScore(points) {
+            score += points;
+            document.getElementById('score-display').innerText = score.toLocaleString();
+            
+            const popup = document.createElement('div');
+            popup.className = 'bonus-popup';
+            popup.innerText = `BONUS +${points}`;
+            document.getElementById('msg-container').appendChild(popup);
+            setTimeout(() => popup.remove(), 1000);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

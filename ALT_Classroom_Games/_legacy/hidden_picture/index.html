@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hidden Picture - Brain Power</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../global_setup.css">
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <script src="../utils/audio.js"></script>
+</head>
+
+<body>
+    <!-- Setup Screen -->
+    <header class="game-header header-hidden">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='../index.html'">← Back to Hub</button>
+            <h1>🖼️ Hidden Picture</h1>
+            <div class="right-actions">
+                <button class="btn-icon" onclick="toggleMute()" title="Toggle Sound">🔊</button>
+                <button class="btn-icon" onclick="window.location.href='teacher.html'" title="Teacher Mode">⚙️</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Setup Screen -->
+    <div id="setup-screen" class="screen active">
+
+        <div class="container text-center">
+            <h2 class="mb-lg">Game Setup</h2>
+
+            <div class="setup-card">
+                <h3>Select Game Set</h3>
+                <select id="game-set-select" class="input-select">
+                    <option value="default">Loading...</option>
+                </select>
+            </div>
+
+            <div class="setup-card">
+                <h3>Number of Teams</h3>
+                <div class="team-buttons">
+                    <button class="btn btn-accent team-count-btn active" data-teams="2">2 Teams</button>
+                    <button class="btn btn-accent team-count-btn" data-teams="3">3 Teams</button>
+                    <button class="btn btn-accent team-count-btn" data-teams="4">4 Teams</button>
+                </div>
+            </div>
+
+            <div class="setup-card">
+                <h3>Grid Size</h3>
+                <div class="grid-buttons">
+                    <button class="btn btn-primary grid-size-btn" data-size="9">3×3</button>
+                    <button class="btn btn-primary grid-size-btn active" data-size="16">4×4</button>
+                    <button class="btn btn-primary grid-size-btn" data-size="25">5×5</button>
+                </div>
+            </div>
+
+            <button class="btn btn-large btn-primary mt-lg" onclick="startGame()">Start Game!</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen game-screen">
+        <header class="game-header compact">
+            <div class="container" style="justify-content: center; position: relative;">
+                <button class="btn-sm btn-secondary" onclick="location.reload()"
+                    style="position: absolute; left: 1rem;">↺ Restart</button>
+                <div class="turn-display" id="current-team-display">Team 1's Turn</div>
+                <button class="btn-sm btn-accent" onclick="attemptGuess()" style="position: absolute; right: 1rem;">💡
+                    Guess Picture</button>
+            </div>
+        </header>
+
+        <div class="container game-container-centered">
+            <!-- Top: Scores -->
+            <div class="scores-row" id="teams-scores">
+                <!-- Scores injected here -->
+            </div>
+
+            <!-- Main: Picture Grid -->
+            <div class="main-area">
+                <div class="picture-frame">
+                    <img id="hidden-image" src="" alt="Hidden Image">
+                    <div class="overlay-grid" id="overlay-grid">
+                        <!-- Tiles injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Modal -->
+    <div class="modal-overlay" id="question-modal">
+        <div class="modal question-modal">
+            <div class="modal-header">
+                <h3>Question</h3>
+                <div class="timer" id="timer"></div>
+            </div>
+            <div class="modal-body">
+                <p id="question-text" class="question-text">Loading...</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" onclick="answerWrong()">Wrong ✗</button>
+                <button class="btn btn-success" onclick="answerCorrect()">Correct ✓</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guess Modal -->
+    <div class="modal-overlay" id="guess-modal">
+        <div class="modal">
+            <h2>Guess the Picture!</h2>
+            <p>Ready to solve it?</p>
+            <div style="margin: 2rem 0;">
+                <button class="btn btn-accent btn-large" onclick="revealAll()">Yes, Reveal It! 🌟</button>
+            </div>
+            <button class="btn btn-secondary" onclick="closeGuessModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Win Modal -->
+    <div class="modal-overlay" id="win-modal">
+        <div class="modal text-center">
+            <h2>🎉 Game Complete! 🎉</h2>
+            <div id="winner-announcement" class="winner-text"></div>
+            <div id="final-scores" class="final-scores-list"></div>
+            <button class="btn btn-primary" onclick="location.reload()">Play Again ↻</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+
+</html>

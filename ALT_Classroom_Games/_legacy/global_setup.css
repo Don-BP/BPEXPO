@@ -1,0 +1,61 @@
+/* Global Setup Screen Styles - Used by All Games */
+
+.screen {
+    display: none;
+    padding: var(--space-2xl) 0;
+    min-height: 70vh;
+}
+
+.screen.active {
+    display: block;
+}
+
+.setup-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.setup-card h3 {
+    margin-bottom: var(--space-md);
+    color: var(--text-dark);
+}
+
+.input-select {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    background: var(--surface);
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+.input-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.team-buttons,
+.grid-buttons {
+    display: flex;
+    gap: var(--space-sm);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.team-count-btn,
+.grid-size-btn {
+    min-width: 120px;
+}
+
+.team-count-btn.active,
+.grid-size-btn.active {
+    background: var(--primary);
+    color: white;
+}

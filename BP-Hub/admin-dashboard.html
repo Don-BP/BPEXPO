@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - BP LABO Admin</title>
+    <link rel="icon" type="image/png" href="assets/bp_favicon.png">
+    <link rel="stylesheet" href="admin-styles.css"> <!-- Link to the new shared stylesheet -->
+</head>
+<body>
+    <div class="container">
+        <div class="header"><h1>BP LABO Admin Dashboard</h1><div class="actions"><button id="refresh-btn" class="btn btn-primary">🔄 Refresh Data</button><a href="index.html" class="btn btn-secondary">🏠 Back to BP LABO</a></div></div>
+
+        <!-- Admin Tabs Navigation -->
+        <nav class="admin-tabs">
+            <a href="admin-dashboard.html" class="tab-link active">User Management</a>
+            <a href="admin-blog.html" class="tab-link">Blog Management</a>
+        </nav>
+
+        <div id="stats-section" class="stats-grid"><div class="stat-card loading">Loading...</div></div>
+
+        <div class="section">
+             <div class="section-header"><h2>🔑 Whitelist Management</h2></div>
+             <form class="form-inline" id="add-employee-form"><input type="text" id="new-employee-id" class="form-input" placeholder="Add single Employee ID" required><button type="submit" class="btn btn-success">Add</button></form>
+             <div class="bulk-form">
+                 <form id="bulk-add-form">
+                     <label for="bulk-ids" style="font-weight:600; color:#606770;">Bulk Add Employees</label>
+                     <textarea id="bulk-ids" class="form-input" placeholder="Paste one Employee ID per line..."></textarea>
+                     <button type="submit" class="btn btn-primary">Add Multiple</button>
+                 </form>
+             </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header"><h2>👥 Unified User & License Management</h2></div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Employee ID</th><th>License Code</th><th>License Status</th><th>Username</th><th>Email</th><th>Role</th><th>Account Status</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="unified-table-body">
+                        <tr><td colspan="8" class="loading">Loading data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="js/auth.js"></script>
+    <script>
+        // --- DATA LOADING ---
+        async function loadSystemStats() {
+            const container = document.getElementById('stats-section');
+            try {
+                const { stats } = await auth.getSystemStats();
+                container.innerHTML = `
+                    <div class="stat-card"><div class="stat-number">${stats.totalUsers}</div><div class="stat-label">Total Users</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.activeUsers}</div><div class="stat-label">Active Users</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.totalLicenses}</div><div class="stat-label">Total Licenses</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.usedLicenses}</div><div class="stat-label">Used Licenses</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.adminUsers}</div><div class="stat-label">Admin Users</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.recentRegistrations}</div><div class="stat-label">New Users (30d)</div></div>
+                `;
+            } catch (error) { container.innerHTML = `<div class="stat-card"><div class="stat-label">Error loading stats.</div></div>`; }
+        }
+
+        async function loadUnifiedData() {
+            const tbody = document.getElementById('unified-table-body');
+            tbody.innerHTML = '<tr><td colspan="8" class="loading">Loading data...</td></tr>';
+            const currentUser = auth.getCurrentUser();
+
+            try {
+                const { employees } = await auth.adminGetUnifiedUsers();
+                if (employees.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Whitelist is empty. Add an Employee ID to begin.</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = employees.map(employee => {
+                    const license = employee.license;
+                    const user = license?.user;
+                    const isCurrentUser = user?.id === currentUser.id;
+
+                    const licenseCode = license?.code || '---';
+                    const licenseStatus = license?.isUsed ? 'Used' : (license ? 'Available' : 'N/A');
+                    const licenseStatusClass = license?.isUsed ? 'status-used' : (license ? 'status-available' : '');
+                    
+                    const username = user?.username || '---';
+                    const email = user?.email || '---';
+                    
+                    const roleDropdown = user ? `
+                        <select class="role-select" onchange="changeUserRole('${user.id}', this, '${user.role}')" ${isCurrentUser ? 'disabled' : ''}>
+                            <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
+                            <option value="alt" ${user.role === 'alt' ? 'selected' : ''}>ALT</option>
+                            <option value="jte" ${user.role === 'jte' ? 'selected' : ''}>JTE</option>
+                            <option value="student" ${user.role === 'student' ? 'selected' : ''}>Student</option>
+                            <option value="user" ${user.role === 'user' ? 'selected' : ''}>User</option>
+                        </select>` : '---';
+
+                    const accountStatus = user ? (user.isActive ? 'Active' : 'Disabled') : 'N/A';
+                    const accountStatusClass = user ? (user.isActive ? 'status-active' : 'status-disabled') : '';
+
+                    let actions = `<button class="btn btn-delete btn-sm" onclick="handleDeleteEmployee('${employee.id}', '${employee.employeeId}')" title="Delete whitelist entry and license">Delete Whitelist</button>`;
+                    if (user) {
+                        actions += `
+                            <button class="btn btn-sm ${user.isActive ? 'btn-secondary' : 'btn-success'}" onclick="toggleUserStatus('${user.id}', ${!user.isActive})" ${isCurrentUser ? 'disabled' : ''}>${user.isActive ? 'Deactivate' : 'Activate'}</button>
+                            <button class="btn btn-delete btn-sm" onclick="deleteUser('${user.id}', '${user.username}')" ${isCurrentUser ? 'disabled' : ''} title="Delete user account and license">Delete User</button>
+                        `;
+                    }
+                    
+                    return `
+                        <tr>
+                            <td><strong>${employee.employeeId}</strong></td>
+                            <td>${licenseCode}</td>
+                            <td><span class="status-badge ${licenseStatusClass}">${licenseStatus}</span></td>
+                            <td>${username}</td>
+                            <td>${email}</td>
+                            <td>${roleDropdown}</td>
+                            <td><span class="status-badge ${accountStatusClass}">${accountStatus}</span></td>
+                            <td class="actions-cell">${actions}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error("Error loading unified data:", error);
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Error loading user data.</td></tr>';
+            }
+        }
+
+        function loadAllData() {
+            loadSystemStats();
+            loadUnifiedData();
+        }
+
+        // --- ACTION HANDLERS ---
+        async function handleAddEmployee(event) {
+            event.preventDefault();
+            const input = document.getElementById('new-employee-id');
+            const employeeId = input.value.trim().toUpperCase();
+            if (!employeeId) { alert('Please enter an Employee ID.'); return; }
+            try {
+                const response = await auth.addWhitelistedEmployee(employeeId);
+                alert(response.message);
+                input.value = '';
+                loadAllData();
+            } catch (error) { alert(`Error: ${error.message}`); }
+        }
+
+        async function handleBulkAddEmployees(event) {
+            event.preventDefault();
+            const textarea = document.getElementById('bulk-ids');
+            const button = event.target.querySelector('button');
+            
+            const employeeIds = textarea.value
+                .split('\n')
+                .map(id => id.trim())
+                .filter(id => id);
+
+            if (employeeIds.length === 0) {
+                alert('Please paste at least one Employee ID.');
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = 'Adding...';
+
+            try {
+                const response = await auth.adminBulkAddEmployees(employeeIds);
+                alert(response.message);
+                textarea.value = '';
+                loadAllData();
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Add Multiple';
+            }
+        }
+
+        async function handleDeleteEmployee(employeeId, employeeIdentifier) {
+             if (confirm(`DELETE "${employeeIdentifier}" from the whitelist?\nThis will also delete their license code and CANNOT be undone.`)) {
+                try {
+                    await auth.deleteWhitelistedEmployee(employeeId);
+                    alert('Whitelist entry and license deleted.');
+                    loadAllData();
+                } catch (error) { alert(`Error: ${error.message}`); }
+            }
+        }
+
+        async function deleteUser(userId, username) {
+             if (confirm(`DELETE the user "${username}"?\nThis will also delete their license code and CANNOT be undone.`)) {
+                try {
+                    await auth.deleteUser(userId);
+                    alert(`User "${username}" and their license have been deleted.`);
+                    loadAllData();
+                } catch (error) { alert(`Failed to delete user: ${error.message}`); }
+            }
+        }
+        
+        async function changeUserRole(userId, selectElement, originalRole) {
+            const newRole = selectElement.value;
+            if (confirm(`Change this user's role to "${newRole}"?`)) {
+                try {
+                    await auth.updateUserRole(userId, newRole);
+                    alert('User role updated!');
+                    // No full reload needed, just update stats if you want
+                    loadSystemStats();
+                } catch (error) { 
+                    alert(`Failed to update role: ${error.message}`); 
+                    selectElement.value = originalRole; // Revert dropdown on failure
+                }
+            } else { 
+                selectElement.value = originalRole; // Revert if user cancels
+            }
+        }
+
+        async function toggleUserStatus(userId, newStatus) {
+            const action = newStatus ? 'Activate' : 'Deactivate';
+            if (confirm(`Are you sure you want to ${action} this user?`)) {
+                try {
+                    await auth.updateUserStatus(userId, newStatus);
+                    alert(`User has been ${action.toLowerCase()}d.`);
+                    loadAllData(); // Reload all data to reflect the change
+                } catch (error) { 
+                    alert(`Failed to ${action} user: ${error.message}`); 
+                }
+            }
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!auth.isLoggedIn() || auth.getCurrentUser().role !== 'admin') {
+                alert('Access Denied. Redirecting to login.');
+                window.location.href = 'login.html';
+                return;
+            }
+            loadAllData();
+            document.getElementById('refresh-btn').addEventListener('click', loadAllData);
+            document.getElementById('add-employee-form').addEventListener('submit', handleAddEmployee);
+            document.getElementById('bulk-add-form').addEventListener('submit', handleBulkAddEmployees);
+        });
+    </script>
+</body>
+</html>

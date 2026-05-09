@@ -1,0 +1,5 @@
+Exa_API_key=529937f1-257d-44b4-814d-ef85a6de193a
+Firecrawl_API_key=fc-c348ea8416c04e2dba3a3aa5404c157d
+
+# Resend API Key
+RESEND_API_KEY=re_NkUd7j2q_E5eSEYpCKihDMcjdh728UUCq

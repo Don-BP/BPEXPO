@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Mode - Mystery Box</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .teacher-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-lg);
+        }
+
+        .reward-item {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            padding: 0.5rem;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        .reward-list-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: var(--radius-md);
+            padding: 0.5rem;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="game-header" style="background: linear-gradient(135deg, #FF512F 0%, #DD2476 100%);">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='index.html'">← Back to Game</button>
+            <h1>⚙️ Teacher Mode - Mystery Box</h1>
+        </div>
+    </header>
+
+    <div class="teacher-container">
+        <!-- Editor -->
+        <div class="card" style="margin-bottom: var(--space-lg);">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
+                <h3>Edit Reward Set</h3>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary" onclick="newSet()">New Set</button>
+                    <button class="btn btn-primary" onclick="saveSet()">💾 Save Set</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Set Name</label>
+                <input type="text" id="set-name" class="form-input" placeholder="e.g. Standard Mix">
+            </div>
+
+            <div class="form-group">
+                <label>Rewards Configuration</label>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem;">Add rewards to the pool. The 'Weight'
+                    determines how many of this type are in the box pool.</p>
+
+                <div class="reward-list-container" id="rewards-list">
+                    <!-- JS Populated -->
+                </div>
+
+                <button class="btn btn-success" style="margin-top: 0.5rem;" onclick="addReward()">+ Add Reward
+                    Type</button>
+            </div>
+        </div>
+
+        <!-- Saved Sets -->
+        <div class="card">
+            <h3>Saved Sets</h3>
+            <div id="saved-list"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentSet = {
+            id: null,
+            name: '',
+            rewards: []
+        };
+
+        const DEFAULT_REWARDS = [
+            { type: 'points', value: 100, weight: 5 },
+            { type: 'points', value: 500, weight: 3 },
+            { type: 'bomb', value: 0, weight: 1 }
+        ];
+
+        function init() {
+            loadSavedList();
+            // Load default if needed
+            newSet();
+        }
+
+        function renderRewards() {
+            const list = document.getElementById('rewards-list');
+            list.innerHTML = '';
+
+            currentSet.rewards.forEach((r, i) => {
+                const div = document.createElement('div');
+                div.className = 'reward-item';
+                div.innerHTML = `
+                    <select class="form-input" style="width:120px;" onchange="updateReward(${i}, 'type', this.value)">
+                        <option value="points" ${r.type === 'points' ? 'selected' : ''}>Points</option>
+                        <option value="bomb" ${r.type === 'bomb' ? 'selected' : ''}>Bomb (Reset)</option>
+                        <option value="robber" ${r.type === 'robber' ? 'selected' : ''}>Robber (Steal)</option>
+                        <option value="swap" ${r.type === 'swap' ? 'selected' : ''}>Swap</option>
+                        <option value="multiply" ${r.type === 'multiply' ? 'selected' : ''}>Multiply</option>
+                    </select>
+                    
+                    <input type="number" class="form-input" style="width:100px;" value="${r.value}" 
+                           onchange="updateReward(${i}, 'value', this.value)" placeholder="Value" 
+                           ${['bomb', 'robber', 'swap'].includes(r.type) ? 'disabled' : ''}>
+                           
+                    <label>Qty:</label>
+                    <input type="number" class="form-input" style="width:70px;" value="${r.weight}" 
+                           onchange="updateReward(${i}, 'weight', this.value)" min="0">
+                           
+                    <button class="btn-icon" style="color:red;" onclick="removeReward(${i})">🗑️</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function addReward() {
+            currentSet.rewards.push({ type: 'points', value: 100, weight: 1 });
+            renderRewards();
+        }
+
+        function removeReward(index) {
+            currentSet.rewards.splice(index, 1);
+            renderRewards();
+        }
+
+        function updateReward(index, field, val) {
+            let value = val;
+            if (field === 'weight' || field === 'value') value = parseInt(val);
+            currentSet.rewards[index][field] = value;
+
+            // Re-render if type changed to toggle disabled state of value input
+            if (field === 'type') renderRewards();
+        }
+
+        function saveSet() {
+            const name = document.getElementById('set-name').value.trim();
+            if (!name) return alert("Please name your set");
+            if (currentSet.rewards.length === 0) return alert("Add at least one reward");
+
+            currentSet.name = name;
+            currentSet.id = currentSet.id || 'mys_' + Date.now();
+
+            const sets = getSavedSets();
+            sets[currentSet.id] = currentSet;
+            localStorage.setItem('mystery_sets', JSON.stringify(sets));
+
+            loadSavedList();
+            alert('Saved!');
+        }
+
+        function getSavedSets() {
+            const s = localStorage.getItem('mystery_sets');
+            return s ? JSON.parse(s) : {};
+        }
+
+        function loadSavedList() {
+            const sets = getSavedSets();
+            const list = document.getElementById('saved-list');
+            list.innerHTML = '';
+
+            Object.keys(sets).forEach(key => {
+                const s = sets[key];
+                if (key === 'default') return; // Don't allow editing default directly (or just hide it)
+
+                const div = document.createElement('div');
+                div.style.padding = '0.5rem';
+                div.style.background = '#f9f9f9';
+                div.style.marginBottom = '0.5rem';
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.innerHTML = `
+                    <span>${s.name} (${s.rewards.length} types)</span>
+                    <div>
+                        <button class="btn btn-sm btn-accent" onclick="loadSet('${key}')">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteSet('${key}')">Delete</button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function loadSet(id) {
+            const sets = getSavedSets();
+            currentSet = JSON.parse(JSON.stringify(sets[id]));
+            document.getElementById('set-name').value = currentSet.name;
+            renderRewards();
+        }
+
+        function deleteSet(id) {
+            if (!confirm("Delete this set?")) return;
+            const sets = getSavedSets();
+            delete sets[id];
+            localStorage.setItem('mystery_sets', JSON.stringify(sets));
+            loadSavedList();
+            if (currentSet.id === id) newSet();
+        }
+
+        function newSet() {
+            currentSet = { id: null, name: '', rewards: JSON.parse(JSON.stringify(DEFAULT_REWARDS)) };
+            document.getElementById('set-name').value = '';
+            renderRewards();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>

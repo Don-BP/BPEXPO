@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman - ALT Classroom Games</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header class="game-header header-hangman">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='../index.html'">← Back to Hub</button>
+            <h1>Hangman</h1>
+            <div class="right-actions">
+                <button class="btn-icon" onclick="toggleMute()" title="Sound">🔊</button>
+                <button class="btn-icon" onclick="window.location.href='teacher.html'" title="Teacher Mode">⚙️</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="game-container">
+
+        <div class="stats-bar" style="text-align: center; margin-bottom: 1rem;">
+            <div class="score" style="font-size: 1.2rem; font-weight: bold; color:#455a64;">Wins: <span
+                    id="win-count">0</span></div>
+        </div>
+
+        <!-- New Layout Wrapper -->
+        <div class="game-layout">
+
+            <!-- Top Section: Visual + Keyboard -->
+            <div class="top-row">
+                <!-- Visual (Left) -->
+                <div class="gallows-section">
+                    <svg width="200" height="250" viewBox="0 0 200 250">
+                        <!-- Structure -->
+                        <line x1="20" y1="230" x2="100" y2="230" class="structure" />
+                        <line x1="60" y1="230" x2="60" y2="20" class="structure" />
+                        <line x1="60" y1="20" x2="140" y2="20" class="structure" />
+                        <line x1="140" y1="20" x2="140" y2="50" class="structure" />
+
+                        <!-- Parts (Hidden by default) -->
+                        <circle cx="140" cy="70" r="20" class="part hidden" id="part-0" /> <!-- Head -->
+                        <line x1="140" y1="90" x2="140" y2="150" class="part hidden" id="part-1" /> <!-- Body -->
+                        <line x1="140" y1="100" x2="110" y2="130" class="part hidden" id="part-2" /> <!-- L Arm -->
+                        <line x1="140" y1="100" x2="170" y2="130" class="part hidden" id="part-3" /> <!-- R Arm -->
+                        <line x1="140" y1="150" x2="120" y2="190" class="part hidden" id="part-4" /> <!-- L Leg -->
+                        <line x1="140" y1="150" x2="160" y2="190" class="part hidden" id="part-5" /> <!-- R Leg -->
+                    </svg>
+                </div>
+
+                <!-- Keyboard (Right) -->
+                <div class="keyboard-section">
+                    <div class="keyboard" id="keyboard">
+                        <!-- Buttons injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section: Word Display -->
+            <div class="bottom-row">
+                <div id="word-display" class="word-display">
+                    <!-- Spans injected here -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Result Modal -->
+        <div id="result-modal" class="modal-overlay">
+            <div class="modal center-content">
+                <h2 id="result-title">Game Over</h2>
+                <p id="result-msg">The word was...</p>
+                <div id="word-reveal" class="word-reveal"></div>
+                <button class="btn btn-primary" onclick="initGame()">Play Again</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

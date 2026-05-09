@@ -1,0 +1,36 @@
+EXA + Firecrawl Setup Guide for Claude Code & Codex
+Your AI agent is only as good as the information it has. Without web search and scraping, it codes from memory -- hallucinated APIs, outdated patterns, and guesswork.
+
+EXA gives your agent real-time web search.
+Firecrawl gives it the ability to read any website.
+Together, they eliminate hallucination.
+
+What you're installing:
+EXA -- AI-native semantic search via MCP Server
+Firecrawl -- Web scraping, crawling, autonomous research agent, cloud browser via CLI + Skill
+
+EXA Quick Install (one command):
+claude mcp add --transport http -s user exa https://mcp.exa.ai/mcp
+
+
+Firecrawl Quick Install (one command):
+npx -y firecrawl-cli@latest init --all --browser
+
+
+The combo workflow:
+Agent needs info -> EXA searches for it (finds the right sources)
+Agent needs full content -> Firecrawl scrapes it (reads the page)
+Agent builds with real, current context -> zero hallucination
+
+Full setup guide attached below -- give the .md file directly to your Claude Code or Codex agent and tell it: "Set up EXA and Firecrawl using this guide."
+EXA Tools Available
+web_search_exa -- General web search
+get_code_context_exa -- Code-specific search
+company_research_exa -- Company intel
+deep_researcher_start -- Autonomous research agent
+Firecrawl CLI Commands
+firecrawl scrape <url> -- Get page as markdown
+firecrawl search "query" -- Web search
+firecrawl agent "task" -- Autonomous research
+firecrawl browser -- Cloud Chromium session
+AI Architect Academy | Stop hallucinating. Start researching.

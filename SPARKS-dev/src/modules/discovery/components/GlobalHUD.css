@@ -1,0 +1,37 @@
+/* src/components/GlobalHUD.css */
+
+.global-hud {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  width: calc(100% - 40px);
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* Children (top-level buttons) need pointer events */
+.global-hud>* {
+  pointer-events: auto;
+}
+
+/* This is a wrapper for a standard button, making it invisible */
+.hud-image-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  line-height: 0;
+  /* Helps align the image */
+}
+
+/* This styles ALL images within the HUD for consistent sizing */
+.hud-button-img {
+  height: 50px;
+  /* Adjust the height of all HUD buttons here */
+  width: auto;
+}

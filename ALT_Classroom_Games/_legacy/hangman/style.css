@@ -1,0 +1,256 @@
+body {
+    background-color: #eceff1;
+    font-family: 'Fredoka', sans-serif;
+}
+
+.game-container {
+    max-width: 1100px;
+    /* Increased max-width */
+    margin: 0 auto;
+    padding: 1rem;
+    min-height: calc(100vh - 80px);
+    /* Account for header */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Layout Grid */
+.game-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+    flex-grow: 1;
+}
+
+/* Top Row: Gallows (Left) + Keyboard (Right) */
+.top-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    /* Align top */
+    gap: 3rem;
+    flex-wrap: wrap;
+    /* allow wrap on small screens */
+}
+
+.gallows-section {
+    flex: 0 0 250px;
+    /* Fixed width for gallows */
+    display: flex;
+    justify-content: center;
+    background: white;
+    padding: 1rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.keyboard-section {
+    flex: 1;
+    min-width: 300px;
+    /* Prevent being too squished */
+    max-width: 600px;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Bottom Row: Word Display */
+.bottom-row {
+    width: 100%;
+    background: white;
+    padding: 2rem 1rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 120px;
+    /* Ensure space even if empty */
+}
+
+/* Visual Container (Gallows) */
+.gallows-section svg {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+}
+
+/* Word Display */
+.word-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    width: 100%;
+}
+
+.letter-slot {
+    width: 50px;
+    height: 70px;
+    border-bottom: 5px solid #37474f;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    font-size: 3rem;
+    /* BIG TEXT */
+    font-weight: bold;
+    color: #263238;
+}
+
+.letter-slot.space {
+    border-bottom: none;
+    width: 30px;
+}
+
+/* Keyboard */
+.keyboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.key-btn {
+    width: 45px;
+    height: 50px;
+    border: none;
+    border-radius: 8px;
+    background: #eceff1;
+    box-shadow: 0 3px 0 #cfd8dc;
+    font-family: inherit;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #455a64;
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.key-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 #b0bec5;
+    background: #fff;
+}
+
+.key-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #b0bec5;
+}
+
+.key-btn.correct {
+    background: #66bb6a;
+    color: white;
+    box-shadow: 0 3px 0 #388e3c;
+}
+
+.key-btn.wrong {
+    background: #ef5350;
+    color: white;
+    box-shadow: 0 3px 0 #d32f2f;
+}
+
+.key-btn:disabled {
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+    cursor: default;
+}
+
+
+/* Mobile Stack */
+@media (max-width: 768px) {
+    .top-row {
+        gap: 1rem;
+    }
+
+    .gallows-section {
+        flex: 1 1 100%;
+        /* Full width */
+        max-width: none;
+        padding: 0.5rem;
+    }
+
+    .gallows-section svg {
+        max-height: 150px;
+        /* Smaller gallows on mobile */
+    }
+
+    .keyboard-section {
+        flex: 1 1 100%;
+        padding: 1rem;
+    }
+
+    .key-btn {
+        width: 35px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .letter-slot {
+        width: 30px;
+        height: 50px;
+        font-size: 2rem;
+        border-bottom-width: 3px;
+    }
+
+    .bottom-row {
+        padding: 1rem;
+    }
+}
+
+/* SVG Styling */
+.structure {
+    stroke: #37474f;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+
+.part {
+    stroke: #d32f2f;
+    stroke-width: 4;
+    stroke-linecap: round;
+    fill: none;
+    transition: opacity 0.3s;
+}
+
+.part.hidden {
+    opacity: 0;
+}
+
+/* Result Modal Overlay - Keep existing */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 90%;
+    width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.word-reveal {
+    font-size: 2rem;
+    color: #d32f2f;
+    letter-spacing: 2px;
+    margin: 1rem 0;
+    font-weight: bold;
+}

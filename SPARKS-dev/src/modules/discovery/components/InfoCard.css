@@ -1,0 +1,131 @@
+/* src/components/InfoCard.css */
+
+.info-card-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: fit-content;
+}
+
+.info-card-button {
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease-out;
+  position: relative;
+  z-index: 10;
+}
+
+.info-card-button:hover {
+  transform: scale(1.05);
+}
+
+.card-icon-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.info-card-content-wrapper {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 146px;
+  background-color: white;
+  border: 6px solid #D72424;
+  border-radius: 70px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px 10px 170px;
+  overflow: visible;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  max-width: calc(100vw - 200px);
+  word-wrap: break-word;
+  width: var(--container-width, auto);
+}
+
+.info-card-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  container-type: size;
+  container-name: info-card-content;
+}
+
+.info-card-content p {
+  color: #D72424;
+  font-size: clamp(0.9rem, min(7cqw, 20cqh), 2rem);
+  font-weight: bold;
+  line-height: 1.15;
+  text-align: left;
+  white-space: pre-wrap;
+  margin: 0;
+  padding: 4px 0;
+  flex-basis: 80%;
+  flex-shrink: 0;
+  /* The key for the JS logic is to allow overflow to be measured */
+  overflow: hidden;
+  max-height: 100%;
+  word-wrap: break-word;
+  hyphens: auto;
+  text-size-adjust: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: block;
+  height: auto;
+}
+
+.content-spill-image {
+  height: 120%;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+  filter: drop-shadow(3px 5px 5px rgba(0, 0, 0, 0.3));
+  position: relative;
+  right: -2px;
+}
+
+.expanded-image-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+
+.expanded-image-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 80vw;
+  max-height: 80vh;
+}
+
+.expanded-image {
+  max-width: 80vw;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 8px;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+  transition: transform 0.2s ease;
+}
+
+.expanded-image:hover {
+  transform: scale(1.02);
+}

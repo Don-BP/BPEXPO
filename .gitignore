@@ -1,0 +1,46 @@
+.tmp/
+.agent/history/
+__pycache__/
+*.pyc
+
+# Environment files - DO NOT COMMIT
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+functions/.env
+
+# Sensitive credentials
+credentials.json
+google-services.json
+GoogleService-Info.plist
+
+# Dependencies
+node_modules/
+venv/
+
+# Activity scraper artefacts
+SPARKS-dev/scripts/.scrape-cache.json
+SPARKS-dev/scrape-failures.log
+
+# Large local-only directories — not needed by Vercel or CI
+shared-data/
+.agent/
+.claude/
+CC-Session-Logs/
+knowledge/
+docs/
+
+# Large binary assets — too big for GitHub, serve from Supabase Storage
+SPARKS-dev/public/shared-data/
+SPARKS-dev/public/audio/
+SPARKS-dev/public/assets/images/words/
+SPARKS-dev/public/assets/images/categories/
+ALT_Classroom_Games/public/shared-data/
+ALT_Classroom_Games/public/audio/
+*.mp4

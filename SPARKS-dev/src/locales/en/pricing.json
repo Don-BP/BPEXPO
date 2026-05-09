@@ -1,0 +1,117 @@
+{
+  "header": {
+    "title": "Pick your plan. Start teaching.",
+    "subtitle": "No credit card. No catches. Just great classroom tools."
+  },
+  "billing": {
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "annualSavings": "Save 35% — $54.99/year"
+  },
+  "tiers": {
+    "free": {
+      "name": "Free Forever",
+      "price": "$0",
+      "period": "always free",
+      "cta": "Start Free — No Card Needed",
+      "features": [
+        "9 classroom tools, yours forever",
+        "9 Word Box vocabulary categories",
+        "A handful of Song Library songs, free forever",
+        "15 Sparks to try AI lesson planning (3 plans!)",
+        "Watch an ad → unlock more tools, songs & categories for 2 hours",
+        "Lists & templates reset on close (saving is Pro)"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "badge": "⭐ Teachers Love This",
+      "priceMonthly": "$6.99",
+      "priceAnnual": "$4.58",
+      "periodMonthly": "/month",
+      "periodAnnual": "/month, billed annually",
+      "annualTotal": "$54.99/year — save 35%!",
+      "cta": "Upgrade to Pro",
+      "features": [
+        "All 20+ tools — unlocked forever, no ads",
+        "Every Scoreboard theme included",
+        "All Word Box categories + build your own sets",
+        "Full Song Library access",
+        "Save everything, synced across devices",
+        "500 Sparks/month — practically unlimited plans",
+        "Full lesson history + one-click PDF export",
+        "Zero ads, ever"
+      ]
+    },
+    "school": {
+      "name": "School",
+      "badge": "🏫 Coming Soon",
+      "description": "A plan built for whole schools and BOEs — currently in development. Get in touch to register your interest.",
+      "cta": "Get In Touch Early"
+    }
+  },
+  "featureTable": {
+    "title": "Full feature comparison",
+    "expand": "Show full comparison",
+    "collapse": "Hide comparison",
+    "sections": {
+      "toolsGames": "Tools & Games",
+      "wordBox": "Word Box",
+      "buildLink": "Build & Link",
+      "general": "General"
+    },
+    "rows": {
+      "freeTools": { "label": "Always-free tools", "free": "9 tools", "pro": "All 20+" },
+      "adTools": { "label": "Ad-unlock tools (2hr)", "free": "✅", "pro": "Not needed" },
+      "scoreboardThemes": { "label": "Scoreboard themes", "free": "3 themes", "pro": "All themes" },
+      "saving": { "label": "Save lists & templates", "free": "❌", "pro": "✅ Cloud sync" },
+      "freeCategories": { "label": "Free Word Box categories", "free": "9", "pro": "All" },
+      "adCategories": { "label": "Ad-unlock Word Box (2hr)", "free": "✅", "pro": "Not needed" },
+      "customSets": { "label": "Custom Word Box sets", "free": "❌", "pro": "✅" },
+      "songLibrary": { "label": "Song Library", "free": "A few free + ad unlock", "pro": "✅ Full access" },
+      "sparks": { "label": "Build & Link Sparks", "free": "15 (one-time)", "pro": "500/month" },
+      "adSparks": { "label": "Earn Sparks via ad", "free": "✅", "pro": "Not needed" },
+      "history": { "label": "Lesson history", "free": "❌", "pro": "✅" },
+      "pdfExport": { "label": "PDF / print export", "free": "❌", "pro": "✅" },
+      "ads": { "label": "Ads", "free": "Yes", "pro": "None" }
+    }
+  },
+  "faq": {
+    "title": "Got questions? We've got answers.",
+    "questions": [
+      {
+        "q": "What happens when my Sparks run out?",
+        "a": "Watch a short ad to earn 5 Sparks (enough for one AI lesson plan). Free users start with 15 Sparks (3 plans). Pro users get 500 Sparks per month — more than enough for any teacher."
+      },
+      {
+        "q": "Can I cancel my Pro plan anytime?",
+        "a": "Yes, always. For monthly plans, you keep Pro access until the end of your current billing month and won't be charged again. For annual plans, you keep full Pro access for the remainder of your paid year — annual subscriptions are non-refundable, but you are never charged again after cancelling."
+      },
+      {
+        "q": "Do the free tools ever go away?",
+        "a": "Never. All 9 free classroom tools, games, and 9 Word Box categories are yours forever — no tricks, no expiry. You can also unlock any Pro tool or Word Box category for free for a short time by watching a short ad."
+      },
+      {
+        "q": "Is there a discount for schools or BOEs in Japan?",
+        "a": "We're working on a dedicated School plan for groups of teachers. Contact us and we'll get you set up early with a custom deal."
+      },
+      {
+        "q": "What is the Song Library?",
+        "a": "A growing collection of fun, educational, and developmental English songs — perfect for ESL classrooms. A handful of songs are free forever, and free users can unlock the full library for a short time by watching an ad. Pro users get full access with no ads, always."
+      },
+      {
+        "q": "What is the School plan?",
+        "a": "The School plan is coming soon — built for groups of teachers at the same school or BOE. Contact us to register your interest and be first in line."
+      },
+      {
+        "q": "What if there's a tool or game I want that isn't in the app?",
+        "a": "We love feature requests! Contact us and tell us what you'd like to see. We're always working to expand Sparks with new tools, games, and features to make classroom life easier for teachers."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Level up your classroom! 🚀",
+    "startFree": "Start Free",
+    "goPro": "Go Pro Now"
+  }
+}

@@ -1,0 +1,853 @@
+/* ========= START: bp-tango-dev/src/BPTango.css (CORRECT AND FINAL FORMATTING) ========= */
+
+/* --- General App Layout --- */
+.App {
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.tango-header {
+  background-color: #006ace;
+  padding: 15px;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  
+  display: flex;
+  /* MODIFICATION: Switched to space-between to push the side containers to the edges. */
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tango-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  /* MODIFICATION: The title is now implicitly centered by the flex layout. */
+  text-align: center;
+}
+
+.header-side-container {
+  flex: 1; /* This makes both side containers take up equal space. */
+  display: flex;
+}
+
+.header-side-container:last-child {
+  justify-content: flex-end;
+}
+
+.header-nav-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid white;
+  border-radius: 10px;
+  color: white;
+  padding: 10px 25px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.header-nav-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.tango-main-content {
+  flex-grow: 1;
+  padding: 15px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 0;
+}
+
+/* --- Welcome Screen Styles --- */
+.tango-welcome-screen {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+
+  /* MODIFICATION: Added a fallback background color for this specific screen. */
+  background-color: #e0f7fa;
+  
+  /* The 'background-image' is handled by an inline style in the React component. */
+  background-size: cover;
+  background-position: center;
+}
+
+.action-lines-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%; 
+  height: 120%;
+  transform: translate(-50%, -50%);
+  /* MODIFICATION: Changed from 'contain' to 'cover'. This is the key fix for the animation edges. */
+  object-fit: cover;
+  opacity: 0.7;
+  z-index: 1; 
+  animation: shrink-grow 5s ease-in-out infinite;
+}
+
+/* MODIFICATION: New keyframes for the shrink/grow animation */
+@keyframes shrink-grow {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.welcome-video-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  height: auto;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.tango-welcome-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  /* MODIFICATION: Increased z-index to ensure it's on top of the new action lines */
+  z-index: 2;
+}
+
+.tango-welcome-logo {
+  max-width: 800px;
+  width: 100%;
+  height: auto;
+  animation: logo-float 3s ease-in-out infinite;
+}
+
+@keyframes logo-float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* MODIFICATION: Replaced old text button style with new image button style */
+.welcome-start-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease-out;
+}
+
+.welcome-start-button:hover {
+  transform: scale(1.05);
+}
+
+.welcome-start-button img {
+  display: block; /* Removes any extra space below the image */
+  max-width: 300px;
+  width: 100%;
+}
+
+.setup-video-bg {
+  position: fixed; /* Fixes the video to the viewport */
+  top: 50%;
+  left: 50%;
+  width: auto;
+  height: auto;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  z-index: -1; /* Places the video behind all other content */
+}
+
+/* --- Setup Screen Styles --- */
+.tango-setup-screen {
+  width: 100%;
+  /* FIX 1: Make the setup screen a flex container that fills 100% of its parent's height.
+     This is the first step to constraining the content. */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.tango-setup-section {
+  width: 100%;
+  /* MODIFICATION: Decreased the alpha from 0.9 to 0.8 to increase transparency. */
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.tango-category-picker {
+  /* FIX 2: Allow this section to grow and fill available vertical space.
+     The 'min-height: 0' is crucial to allow it to shrink if needed on smaller screens. */
+  flex: 1;
+  min-height: 0;
+}
+
+.tango-setup-header {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #1659d4;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 15px;
+  flex-shrink: 0;
+}
+
+.tango-grade-level-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.tango-grade-button {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 3px solid #b0bec5;
+  color: #37474f;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tango-grade-button:hover {
+  background-color: #eceff1;
+}
+
+.tango-grade-button.selected {
+  background-color: #2d6ccc;
+  border-color: #fff;
+  color: #fff;
+}
+
+.tango-category-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 15px;
+  padding: 5px 10px;
+  /* FIX 3: Make the grid container itself grow to fill its parent (.tango-category-picker).
+     This ensures the grid has a defined, non-overflowing area to lay out its items. */
+  flex-grow: 1;
+  min-height: 0;
+  /* MODIFICATION: Add 'align-content: start'. This is the key fix that prevents the grid rows from stretching vertically. */
+  align-content: start;
+  /* --- THIS IS THE FIX --- */
+  /* This centers the grid horizontally, fixing the landscape view on iPads. */
+  justify-content: center;
+}
+
+.tango-category-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 8px;
+  background-color: #fff;
+  border: 4px solid transparent;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.tango-category-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.tango-category-button.selected {
+  border-color: #ffc107;
+  background-color: #fffde7;
+}
+
+.tango-category-button.disabled {
+  filter: grayscale(100%);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tango-category-button.disabled:hover {
+  transform: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tango-category-image {
+  width: 100%;
+  flex: 1;
+  min-height: 0; 
+  object-fit: contain;
+  /* --- THIS IS THE FIX --- */
+  /* This prevents the image from growing too tall and pushing the text out on smaller buttons. */
+  max-height: 75%;
+}
+
+.tango-category-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  width: 100%;
+  line-height: 1.1;
+}
+
+.tango-start-button {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  background-color: #f57c00;
+  border: none;
+  border-radius: 15px;
+  padding: 15px 50px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+  flex-shrink: 0;
+}
+
+.tango-start-button:hover:not(:disabled) {
+  background-color: #ff9800;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* MODIFICATION: Add disabled state for start button */
+.tango-start-button:disabled {
+  background-color: #9e9e9e;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* MODIFICATION: New styles for the smaller button variant in the header */
+.tango-start-button.header-button {
+  font-size: 1.1rem;
+  padding: 10px 25px;
+  border-radius: 10px;
+  margin-top: 0;
+}
+
+/* --- Practice Screen Styles --- */
+.tango-practice-screen {
+  width: 100%;
+  flex-grow: 1;
+  min-height: 0; 
+  display: flex;
+  flex-direction: column;
+  background-color: #80deea;
+}
+
+.practice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 15px;
+  background-color: #00796b;
+  color: white;
+  flex-shrink: 0;
+  z-index: 5;
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.practice-nav-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid white;
+  border-radius: 8px;
+  color: white;
+  padding: 5px 10px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.practice-nav-button:hover:not(.active) {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.practice-nav-button.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.practice-nav-button img {
+  height: 26px;
+  vertical-align: middle;
+}
+
+.shuffle-button.active,
+.multi-button.active,
+.say-word-button.active {
+  background-color: #ffc107;
+  color: #333;
+  border-color: #fffde7;
+}
+
+.card-display-area {
+  flex-grow: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  /* --- FIX 1: Add bottom padding as a final safety buffer. --- */
+  padding-bottom: 10px; 
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.practice-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #004d40;
+  flex-shrink: 0;
+}
+
+.practice-arrow-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.practice-arrow-button:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.practice-arrow-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.practice-arrow-button img {
+  height: 60px;
+}
+
+.progress-indicator {
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/* --- Single Card View Styles --- */
+.single-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* This helps center the content block */
+  
+  /* FIX: Use a minimal gap to prevent extra spacing issues. */
+  gap: 2px;
+
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.flashcard-text-external {
+  font-size: 6rem;
+  font-weight: bold;
+  color: #004d40;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+  transition: opacity 0.4s ease;
+  opacity: 1;
+
+  /* FIX: Remove default browser margins to minimize space. */
+  margin: 0;
+}
+
+.flashcard-text-external.hidden {
+  opacity: 0;
+}
+
+/* --- Multi Card View Styles (NOW DYNAMIC) --- */
+.multi-card-view {
+  display: grid;
+  align-content: start;
+  /* --- THIS IS THE FIX --- */
+  /* This centers the entire grid horizontally if it's narrower than the container, preventing side cropping. */
+  justify-content: center;
+
+  /* This centers items within their own grid cells */
+  justify-items: center;
+  
+  /* User settings from previous turn */
+  row-gap: 15px;
+  column-gap: 10px;
+
+  width: 100%;
+  height: 100%;
+  padding-top: 10px;
+}
+
+.multi-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  width: 100%;
+}
+
+.multi-card-wrapper .flashcard-text-external.small {
+  /* --- FIX 2: Reduce font-weight from 600 to 500 for a cleaner look on iPads. --- */
+  font-weight: 500;
+  color: #004d40;
+  text-shadow: none;
+  line-height: 1.1;
+  width: 100%; 
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.multi-card-wrapper > div {
+  width: 100%; /* Will be overridden by inline style */
+  height: 100%; /* Will be overridden by inline style */
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.multi-card-wrapper .flashcard-scene {
+  width: 100%;
+  height: 100%;
+  perspective: 800px;
+}
+
+/* --- Flashcard Styles --- */
+.flashcard-scene {
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;                 /* Attempt to fill the container's width */
+  aspect-ratio: 1 / 1;          /* Enforce a square shape */
+  flex-grow: 1;                 /* Allow the card to grow vertically to fill space */
+  min-height: 0;                /* A crucial flexbox fix to allow proper shrinking */
+  max-width: 1000px;
+  max-height: 1000px;             /* Set a reasonable upper limit for very large screens */
+  perspective: 1200px;
+  cursor: pointer;
+}
+
+.flashcard {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.flashcard.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.flashcard-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.flashcard-front {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.flashcard-back {
+  background-color: #b2dfdb;
+  transform: rotateY(180deg);
+}
+
+.flashcard-image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+}
+
+.card-back-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-words-placeholder {
+  color: white;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 30px;
+  border-radius: 20px;
+}
+
+/* --- Side Menu & Modal Styles --- */
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* --- NEW: Style for the timer display --- */
+.timer-display {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ffc107; /* Make it stand out */
+  background-color: rgba(0, 0, 0, 0.25);
+  padding: 5px 15px;
+  border-radius: 8px;
+  font-family: monospace, sans-serif; /* Monospace for even number spacing */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.side-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.side-menu-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 320px;
+  height: 100%;
+  background-color: #f5f5f5;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.side-menu.is-open {
+  transform: translateX(0);
+}
+
+.side-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #004d40;
+  color: white;
+  flex-shrink: 0;
+}
+
+.side-menu-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.close-menu-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.side-menu-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.side-menu-content p {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 0;
+  line-height: 1.4;
+}
+
+.category-jump-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-jump-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.jump-button {
+  flex-grow: 1;
+  text-align: left;
+  padding: 8px 15px; /* Adjusted padding for better vertical alignment */
+  font-size: 1.1rem;
+  font-weight: bold;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px 0 0 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  
+  /* MODIFICATION: Use flexbox for easy alignment */
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between thumbnail and text */
+}
+
+.jump-button:hover:not(:disabled) {
+  background-color: #e0f2f1;
+}
+
+.jump-button.disabled {
+  background-color: #f0f0f0;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.category-thumbnail {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 5px;
+  background-color: #e0f2f1; /* A light background for images with transparency */
+  flex-shrink: 0; /* Prevents the image from shrinking */
+}
+
+.toggle-visibility-btn {
+  padding: 12px 15px;
+  font-size: 1.2rem;
+  border: 1px solid #ddd;
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  background-color: #ffffff;
+}
+
+.toggle-visibility-btn.visible {
+  color: #00796b;
+}
+
+.toggle-visibility-btn.hidden {
+  color: #ccc;
+  text-decoration: line-through;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px 40px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-width: 400px;
+  animation: modal-fade-in 0.3s ease-out;
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-content p {
+  font-size: 1.4rem;
+  color: #333;
+  margin: 0 0 25px 0;
+}
+
+.modal-content button {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+  background-color: #00796b;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 45px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal-content button:hover {
+  background-color: #009688;
+}
+
+/* ========= END: bp-tango-dev/src/BPTango.css (CORRECT AND FINAL FORMATTING) ========= */

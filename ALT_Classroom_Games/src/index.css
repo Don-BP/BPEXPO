@@ -1,0 +1,195 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Outfit:wght@300;400;700;900&family=Roboto+Mono:wght@400;700&family=Chewy&family=Fredoka:wght@400;600&display=swap');
+
+@theme {
+  /* Horror Palette (PRESERVED) */
+  --color-blood-red: #8a1c1c;
+  --color-fresh-blood: #dc2626;
+  --color-zombie-green: #4ade80;
+  --color-bone: #e5e5e5;
+  --color-dark-night: #020205;
+
+  /* Playful Palette (NEW) */
+  --color-fun-blue: #4CC9F0;
+  --color-fun-purple: #7209B7;
+  --color-fun-pink: #F72585;
+  --color-fun-yellow: #FFD60A;
+  --color-fun-green: #06D6A0;
+  --color-fun-orange: #FB5607;
+  --color-fun-bg: #E0F7FA;
+
+  /* Typography */
+  --font-horror: 'Creepster', cursive;
+  --font-mono: 'Roboto Mono', monospace;
+  --font-outfit: 'Outfit', sans-serif;
+  --font-fun: 'Chewy', cursive;
+  /* Headings */
+  --font-body-fun: 'Fredoka', sans-serif;
+  /* UI Text */
+
+  /* Elevations */
+  --shadow-neon: 0 0 10px rgba(78, 205, 196, 0.5), 0 0 20px rgba(78, 205, 196, 0.3);
+  --shadow-glass: 0 8px 32px 0 rgba(255, 255, 255, 0.3);
+  --shadow-card: 8px 8px 0px 0px rgba(0, 0, 0, 0.1);
+  --shadow-pop: 5px 5px 0px 0px rgba(0, 0, 0, 0.2);
+
+  /* Horror Shadows */
+  --shadow-blood: 0 0 15px rgba(220, 38, 38, 0.6);
+  --shadow-text-glow: 0 0 5px rgba(255, 255, 255, 0.5);
+
+  /* Animations */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-glow: pulseGlow 2s infinite;
+  --animate-dripping: drip 3s infinite;
+  --animate-shake: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+  --animate-bounce-fun: bounceFun 2s infinite;
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes pulseGlow {
+
+    0%,
+    100% {
+      opacity: 1;
+      filter: brightness(1);
+    }
+
+    50% {
+      opacity: 0.8;
+      filter: brightness(1.2);
+    }
+  }
+
+  @keyframes bounceFun {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px) rotate(2deg);
+    }
+  }
+
+  @keyframes drip {
+    0% {
+      transform: scaleY(1);
+      opacity: 0.8;
+    }
+
+    50% {
+      transform: scaleY(1.2);
+      opacity: 1;
+    }
+
+    100% {
+      transform: scaleY(1);
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes shake {
+
+    10%,
+    90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+      transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+      transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+      transform: translate3d(4px, 0, 0);
+    }
+  }
+}
+
+/* Global Styles */
+:root {
+  /* Default to dark mechanism only if user prefers, but we are overriding with specific themes */
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body-fun);
+  /* The default is now Playful. TypingDead must override this with a wrapper. */
+  background: linear-gradient(135deg, #4CC9F0 0%, #7209B7 100%);
+  color: #1a1a1a;
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll from bouncing elements */
+}
+
+/* Horror Utilities */
+.font-horror {
+  font-family: var(--font-horror);
+  letter-spacing: 0.1em;
+}
+
+.font-outfit {
+  font-family: var(--font-outfit);
+}
+
+.text-shadow-blood {
+  text-shadow: 2px 2px 0px #330000, 0 0 10px rgba(220, 38, 38, 0.8);
+}
+
+.border-grunge {
+  border-image: linear-gradient(to bottom, #444, #111) 1;
+}
+
+.bg-vignette {
+  background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.4) 60%, rgba(50, 0, 0, 0.6) 100%);
+}
+
+.text-gradient-blood {
+  background: linear-gradient(to bottom, #ff0000, #550000);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Playful Utilities */
+.font-chewy {
+  font-family: var(--font-fun);
+}
+
+.text-shadow-pop {
+  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+}
+
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-hover:hover {
+  transform: translateY(-5px) rotate(1deg);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+}

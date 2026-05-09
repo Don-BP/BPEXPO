@@ -1,0 +1,296 @@
+/* Memory Game Styles */
+
+/* Header */
+.game-header {
+    background: linear-gradient(135deg, #9C27B0 0%, #E040FB 100%);
+    box-shadow: var(--shadow-md);
+}
+
+/* Screens */
+.screen {
+    display: none;
+    padding: var(--space-2xl) 0;
+    min-height: 70vh;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* Setup Screen */
+.setup-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.setup-card h3 {
+    margin-bottom: var(--space-md);
+    color: var(--text-dark);
+}
+
+.input-select {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    background: var(--surface);
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+.input-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.team-buttons,
+.grid-buttons {
+    display: flex;
+    gap: var(--space-sm);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.team-count-btn,
+.grid-size-btn {
+    min-width: 120px;
+}
+
+.team-count-btn.active,
+.grid-size-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+.game-screen {
+    display: none;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.game-screen.active {
+    display: block;
+}
+
+/* Setup Card (Standardized) */
+.setup-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    max-width: 600px;
+    margin: var(--space-xl) auto;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+}
+
+.btn-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-group.centered {
+    justify-content: center;
+}
+
+.input-select {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1.1rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    background-color: white;
+}
+
+/* Button overrides */
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--border);
+    color: var(--text-light);
+}
+
+.btn-outline.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Score Board */
+.score-board {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-lg);
+    margin: var(--space-lg) 0;
+    flex-wrap: wrap;
+}
+
+.team-score {
+    background: var(--surface);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    min-width: 140px;
+    border: 3px solid transparent;
+    transition: all var(--transition-fast);
+}
+
+.team-score.active {
+    border-color: #9C27B0;
+    transform: scale(1.05);
+    background: #F3E5F5;
+    box-shadow: var(--shadow-md);
+}
+
+.team-name {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+}
+
+.team-points {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #9C27B0;
+    line-height: 1;
+}
+
+/* Turn Indicator */
+.turn-indicator {
+    text-align: center;
+    margin-bottom: var(--space-lg);
+    font-size: 1.5rem;
+    font-family: var(--font-heading);
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+/* Grid Layout */
+.memory-grid-container {
+    display: flex;
+    justify-content: center;
+    padding-bottom: var(--space-2xl);
+}
+
+.memory-grid {
+    display: grid;
+    gap: var(--space-sm);
+    /* Columns set via JS based on grid size */
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Card Styles */
+.memory-card {
+    aspect-ratio: 4/5;
+    position: relative;
+    cursor: pointer;
+    perspective: 1000px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.memory-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Bouncy flip */
+    transform-style: preserve-3d;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.memory-card:hover:not(.flipped) .memory-card-inner {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.memory-card.flipped .memory-card-inner {
+    transform: rotateY(180deg);
+}
+
+.memory-card.matched .memory-card-inner {
+    opacity: 0.6;
+    transform: rotateY(180deg) scale(0.95);
+}
+
+.memory-card-front,
+.memory-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    flex-direction: column;
+    padding: var(--space-xs);
+    overflow: hidden;
+}
+
+/* Front is the "back" of the playing card (the cover) */
+.memory-card-front {
+    background: linear-gradient(135deg, #1565C0 0%, #42A5F5 100%);
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    border: 2px solid white;
+}
+
+/* Back is the content (the reveal) */
+.memory-card-back {
+    background: white;
+    color: var(--text-dark);
+    transform: rotateY(180deg);
+    border: 3px solid var(--primary);
+}
+
+.card-content {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.card-image {
+    max-width: 80%;
+    max-height: 60%;
+    object-fit: contain;
+    margin-bottom: var(--space-xs);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .memory-grid {
+        gap: 0.5rem;
+    }
+
+    .memory-card {
+        aspect-ratio: 1;
+        /* Square on mobile */
+    }
+
+    .card-content {
+        font-size: 0.9rem;
+    }
+}

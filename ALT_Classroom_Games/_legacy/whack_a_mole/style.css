@@ -1,0 +1,253 @@
+:root {
+    --hole-bg: #8d6e63;
+    --hole-shadow: #5d4037;
+    --mole-bg: #fff;
+    --target-color: #ffeb3b;
+}
+
+body {
+    background-color: #aed581;
+    /* Grass green background */
+    overflow: hidden;
+}
+
+.game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header is handled globally */
+
+
+.stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.stat-box {
+    background: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 2px solid #ddd;
+}
+
+.target-display {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+    margin: 1rem 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.highlight {
+    color: var(--target-color);
+    text-transform: uppercase;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+    padding: 20px;
+    flex-grow: 1;
+    max-height: 600px;
+}
+
+.hole {
+    background: var(--hole-bg);
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 10px 20px var(--hole-shadow);
+    border-bottom: 5px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+}
+
+.mole {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    background: var(--mole-bg);
+    border-radius: 20px;
+    top: 100%;
+    /* Start hidden relative to hole */
+    left: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    transition: top 0.1s;
+    user-select: none;
+    border: 4px solid #eee;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    padding: 5px;
+    word-break: break-word;
+}
+
+.mole.up {
+    top: 10%;
+}
+
+.mole.correct {
+    background: #a5d6a7;
+    /* Green highlight */
+    border-color: #2e7d32;
+    animation: pulse 0.2s;
+}
+
+.mole.wrong {
+    background: #ef9a9a;
+    /* Red highlight */
+    border-color: #c62828;
+    animation: shake 0.3s;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    50% {
+        transform: translateX(5px);
+    }
+
+    75% {
+        transform: translateX(-5px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* Modals */
+.category-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.cat-btn {
+    font-size: 1.2rem;
+    padding: 1rem;
+}
+
+.center-content {
+    text-align: center;
+}
+
+/* Setup Screen */
+.setup-screen {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 800px;
+    width: 90%;
+    margin: auto;
+    /* Center vertically/horizontally */
+    flex-grow: 1;
+    /* Take up space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.setup-title {
+    font-size: 2.5rem;
+    color: #5d4037;
+    margin: 0;
+}
+
+.setup-subtitle {
+    font-size: 1.2rem;
+    color: #795548;
+    margin-top: -1rem;
+}
+
+.settings-group {
+    background: #f5f5f5;
+    padding: 1.5rem;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.setting-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #5d4037;
+}
+
+input[type=range] {
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.speed-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #795548;
+}
+
+.cat-btn {
+    transition: all 0.2s;
+    border: 4px solid transparent;
+}
+
+.cat-btn.selected {
+    transform: scale(1.05);
+    border-color: #5d4037;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-xl {
+    font-size: 1.5rem;
+    padding: 1rem 3rem;
+    border-radius: 50px;
+    margin-top: 1rem;
+}
+
+#active-game {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Utilities */
+.hidden {
+    display: none !important;
+}

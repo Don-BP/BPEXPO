@@ -1,0 +1,122 @@
+/* Card preview */
+.nm-card-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #555;
+}
+.nm-card-preview p { margin: 0; font-size: 0.95em; }
+
+/* Root */
+.nm-tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding: 1em;
+  box-sizing: border-box;
+  gap: 14px;
+  background: #f0f4f8;
+}
+.nm-tool.is-active {
+  background: #eaf7ea;
+}
+
+/* Controls */
+.nm-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+  flex-shrink: 0;
+  width: 100%;
+}
+.nm-control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.95em;
+}
+.nm-control-group label { font-weight: bold; color: #444; }
+.nm-control-group select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 2px solid #FDD835;
+  background: white;
+  font-family: inherit;
+  font-size: 0.9em;
+}
+.nm-control-group input[type="range"] {
+  border: none;
+}
+.nm-control-group input[type="range"] { width: 100px; }
+
+/* Start/Stop button */
+.nm-toggle-btn {
+  border-radius: 50px !important;
+  padding: 0 28px !important;
+  height: 44px !important;
+  font-size: 1em !important;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+/* Theme visual */
+.nm-visual-container {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  background: #dde3ea;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.nm-theme-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: opacity 0.15s ease;
+}
+
+/* Volume bar */
+.nm-meter-container {
+  width: 100%;
+  max-width: 500px;
+  height: 36px;
+  background: #e0e0e0;
+  border: 1px solid #ccc;
+  border-radius: 18px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.nm-meter-fill {
+  height: 100%;
+  width: 0%;
+  background: #5cb85c;
+  border-radius: 18px;
+  transition: width 0.1s linear, background-color 0.3s ease;
+}
+
+/* Status */
+.nm-status {
+  margin: 0;
+  font-weight: bold;
+  color: #555;
+  font-size: 1em;
+  min-height: 1.4em;
+  flex-shrink: 0;
+}
+
+/* Fullscreen: taller meter bar */
+@media (min-height: 600px) {
+  .nm-meter-container {
+    height: 46px;
+    max-width: 80%;
+  }
+}

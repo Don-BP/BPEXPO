@@ -1,0 +1,117 @@
+/* src/components/Quiz.css */
+
+.quiz-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+  gap: 20px;
+}
+
+.quiz-container h2 {
+    font-size: 3rem;
+    font-weight: 900;
+}
+
+.quiz-progress {
+    font-size: 1.2rem;
+    color: #666;
+    background-color: #eee;
+    padding: 5px 15px;
+    border-radius: 15px;
+}
+
+.quiz-question {
+  font-size: 2rem;
+  font-weight: bold;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+}
+
+.answer-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.option-btn {
+  flex-grow: 1;
+  min-width: 250px;
+  padding: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-dark);
+  border: none;
+  background-color: transparent;
+  background-image: var(--quiz-btn-default);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: all 0.2s ease;
+}
+
+.option-btn:hover:not(:disabled) {
+    background-image: var(--quiz-btn-hover);
+    transform: translateY(-3px);
+}
+
+.option-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.option-btn.correct {
+  background-image: var(--quiz-btn-correct);
+  transform: scale(1.05);
+  color: white;
+}
+
+.option-btn.incorrect {
+  background-image: var(--quiz-btn-incorrect);
+  color: white;
+}
+
+.feedback {
+  margin-top: 20px;
+  font-size: 2rem;
+  font-weight: bold;
+}
+.correct-text {
+    color: var(--secondary-green);
+}
+.incorrect-text {
+    color: #d32f2f;
+}
+
+.quiz-finished {
+    gap: 30px;
+}
+.final-score {
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+}
+.restart-image-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.restart-button-img {
+  height: 200px;
+  width: auto;
+}

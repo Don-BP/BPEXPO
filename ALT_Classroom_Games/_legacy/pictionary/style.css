@@ -1,0 +1,128 @@
+body {
+    background-color: #e0f7fa;
+    /* Light Cyan */
+    overscroll-behavior: none;
+    /* Prevent bounce */
+}
+
+.game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+/* Header is handled globally */
+
+
+.topic-box {
+    background: white;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.label {
+    font-weight: bold;
+    color: #555;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+#secret-word {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    transition: filter 0.3s;
+}
+
+.blur {
+    filter: blur(8px);
+    user-select: none;
+}
+
+/* Canvas */
+.canvas-container {
+    flex-grow: 1;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+    /* Critical for drawing on mobile */
+    cursor: crosshair;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Toolbar */
+.toolbar {
+    margin-top: 1rem;
+    background: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.colors {
+    display: flex;
+    gap: 10px;
+}
+
+.color-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s;
+}
+
+.color-btn.active {
+    transform: scale(1.2);
+    border-color: #333;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-tool {
+    background: #f0f0f0;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-tool:active {
+    background: #ddd;
+}
+
+.btn-xs {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+}

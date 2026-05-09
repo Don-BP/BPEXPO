@@ -1,0 +1,310 @@
+/* Uses CSS variables from AdminShell.css via .admin-shell scope */
+
+.al-root {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* ── Header ── */
+.al-header { margin-bottom: 0; }
+.al-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--admin-text-primary);
+    margin: 0 0 4px;
+}
+.al-subtitle {
+    font-size: 14px;
+    color: var(--admin-text-muted);
+    margin: 0;
+}
+
+/* ── Status bar ── */
+.al-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--admin-sidebar-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.al-status-bar__stats {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+.al-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.al-stat__label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--admin-text-muted);
+}
+.al-stat__value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--admin-text-primary);
+}
+
+/* ── Run Now button ── */
+.al-run-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--admin-accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+    font-family: inherit;
+    white-space: nowrap;
+}
+.al-run-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.al-run-btn__spinner {
+    animation: al-spin 1s linear infinite;
+}
+@keyframes al-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* ── Section titles ── */
+.al-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--admin-text-primary);
+    margin: 0 0 16px;
+}
+.al-subsection-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--admin-text-muted);
+    margin: 20px 0 10px;
+}
+
+/* ── Insights panel ── */
+.al-insights {
+    background: var(--admin-sidebar-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 10px;
+    padding: 24px;
+}
+.al-insights__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.al-insights__meta {
+    font-size: 12px;
+    color: var(--admin-text-muted);
+}
+.al-insights__summary {
+    font-size: 14px;
+    color: var(--admin-text-primary);
+    line-height: 1.6;
+    margin: 0 0 20px;
+}
+.al-insights__summary--muted {
+    color: var(--admin-text-muted);
+}
+
+/* ── Pattern cards ── */
+.al-patterns {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+}
+.al-pattern-card {
+    background: var(--admin-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.al-pattern-card__lift {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--admin-accent);
+}
+.al-pattern-card__pattern {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--admin-text-primary);
+    margin: 0;
+}
+.al-pattern-card__evidence {
+    font-size: 12px;
+    color: var(--admin-text-muted);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ── Hypotheses ── */
+.al-hypotheses { margin-top: 8px; }
+.al-hypothesis {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid var(--admin-border);
+}
+.al-hypothesis__label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--admin-accent);
+    background: var(--admin-accent-subtle);
+    border-radius: 4px;
+    padding: 2px 6px;
+    white-space: nowrap;
+    align-self: flex-start;
+    margin-top: 2px;
+}
+.al-hypothesis__text {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--admin-text-primary);
+    margin: 0 0 2px;
+}
+.al-hypothesis__rationale {
+    font-size: 12px;
+    color: var(--admin-text-muted);
+    margin: 0;
+}
+
+/* ── Badges ── */
+.al-badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+.al-badge--cron {
+    color: var(--admin-text-muted);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--admin-border);
+}
+.al-badge--manual {
+    color: var(--admin-accent);
+    background: var(--admin-accent-subtle);
+    border: 1px solid rgba(249,115,22,0.2);
+}
+
+/* ── Run history table ── */
+.al-history {
+    background: var(--admin-sidebar-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 10px;
+    padding: 24px;
+}
+.al-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.al-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--admin-text-muted);
+    padding: 0 12px 10px;
+    border-bottom: 1px solid var(--admin-border);
+}
+.al-table th:first-child { padding-left: 0; width: 24px; }
+.al-table td {
+    padding: 12px;
+    color: var(--admin-text-primary);
+    border-bottom: 1px solid var(--admin-border);
+    vertical-align: top;
+}
+.al-table td:first-child { padding-left: 0; }
+.al-table__row--clickable { cursor: pointer; }
+.al-table__row--clickable:hover td { background: rgba(255,255,255,0.02); }
+.al-table__chevron { color: var(--admin-text-muted); }
+.al-table__pattern {
+    color: var(--admin-text-muted);
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.al-table__detail td { background: var(--admin-bg); }
+
+/* ── Expanded detail ── */
+.al-detail {
+    padding: 12px 0 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.al-detail__summary {
+    font-size: 13px;
+    color: var(--admin-text-muted);
+    margin: 0;
+    line-height: 1.6;
+}
+.al-detail__section strong {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--admin-text-muted);
+    display: block;
+    margin-bottom: 6px;
+}
+.al-detail__section ul {
+    margin: 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.al-detail__section li {
+    font-size: 13px;
+    color: var(--admin-text-primary);
+    line-height: 1.5;
+}
+.al-detail__lift {
+    color: var(--admin-accent);
+    font-weight: 700;
+}
+
+/* ── Empty / loading / error ── */
+.al-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 40px 0;
+    color: var(--admin-text-muted);
+    text-align: center;
+}
+.al-empty p { margin: 0; font-size: 14px; }
+.al-loading, .al-error {
+    padding: 40px;
+    color: var(--admin-text-muted);
+    font-size: 14px;
+}

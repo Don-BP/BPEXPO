@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Power - ALT Classroom Games</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Hub-specific styles */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: var(--space-2xl) 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: var(--space-md);
+            text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-2xl);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .game-card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid transparent;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .game-card.tornado {
+            border-color: var(--primary);
+        }
+
+        .game-card.tornado:hover {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(255, 135, 135, 0.05) 100%);
+        }
+
+        .game-card.jeopardy {
+            border-color: var(--info);
+        }
+
+        .game-card.jeopardy:hover {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(75, 179, 241, 0.05) 100%);
+        }
+
+        .game-card.karuta {
+            border-color: var(--secondary);
+        }
+
+        .game-card.karuta:hover {
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.05) 0%, rgba(110, 221, 213, 0.05) 100%);
+        }
+
+        .game-card.wordle {
+            border-color: #2ecc71;
+        }
+
+        .game-card.wordle:hover {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.05) 0%, rgba(46, 204, 113, 0.1) 100%);
+        }
+
+        .game-card.bingo {
+            border-color: #9b59b6;
+        }
+
+        .game-card.bingo:hover {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.05) 0%, rgba(155, 89, 182, 0.1) 100%);
+        }
+
+        .game-card.whack {
+            border-color: #e67e22;
+        }
+
+        .game-card.whack:hover {
+            background: linear-gradient(135deg, rgba(230, 126, 34, 0.05) 0%, rgba(230, 126, 34, 0.1) 100%);
+        }
+
+        .game-card.pictionary {
+            border-color: #34495e;
+        }
+
+        .game-card.pictionary:hover {
+            background: linear-gradient(135deg, rgba(52, 73, 94, 0.05) 0%, rgba(52, 73, 94, 0.1) 100%);
+        }
+
+        .game-card.hangman {
+            border-color: #7f8c8d;
+        }
+
+        .game-card.hangman:hover {
+            background: linear-gradient(135deg, rgba(127, 140, 141, 0.05) 0%, rgba(127, 140, 141, 0.1) 100%);
+        }
+
+        .game-card.wheel {
+            border-color: #f1c40f;
+        }
+
+        .game-card.wheel:hover {
+            background: linear-gradient(135deg, rgba(241, 196, 15, 0.05) 0%, rgba(241, 196, 15, 0.1) 100%);
+        }
+
+        .game-icon {
+            font-size: 4rem;
+            margin-bottom: var(--space-md);
+            display: block;
+        }
+
+        .game-title {
+            font-size: 1.75rem;
+            margin-bottom: var(--space-sm);
+            color: var(--text-dark);
+        }
+
+        .game-description {
+            color: var(--text-light);
+            margin-bottom: var(--space-md);
+            line-height: 1.6;
+        }
+
+        .game-badges {
+            display: flex;
+            gap: var(--space-xs);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-md);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-teacher {
+            background: rgba(155, 89, 182, 0.15);
+            color: #8e44ad;
+        }
+
+        .badge-tablet {
+            background: rgba(52, 152, 219, 0.15);
+            color: #2980b9;
+        }
+
+        .badge-competitive {
+            background: rgba(231, 76, 60, 0.15);
+            color: #c0392b;
+        }
+
+        .placeholder-banner {
+            background: linear-gradient(135deg, var(--warning) 0%, var(--orange) 100%);
+            color: white;
+            padding: var(--space-md);
+            text-align: center;
+            font-weight: 500;
+            margin-bottom: var(--space-lg);
+            border-radius: var(--radius-md);
+        }
+
+        footer {
+            background: var(--text-dark);
+            color: white;
+            text-align: center;
+            padding: var(--space-xl) 0;
+            margin-top: var(--space-2xl);
+        }
+
+        footer p {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="fade-in">🎮 Brain Power Games</h1>
+            <p class="fade-in">Digital classroom games for ALTs teaching English in Japan</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Art Asset Notice -->
+        <div class="placeholder-banner fade-in">
+            ⚠️ <strong>Design Note:</strong> Placeholder graphics in use. Professional art assets will be added later.
+        </div>
+
+        <!-- Games Grid -->
+        <div class="games-grid">
+            <!-- Tornado Game Card -->
+            <div class="game-card tornado fade-in" onclick="window.location.href='tornado/index.html'">
+                <div class="game-icon">🌪️</div>
+                <h2 class="game-title">Tornado Game</h2>
+                <p class="game-description">
+                    Risk and reward! Teams answer questions to earn points, but watch out for tornadoes that wipe out
+                    your score.
+                </p>
+                <div class="game-badges">
+                    <span class="badge badge-teacher">Teacher-Led</span>
+                    <span class="badge badge-competitive">Competitive</span>
+                </div>
+                <button class="btn btn-primary" style="width: 100%;">Play Tornado Game</button>
+            </div>
+
+            <!-- Jeopardy Card -->
+            <div class="game-card jeopardy fade-in" onclick="window.location.href='jeopardy/index.html'"
+                style="animation-delay: 0.1s;">
+                <div class="game-icon">🎯</div>
+                <h2 class="game-title">Jeopardy</h2>
+                <p class="game-description">
+                    Classic quiz show format! Choose categories and point values. Answer correctly to add to your team's
+                    score.
+                </p>
+                <div class="game-badges">
+                    <span class="badge badge-teacher">Teacher-Led</span>
+                    <span class="badge badge-competitive">Competitive</span>
+                </div>
+                <button class="btn btn-secondary" style="width: 100%;">Play Jeopardy</button>
+            </div>
+
+            <!-- Karuta Card -->
+            <div class="game-card karuta fade-in" onclick="window.location.href='karuta/index.html'"
+                style="animation-delay: 0.2s;">
+                <div class="game-icon">🎴</div>
+                <h2 class="game-title">Vocabulary Karuta</h2>
+                <p class="game-description">
+                    Speed-based card matching! Listen to the word, then race to tap the correct card on your tablet.
+                </p>
+                <div class="game-badges">
+                    <span class="badge badge-tablet">Tablet Game</span>
+                    <span class="badge badge-competitive">Competitive</span>
+                </div>
+                <button class="btn btn-accent" style="width: 100%;">Play Karuta</button>
+            </div>
+
+            <!-- Hidden Picture Card -->
+            <div class="game-card hidden-picture fade-in" onclick="window.location.href='hidden_picture/index.html'"
+                style="animation-delay: 0.3s;">
+                <div class="game-icon">🖼️</div>
+                <h2 class="game-title">Hidden Picture</h2>
+                <p class="game-description">
+                    The mystery reveal game! Answer questions to remove tiles and guess the hidden image underneath.
+                </p>
+                <div class="game-badges">
+                    <span class="badge badge-teacher">Teacher-Led</span>
+                    <span class="badge badge-competitive">Co-op / Comp</span>
+                </div>
+                <button class="btn btn-primary" style="width: 100%;">Play Hidden Picture</button>
+            </div>
+
+            <!-- Memory Match Card -->
+            <div class="game-card memory fade-in" onclick="window.location.href='memory/index.html'"
+                style="animation-delay: 0.4s;">
+                <div class="game-icon">🧠</div>
+                <h2 class="game-title">Memory Match</h2>
+                <p class="game-description">
+                    Classic concentration game. Find matching pairs of words, images, or definitions on a customizable
+                    grid.
+                </p>
+                <div class="game-badges">
+                    <span class="badge badge-competitive">Competitive</span>
+                    <span class="badge badge-tablet">Tablet / Board</span>
+                </div>
+                <button class="btn btn-accent" style="width: 100%;">Play Memory Match</button>
+            </div>
+
+            <!-- Mystery Box Card -->
+            <div class="game-card mystery fade-in" onclick="window.location.href='mystery_box/index.html'"
+                style="animation-delay: 0.5s;">
+                <div class="game-icon">🎁</div>
+                <h2 class="game-title">Mystery Box</h2>
+                <p class="game-description">
+                    High energy points game! Answer questions to open boxes containing points, bombs, or swaps.
+                </p>
+                <div class="game-badges">
+                    <span class="badge badge-competitive">Competitive</span>
+                    <span class="badge badge-teacher">High Setup</span>
+                </div>
+                <button class="btn btn-primary" style="width: 100%;">Play Mystery Box</button>
+            </div>
+
+            <!-- Snakes & Ladders Card -->
+            <div class="game-card snakes fade-in" onclick="window.location.href='snakes_ladders/index.html'"
+                style="animation-delay: 0.6s;">
+                <div class="game-icon">🐍</div>
+                <h2 class="game-title">Snakes & Ladders</h2>
+                <p class="game-description">
+                    Classic board game with an educational twist! Answer questions to climb ladders or avoid snakes.
+                </p>
+                <div class="game-badges">
+                    <span class="badge badge-competitive">Competitive</span>
+                    <span class="badge badge-kiosk">Quiz Mode</span>
+                </div>
+                <button class="btn btn-success" style="width: 100%;">Play Board Game</button>
+            </div>
+
+            <!-- Wordle Card -->
+            <div class="game-card wordle fade-in" onclick="window.location.href='wordle/index.html'"
+                style="animation-delay: 0.7s;">
+                <div class="game-icon">🔤</div>
+                <h2 class="game-title">Word Detect</h2>
+                <p class="game-description">Guess the 5-letter hidden word! Use logic and spelling patterns to solve the
+                    puzzle.</p>
+                <div class="game-badges">
+                    <span class="badge badge-tablet">Tablet</span>
+                    <span class="badge badge-teacher">Spelling</span>
+                </div>
+                <button class="btn btn-success" style="width: 100%;">Play Word Detect</button>
+            </div>
+
+            <!-- Bingo Card -->
+            <div class="game-card bingo fade-in" onclick="window.location.href='bingo/index.html'"
+                style="animation-delay: 0.8s;">
+                <div class="game-icon">🎱</div>
+                <h2 class="game-title">Digital Bingo</h2>
+                <p class="game-description">Classic listening practice! Auto-generated cards for students. Teacher
+                    calls, students tap.</p>
+                <div class="game-badges">
+                    <span class="badge badge-tablet">Tablet</span>
+                    <span class="badge badge-teacher">Listening</span>
+                </div>
+                <button class="btn btn-secondary" style="width: 100%;">Play Bingo</button>
+            </div>
+
+            <!-- Whack-a-Mole Card -->
+            <div class="game-card whack fade-in" onclick="window.location.href='whack_a_mole/index.html'"
+                style="animation-delay: 0.9s;">
+                <div class="game-icon">🔨</div>
+                <h2 class="game-title">Vocabulary Pop</h2>
+                <p class="game-description">Fast-paced categorization! Tap ONLY the words that match the target
+                    category.</p>
+                <div class="game-badges">
+                    <span class="badge badge-tablet">Tablet</span>
+                    <span class="badge badge-teacher">Reaction</span>
+                </div>
+                <button class="btn btn-primary" style="width: 100%;">Play Vocab Pop</button>
+            </div>
+
+            <!-- Pictionary Card -->
+            <div class="game-card pictionary fade-in" onclick="window.location.href='pictionary/index.html'"
+                style="animation-delay: 1.0s;">
+                <div class="game-icon">🎨</div>
+                <h2 class="game-title">Draw & Guess</h2>
+                <p class="game-description">Creative vocabulary practice. One student draws, others guess the English
+                    word.</p>
+                <div class="game-badges">
+                    <span class="badge badge-tablet">Tablet</span>
+                    <span class="badge badge-competitive">Team</span>
+                </div>
+                <button class="btn btn-accent" style="width: 100%;">Play Draw & Guess</button>
+            </div>
+
+            <!-- Hangman Card -->
+            <div class="game-card hangman fade-in" onclick="window.location.href='hangman/index.html'"
+                style="animation-delay: 1.1s;">
+                <div class="game-icon">🕷️</div>
+                <h2 class="game-title">Hangman</h2>
+                <p class="game-description">The classic spelling game. Save the spider by guessing the letters before
+                    time runs out.</p>
+                <div class="game-badges">
+                    <span class="badge badge-teacher">Teacher-Led</span>
+                    <span class="badge badge-competitive">Spelling</span>
+                </div>
+                <button class="btn btn-secondary" style="width: 100%;">Play Hangman</button>
+            </div>
+
+            <!-- Wheel of Fortune Card -->
+            <div class="game-card wheel fade-in" onclick="window.location.href='wheel_fortune/index.html'"
+                style="animation-delay: 1.2s;">
+                <div class="game-icon">🎡</div>
+                <h2 class="game-title">Spin & Speak</h2>
+                <p class="game-description">Spin the wheel for a speaking challenge! Make sentences, answer questions,
+                    or win points.</p>
+                <div class="game-badges">
+                    <span class="badge badge-teacher">Teacher-Led</span>
+                    <span class="badge badge-competitive">Speaking</span>
+                </div>
+                <button class="btn btn-accent" style="width: 100%;">Play Spin & Speak</button>
+            </div>
+        </div>
+
+        <!-- Coming Soon Section -->
+        <section class="text-center mt-lg fade-in" style="animation-delay: 0.3s;">
+            <h2 style="color: var(--text-light); font-size: 1.5rem;">🚀 More Games Coming Soon</h2>
+            <p style="color: var(--text-light); margin-top: var(--space-sm);">
+                Sentence Scramble • Simon Says • Family Feud • Story Builder
+            </p>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Brain Power - ALT Dispatch Company</p>
+            <p style="margin-top: var(--space-xs); font-size: 0.9rem;">Making English learning fun for students across
+                Japan</p>
+        </div>
+    </footer>
+
+    <script>
+        // Prevent card click when clicking button
+        document.querySelectorAll('.game-card button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        });
+
+        // Add entrance animations on load
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.fade-in').forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+
+</html>

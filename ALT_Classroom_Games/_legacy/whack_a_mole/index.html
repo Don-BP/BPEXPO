@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Pop - ALT Classroom Games</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="game-header header-whack">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='../index.html'">← Back to Hub</button>
+            <h1>Vocabulary Pop</h1>
+            <div class="right-actions">
+                <button class="btn-icon" onclick="toggleMute()" title="Sound">🔊</button>
+                <button class="btn-icon" onclick="window.location.href='teacher.html'" title="Teacher Mode">⚙️</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="game-container">
+
+        <!-- Setup Screen -->
+        <div id="setup-screen" class="setup-screen">
+            <h2 class="setup-title">Select Target</h2>
+            <p class="setup-subtitle">Choose a category and speed to start hunting!</p>
+
+            <div class="category-grid">
+                <button class="btn btn-primary cat-btn" data-cat="FRUIT">🍎 Fruits</button>
+                <button class="btn btn-secondary cat-btn" data-cat="ANIMAL">🦁 Animals</button>
+                <button class="btn btn-accent cat-btn" data-cat="COLOR">🎨 Colors</button>
+                <button class="btn btn-success cat-btn" data-cat="VERB">🏃 Verbs</button>
+            </div>
+
+            <div class="settings-group">
+                <label for="speed-slider" class="setting-label">Mole Speed:</label>
+                <input type="range" id="speed-slider" min="1" max="3" value="2" step="1">
+                <div class="speed-labels">
+                    <span>Slow</span>
+                    <span>Normal</span>
+                    <span>Fast</span>
+                </div>
+            </div>
+
+            <button id="start-btn" class="btn btn-xl btn-primary" disabled>Start Game</button>
+        </div>
+
+        <!-- Active Game Area (Hidden initially) -->
+        <div id="active-game" class="hidden">
+            <!-- Stats Bar -->
+            <div class="stats-bar" style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem;">
+                <div class="stat-box">Score: <span id="score">0</span></div>
+                <div class="stat-box">Time: <span id="time-left">60</span>s</div>
+            </div>
+
+            <!-- Target Notification -->
+            <div id="target-display" class="target-display">
+                Tap: <span id="target-category" class="highlight">???</span>
+            </div>
+
+            <!-- Game Grid -->
+            <div class="grid-container">
+                <div class="hole" id="hole-0">
+                    <div class="mole" id="mole-0"></div>
+                </div>
+                <div class="hole" id="hole-1">
+                    <div class="mole" id="mole-1"></div>
+                </div>
+                <div class="hole" id="hole-2">
+                    <div class="mole" id="mole-2"></div>
+                </div>
+                <div class="hole" id="hole-3">
+                    <div class="mole" id="mole-3"></div>
+                </div>
+                <div class="hole" id="hole-4">
+                    <div class="mole" id="mole-4"></div>
+                </div>
+                <div class="hole" id="hole-5">
+                    <div class="mole" id="mole-5"></div>
+                </div>
+                <div class="hole" id="hole-6">
+                    <div class="mole" id="mole-6"></div>
+                </div>
+                <div class="hole" id="hole-7">
+                    <div class="mole" id="mole-7"></div>
+                </div>
+                <div class="hole" id="hole-8">
+                    <div class="mole" id="mole-8"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Modal -->
+        <div id="game-over-modal" class="modal-overlay">
+            <div class="modal center-content">
+                <h2>Game Over!</h2>
+                <p>Final Score: <span id="final-score">0</span></p>
+                <button class="btn btn-primary" onclick="location.reload()">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

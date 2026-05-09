@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<!-- ========= START: HEAD TAG ========= -->
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BP-PAY</title>
+  <link rel="icon" type="image/png" href="./assets/bp_favicon-Cn_tqiiO.png">
+
+  <!-- ADDED: ROBUST AUTHENTICATION & AUTHORIZATION SCRIPT -->
+  <script src="../js/auth.js"></script>
+  <script>
+    (function () {
+      // --- Step 1: Check if the user is logged in at all ---
+      if (!window.auth || !auth.isLoggedIn()) {
+        console.log('Auth check failed: Not logged in. Redirecting...');
+        window.location.href = '../login.html';
+        return; // Stop script execution
+      }
+
+      // --- Step 2: Check if the logged-in user has the correct role ---
+      // Define which roles are allowed to see this page.
+      // For BP-PAY, all logged-in users are allowed.
+      const allowedRoles = ['admin', 'alt', 'jte', 'user', 'student'];
+      const currentUser = auth.getCurrentUser();
+
+      if (!currentUser || !allowedRoles.includes(currentUser.role)) {
+        // If the user's role is not in the allowed list, deny access.
+        alert('Access Denied: You do not have permission to view this page.');
+        window.location.href = '../index.html'; // Redirect to the main hub
+        return; // Stop script execution
+      }
+
+      console.log('Auth and role check passed. Loading BP-PAY application...');
+    })();
+  </script>
+
+  <script type="module" crossorigin src="./assets/index-BK1jSayA.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-eLtWo3Pe.css">
+</head>
+<!-- ========= END: HEAD TAG ========= -->
+
+<body>
+  <div id="root"></div>
+  <!-- This script tag will now ONLY run if the auth check above passes -->
+
+</body>
+
+</html>

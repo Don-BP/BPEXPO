@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Mode - Memory Match</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .teacher-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-lg);
+        }
+
+        .editor-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .pair-list {
+            margin-top: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .pair-item {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            margin-bottom: 0.5rem;
+            border-radius: var(--radius-md);
+        }
+
+        .pair-half {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .type-select {
+            font-size: 0.8rem;
+            padding: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="game-header" style="background: linear-gradient(135deg, #9C27B0 0%, #E040FB 100%);">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='index.html'">← Back to Game</button>
+            <h1>⚙️ Teacher Mode - Memory Match</h1>
+        </div>
+    </header>
+
+    <div class="teacher-container">
+        <!-- Editor -->
+        <div class="editor-card">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
+                <div style="flex: 1; margin-right: var(--space-md);">
+                    <label class="form-label">Set Name</label>
+                    <input type="text" id="set-name" class="form-input" placeholder="e.g. Unit 3 Vocab">
+                </div>
+                <div>
+                    <button class="btn btn-secondary" onclick="newSet()">New</button>
+                    <button class="btn btn-primary" onclick="saveSet()">💾 Save Set</button>
+                </div>
+            </div>
+
+            <button class="btn btn-success" onclick="addPair()">+ Add Pair</button>
+
+            <div id="pairs-container" class="pair-list">
+                <!-- Javascript generates inputs here -->
+            </div>
+        </div>
+
+        <!-- Saved Sets -->
+        <div class="editor-card">
+            <h2>Saved Sets</h2>
+            <div id="saved-list"></div>
+        </div>
+
+        <!-- Import/Export -->
+        <div class="editor-card">
+            <h2>Import / Export</h2>
+            <textarea id="json-io" class="form-input" rows="3" placeholder="Paste JSON here..."></textarea>
+            <div style="margin-top: 1rem;">
+                <button class="btn btn-secondary" onclick="exportSets()">Export All</button>
+                <button class="btn btn-accent" onclick="importSets()">Import</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSet = {
+            id: null,
+            name: '',
+            pairs: []
+        };
+
+        function init() {
+            newSet();
+            loadSavedList();
+        }
+
+        function renderPairs() {
+            const container = document.getElementById('pairs-container');
+            container.innerHTML = '';
+
+            currentSet.pairs.forEach((pair, index) => {
+                const div = document.createElement('div');
+                div.className = 'pair-item';
+                div.innerHTML = `
+                    <div style="font-weight:bold; color: #666;">${index + 1}</div>
+                    <div class="pair-half">
+                        <select class="type-select" onchange="updatePair(${index}, 'aType', this.value)">
+                            <option value="text" ${pair.aType === 'text' ? 'selected' : ''}>Text</option>
+                            <option value="image" ${pair.aType === 'image' ? 'selected' : ''}>Image URL</option>
+                        </select>
+                        <input type="text" class="form-input" value="${pair.a}" onchange="updatePair(${index}, 'a', this.value)" placeholder="Side A">
+                    </div>
+                    <div style="font-size: 1.5rem;">↔</div>
+                    <div class="pair-half">
+                        <select class="type-select" onchange="updatePair(${index}, 'bType', this.value)">
+                            <option value="text" ${pair.bType === 'text' ? 'selected' : ''}>Text</option>
+                            <option value="image" ${pair.bType === 'image' ? 'selected' : ''}>Image URL</option>
+                        </select>
+                        <input type="text" class="form-input" value="${pair.b}" onchange="updatePair(${index}, 'b', this.value)" placeholder="Side B">
+                    </div>
+                    <button class="btn-icon" onclick="removePair(${index})" style="color:var(--danger)">🗑️</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addPair() {
+            currentSet.pairs.push({ a: '', aType: 'text', b: '', bType: 'text' });
+            renderPairs();
+        }
+
+        function removePair(index) {
+            currentSet.pairs.splice(index, 1);
+            renderPairs();
+        }
+
+        function updatePair(index, field, value) {
+            currentSet.pairs[index][field] = value;
+            // Rerender not needed for text input, but needed for select if we changed UI based on type (not doing that yet)
+        }
+
+        function saveSet() {
+            const name = document.getElementById('set-name').value.trim();
+            if (!name) return alert('Enter set name');
+            if (currentSet.pairs.length < 2) return alert('Need at least 2 pairs');
+
+            currentSet.name = name;
+            currentSet.id = currentSet.id || 'mem_' + Date.now();
+
+            const sets = getSavedSets();
+            sets[currentSet.id] = currentSet;
+            localStorage.setItem('memory_sets', JSON.stringify(sets));
+
+            loadSavedList();
+            alert('Saved!');
+        }
+
+        function getSavedSets() {
+            const saved = localStorage.getItem('memory_sets');
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        function loadSavedList() {
+            const sets = getSavedSets();
+            const list = document.getElementById('saved-list');
+            list.innerHTML = '';
+
+            Object.keys(sets).forEach(key => {
+                if (key === 'default') return; // Don't allow delete default
+                const s = sets[key];
+                const item = document.createElement('div');
+                item.className = 'saved-item';
+                item.style.padding = '1rem';
+                item.style.background = '#f8f9fa';
+                item.style.marginBottom = '0.5rem';
+                item.style.borderRadius = 'var(--radius-md)';
+
+                item.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center">
+                        <strong>${s.name} (${s.pairs.length} pairs)</strong>
+                        <div class="btn-group-saved">
+                            <button class="btn btn-sm btn-accent" onclick="loadSet('${key}')">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteSet('${key}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function loadSet(id) {
+            const sets = getSavedSets();
+            if (sets[id]) {
+                currentSet = JSON.parse(JSON.stringify(sets[id]));
+                document.getElementById('set-name').value = currentSet.name;
+                renderPairs();
+            }
+        }
+
+        function deleteSet(id) {
+            if (!confirm('Delete?')) return;
+            const sets = getSavedSets();
+            delete sets[id];
+            localStorage.setItem('memory_sets', JSON.stringify(sets));
+            loadSavedList();
+            if (currentSet.id === id) newSet();
+        }
+
+        function newSet() {
+            currentSet = {
+                id: null,
+                name: '',
+                pairs: [
+                    { a: '', aType: 'text', b: '', bType: 'text' },
+                    { a: '', aType: 'text', b: '', bType: 'text' },
+                    { a: '', aType: 'text', b: '', bType: 'text' },
+                    { a: '', aType: 'text', b: '', bType: 'text' },
+                ] // Start with 4 blanks
+            };
+            document.getElementById('set-name').value = '';
+            renderPairs();
+        }
+
+        function exportSets() {
+            document.getElementById('json-io').value = JSON.stringify(getSavedSets(), null, 2);
+        }
+
+        function importSets() {
+            try {
+                const data = JSON.parse(document.getElementById('json-io').value);
+                const current = getSavedSets();
+                localStorage.setItem('memory_sets', JSON.stringify({ ...current, ...data }));
+                loadSavedList();
+                alert('Imported!');
+            } catch (e) {
+                alert('Invalid JSON');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>

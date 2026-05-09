@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Iframe Bridge Test</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        .box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .unlocked {
+            color: green;
+        }
+
+        .locked {
+            color: red;
+        }
+
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Iframe Bridge Tester</h1>
+
+    <div class="box">
+        <h3>Bridge Status</h3>
+        <div id="status-display">Initializing...</div>
+    </div>
+
+    <div class="box">
+        <h3>Feature Test: "Premium Tool"</h3>
+        <div id="feature-status" class="status locked">LOCKED</div>
+        <br>
+        <button id="test-unlock-btn">Request Unlock (Simulate)</button>
+    </div>
+
+    <div class="box">
+        <h3>Parent Simulation (Debug)</h3>
+        <p>Use these buttons to simulate parent responses:</p>
+        <button onclick="simulateParentMessage({ type: 'UNLOCK_STATE', isPro: true })">Send PRO State</button>
+        <button onclick="simulateParentMessage({ type: 'UNLOCK_STATE', isPro: false })">Send FREE State</button>
+        <button onclick="simulateGrant()">Grant Unlock (2h)</button>
+    </div>
+
+    <script src="iframe-bridge.js"></script>
+    <script>
+        const bridge = window.iframeBridge;
+        bridge.init();
+
+        // UI Helpers
+        const statusDisplay = document.getElementById('status-display');
+        const featureStatus = document.getElementById('feature-status');
+        const unlockBtn = document.getElementById('test-unlock-btn');
+
+        function updateUI() {
+            statusDisplay.innerHTML = `
+                Embedded: ${bridge.isEmbedded}<br>
+                Is Pro: ${bridge.isPro}<br>
+                Unlocks: ${bridge.unlocks.size} active
+            `;
+
+            const isUnlocked = bridge.isUnlocked('premium_tool');
+            if (isUnlocked) {
+                featureStatus.textContent = 'UNLOCKED';
+                featureStatus.className = 'status unlocked';
+                unlockBtn.disabled = true;
+                unlockBtn.textContent = 'Unlocked!';
+            } else {
+                featureStatus.textContent = 'LOCKED';
+                featureStatus.className = 'status locked';
+                unlockBtn.disabled = false;
+                unlockBtn.textContent = 'Request Unlock';
+            }
+        }
+
+        // Listen for changes
+        bridge.onStateChange(updateUI);
+        updateUI(); // Initial render
+
+        // Action
+        unlockBtn.onclick = async () => {
+            console.log('Requesting unlock...');
+            unlockBtn.textContent = 'Requesting...';
+
+            // In real app, this waits for parent. 
+            // Here in standalone, it resolves immediately TRUE because bridge.isEmbedded is false?
+            // ARGH wait - if we are opening this file directly, isEmbedded is FALSE.
+            // So it simulates "Standalone Mode" where everything works.
+            // To test "Embedded Mode", we need to run this in an iframe or mock isEmbedded.
+
+            // For testing purposes, let's force isEmbedded to true if needed 
+            // (Wait, we can't easily force correct window.parent check without iframe)
+            // But we can verify that requestUnlock returns promise.
+
+            const result = await bridge.requestUnlock('premium_tool', 'Premium Tool');
+            console.log('Unlock result:', result);
+            updateUI();
+        };
+
+        // Simulators
+        window.simulateParentMessage = (data) => {
+            // Mock receiving message
+            // We can dispatch event directly since bridge listens to window
+            window.dispatchEvent(new MessageEvent('message', { data }));
+        };
+
+        window.simulateGrant = () => {
+            simulateParentMessage({
+                type: 'UNLOCK_GRANTED',
+                featureId: 'premium_tool',
+                expiresAt: Date.now() + 7200000
+            });
+        };
+
+        // If running standalone, fake an embedded environment for testing
+        if (!bridge.isEmbedded) {
+            document.body.insertAdjacentHTML('afterbegin', '<div style="background:orange;padding:5px">⚠️ Running Standalone - Bridge thinks it is NOT embedded. Parent simulation buttons will work via event dispatch.</div>');
+            // Monkey patch for testing
+            bridge.isEmbedded = true;
+            updateUI();
+        }
+
+    </script>
+</body>
+
+</html>

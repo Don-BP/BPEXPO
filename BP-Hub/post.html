@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Post - BP LABO</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+            position: relative;
+            background: radial-gradient(rgb(220, 241, 255) 30%, rgba(0, 119, 255, 0.639) 80%);
+        }
+        body::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('assets/main-bg.jpg'); background-size: cover;
+            background-position: center; opacity: 0.2; z-index: -1;
+        }
+        .container { max-width: 800px; margin: 20px auto; }
+        .post-container, .comments-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            color: white;
+            display: flex; /* Added for footer positioning */
+            flex-direction: column; /* Added for footer positioning */
+        }
+        
+        /* ========== MODIFIED: HEADER STYLES FOR AVATAR ========== */
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2); 
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .post-header-main { flex-grow: 1; }
+        .post-header-avatar img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            flex-shrink: 0; /* Prevents avatar from shrinking */
+        }
+        .post-header h1 { font-size: 2.5rem; margin: 0 0 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .post-meta { font-size: 0.9rem; color: #eee; }
+        .post-meta strong { color: #fff; }
+        /* =================== END MODIFICATION =================== */
+
+        .post-content { line-height: 1.7; font-size: 1.1rem; word-wrap: break-word; flex-grow: 1; }
+        .post-content img { max-width: 100%; height: auto; border-radius: 8px; }
+
+        /* ========== NEW: HIDE TRIX EDITOR FILENAME CAPTION ========== */
+        .post-content figcaption {
+            display: none;
+        }
+        /* ======================= END NEW ======================= */
+        
+        /* ========== NEW: POST FOOTER FOR TAGS ========== */
+        .post-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        .post-tags { text-align: left; }
+        .post-tag { display: inline-block; background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.9rem; margin-right: 8px; color: white; text-decoration: none; }
+        .post-tag:hover { background: rgba(0,0,0,0.4); }
+        /* ===================== END NEW ===================== */
+        
+        .video-container {
+            position: relative; padding-bottom: 56.25%; height: 0;
+            overflow: hidden; max-width: 100%; background: #000;
+            margin: 20px 0; border-radius: 8px;
+        }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .nav-links { margin-bottom: 20px; font-weight: 600; }
+        .nav-links a { color: #fff; text-decoration: none; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 8px; }
+        .comments-section { margin-top: 30px; padding: 20px; }
+        .comment { border-bottom: 1px solid rgba(255,255,255,0.2); padding: 15px 0; }
+        .comment:last-child { border-bottom: none; }
+        .comment-author { font-weight: bold; }
+        .comment-date { font-size: 0.8rem; color: #ddd; margin-left: 10px; }
+        .comment-body { margin-top: 5px; }
+        .comment-form textarea { width: 100%; padding: 10px; font-size: 1rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); resize: vertical; margin-bottom: 10px; box-sizing: border-box; background: rgba(0,0,0,0.2); color: white; }
+        .comment-form button { padding: 10px 15px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; background-color: #1877f2; color: white; }
+        .comment-form button:disabled { background-color: #ccd0d5; cursor: not-allowed; }
+        .loading, .error-state { text-align: center; padding: 50px; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-links"><a href="blog.html">&larr; Back to All Articles</a></div>
+        <main id="post-content-area"><div class="loading">Loading post...</div></main>
+        <section id="comments-area" style="display: none;"></section>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        function embedYouTubeVideos(htmlContent) {
+            if (!htmlContent) return '';
+            const youtubeRegex = /<a href="(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})[^"]*)">[^<]*<\/a>|(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11}))/g;
+            
+            return htmlContent.replace(youtubeRegex, (match, anchorUrl, anchorId, plainUrl, plainId) => {
+                const videoId = anchorId || plainId;
+                if (videoId) {
+                    return `<div class="video-container"><iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+                }
+                return match;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const postContentArea = document.getElementById('post-content-area');
+            const commentsArea = document.getElementById('comments-area');
+            const params = new URLSearchParams(window.location.search);
+            const slug = params.get('slug');
+
+            if (!slug) {
+                postContentArea.innerHTML = `<div class="error-state"><h2>Post Not Found</h2><p>No post specified in the URL.</p></div>`;
+                return;
+            }
+
+            try {
+                const { post } = await auth.getBlogPost(slug);
+                const { comments } = await auth.getPostComments(post.id);
+
+                renderPost(post);
+                renderComments(post, comments);
+
+            } catch (error) {
+                postContentArea.innerHTML = `<div class="error-state"><h2>Error</h2><p>Could not load the article. It may have been removed or the link is incorrect.</p></div>`;
+            }
+        });
+
+        function renderPost(post) {
+            document.title = `${post.title} - BP LABO`;
+            const postContentArea = document.getElementById('post-content-area');
+            const processedContent = embedYouTubeVideos(post.content);
+
+            // ========== MODIFIED: BUILD AVATAR, TAGS, AND FOOTER LOGIC ==========
+            const author = post.author || {};
+            const authorAvatarUrl = author.avatarUrl || 'assets/default-avatar.png';
+            
+            const avatarHtml = `
+                <div class="post-header-avatar">
+                    <img src="${authorAvatarUrl}" alt="${author.username || 'Staff'}">
+                </div>
+            `;
+
+            let footerHtml = '';
+            if (post.tags && post.tags.length > 0) {
+                const tagsHtml = post.tags.map(tag => 
+                    `<a href="blog.html?tag=${tag.slug}" class="post-tag">#${tag.name}</a>`
+                ).join('');
+                footerHtml = `
+                    <footer class="post-footer">
+                        <div class="post-tags">${tagsHtml}</div>
+                    </footer>
+                `;
+            }
+            // ======================= END MODIFICATION =======================
+
+            const article = document.createElement('article');
+            article.className = 'post-container';
+
+            // Construct the final HTML with the new structure
+            article.innerHTML = `
+                <header class="post-header">
+                    <div class="post-header-main">
+                        <h1></h1>
+                        <div class="post-meta">
+                            By <strong>${author.username || 'Staff'}</strong> on ${new Date(post.createdAt).toLocaleDateString()}
+                        </div>
+                    </div>
+                    ${avatarHtml}
+                </header>
+                <div class="post-content">${processedContent}</div>
+                ${footerHtml}
+            `;
+
+            // Safely set the title as text content
+            article.querySelector('h1').textContent = post.title;
+            
+            postContentArea.innerHTML = '';
+            postContentArea.appendChild(article);
+        }
+
+        function renderComments(post, comments) {
+            // This function remains unchanged
+            const commentsArea = document.getElementById('comments-area');
+            commentsArea.style.display = 'block';
+
+            let commentsHtml = `<h2>Comments (${comments.length})</h2><div id="comment-list">`;
+            if (comments.length > 0) {
+                commentsHtml += comments.map(comment => `
+                    <div class="comment">
+                        <span class="comment-author">${comment.author ? comment.author.username : 'User'}</span>
+                        <span class="comment-date">${new Date(comment.createdAt).toLocaleString()}</span>
+                        <p class="comment-body">${comment.content}</p>
+                    </div>
+                `).join('');
+            }
+            commentsHtml += '</div>';
+
+            if (post.allowComments) {
+                if (auth.isLoggedIn()) {
+                    commentsHtml += `
+                        <form class="comment-form" id="comment-form">
+                            <h4>Leave a Comment</h4>
+                            <textarea id="comment-text" rows="4" placeholder="Write your comment here..." required></textarea>
+                            <button type="submit">Post Comment</button>
+                        </form>
+                    `;
+                } else {
+                    commentsHtml += `<p style="margin-top: 20px;"><strong><a href="login.html">Log in</a> to leave a comment.</strong></p>`;
+                }
+            } else {
+                 commentsHtml += `<p style="margin-top: 20px;"><em>Comments are disabled for this post.</em></p>`;
+            }
+
+            commentsArea.innerHTML = commentsHtml;
+
+            const commentForm = document.getElementById('comment-form');
+            if (commentForm) {
+                commentForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const button = e.target.querySelector('button');
+                    const textArea = document.getElementById('comment-text');
+                    const content = textArea.value.trim();
+                    if (!content) return;
+
+                    button.disabled = true;
+                    button.textContent = 'Posting...';
+
+                    try {
+                        const { comment: newComment } = await auth.postComment(post.id, content);
+                        const commentList = document.getElementById('comment-list');
+                        const newCommentEl = document.createElement('div');
+                        newCommentEl.className = 'comment';
+                        newCommentEl.innerHTML = `
+                            <span class="comment-author">${newComment.author.username}</span>
+                            <span class="comment-date">${new Date(newComment.createdAt).toLocaleString()}</span>
+                            <p class="comment-body">${newComment.content}</p>
+                        `;
+                        commentList.appendChild(newCommentEl);
+                        textArea.value = '';
+                    } catch (error) {
+                        alert(`Error posting comment: ${error.message}`);
+                    } finally {
+                        button.disabled = false;
+                        button.textContent = 'Post Comment';
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

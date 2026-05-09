@@ -1,0 +1,225 @@
+/* Hidden file input */
+.dr-hidden { display: none; }
+
+/* Upload label styled as tool-btn pill (labels can't use the class directly) */
+.dr-upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 18px;
+  height: 44px;
+  background: linear-gradient(to bottom, #8BC34A, #7CB342);
+  color: #fff;
+  border: 2px solid white;
+  border-radius: 50px;
+  box-shadow: 0 3px 0 #558B2F;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: bold;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+.dr-upload-label:hover { filter: brightness(1.08); }
+
+/* Remove image button */
+.dr-remove-img-btn {
+  border-radius: 50px !important;
+  padding: 0 16px !important;
+  height: 36px !important;
+  font-size: 0.85em !important;
+}
+
+/* Root */
+.dr-tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 1em;
+  box-sizing: border-box;
+  background: #0a0a14;
+  gap: 16px;
+  position: relative;
+}
+
+/* Controls bar */
+.dr-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 16px;
+  flex-shrink: 0;
+}
+.dr-control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-weight: bold;
+}
+.dr-control-group select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 2px solid #FDD835;
+  background: white;
+  color: #333;
+  font-size: 0.9em;
+  font-family: inherit;
+}
+.dr-roll-btn {
+  border-radius: 50px !important;
+  padding: 0 44px !important;
+  height: 52px !important;
+  font-size: 1.2em !important;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+/* Three.js canvas container */
+.dr-canvas-container {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Dice stage */
+.dr-stage {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  width: 100%;
+}
+
+/* Individual die */
+.dr-die-scene {
+  perspective: 500px;
+  width: 120px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dr-die {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(15deg) rotateY(25deg);
+}
+
+/* Faces */
+.dr-face {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  backface-visibility: hidden;
+}
+.dr-face--front  { transform: rotateY(0deg)    translateZ(50px); }
+.dr-face--back   { transform: rotateY(180deg)  translateZ(50px); }
+.dr-face--right  { transform: rotateY(90deg)   translateZ(50px); }
+.dr-face--left   { transform: rotateY(-90deg)  translateZ(50px); }
+.dr-face--top    { transform: rotateX(90deg)   translateZ(50px); }
+.dr-face--bottom { transform: rotateX(-90deg)  translateZ(50px); }
+
+.dr-face-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.25), 0 0 8px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Pips */
+.dr-pip {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Roll animations — 3 variants for visual variety */
+@keyframes dr-tumble-a {
+  0%   { transform: rotateX(0deg)    rotateY(0deg)    rotateZ(0deg); }
+  30%  { transform: rotateX(400deg)  rotateY(600deg)  rotateZ(180deg); }
+  70%  { transform: rotateX(800deg)  rotateY(1200deg) rotateZ(360deg); }
+  100% { transform: rotateX(1080deg) rotateY(1800deg) rotateZ(540deg); }
+}
+@keyframes dr-tumble-b {
+  0%   { transform: rotateX(0deg)    rotateY(0deg)    rotateZ(0deg); }
+  30%  { transform: rotateX(600deg)  rotateY(400deg)  rotateZ(270deg); }
+  70%  { transform: rotateX(1000deg) rotateY(900deg)  rotateZ(450deg); }
+  100% { transform: rotateX(1440deg) rotateY(1260deg) rotateZ(720deg); }
+}
+@keyframes dr-tumble-c {
+  0%   { transform: rotateX(0deg)    rotateY(0deg)    rotateZ(0deg); }
+  30%  { transform: rotateX(500deg)  rotateY(700deg)  rotateZ(90deg); }
+  70%  { transform: rotateX(900deg)  rotateY(1400deg) rotateZ(270deg); }
+  100% { transform: rotateX(1260deg) rotateY(2160deg) rotateZ(450deg); }
+}
+
+/* Animation names separately so inline animationDuration overrides work */
+.dr-die.rolling {
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation-fill-mode: forwards;
+  animation-duration: 1.6s;
+}
+.dr-die.rolling.anim-a { animation-name: dr-tumble-a; }
+.dr-die.rolling.anim-b { animation-name: dr-tumble-b; }
+.dr-die.rolling.anim-c { animation-name: dr-tumble-c; }
+
+/* Result popup — centered overlay */
+.dr-result-popup {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.dr-result-content {
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 20px;
+  padding: 30px 24px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  animation: dr-popup 0.3s ease-out forwards;
+  min-width: 240px;
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+}
+.dr-result-content h3 { margin: 0 0 12px; font-size: 1.5em; color: #555; }
+.dr-result-total { font-size: clamp(3em, 20vw, 7em); font-weight: bold; color: #e63946; margin: 0 0 24px; line-height: 1; }
+.dr-result-close {
+  border-radius: 50px !important;
+  padding: 0 32px !important;
+  height: 44px !important;
+  font-size: 1em !important;
+  font-weight: bold;
+}
+@keyframes dr-popup {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.dr-scoreboard-btn {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  font-size: 1em !important;
+  flex-shrink: 0;
+}

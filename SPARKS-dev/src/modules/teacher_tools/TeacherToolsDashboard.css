@@ -1,0 +1,92 @@
+/* TeacherToolsDashboard.css — matches the HTML teacher tools page layout */
+
+.tt-dashboard {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #FFF9C4;
+  background-image:
+    radial-gradient(#F48FB1 3px, transparent 3px),
+    radial-gradient(#81C784 3px, transparent 3px);
+  background-size: 60px 60px;
+  background-position: 0 0, 30px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 40px;
+  font-family: 'Poppins', 'M PLUS Rounded 1c', sans-serif;
+  color: #3E2723;
+  box-sizing: border-box;
+}
+
+.tt-header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 10px 1em 1em;
+  width: 96%;
+  max-width: 1800px;
+  background: white;
+  border-radius: 0 0 50px 50px;
+  border: 6px solid #FDD835;
+  border-top: none;
+  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.tt-header h1 {
+  margin: 10px 0 0;
+  font-size: clamp(1.4em, 5vw, 2em);
+  font-weight: 900;
+  color: #3E2723;
+}
+
+.tt-icon-menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  z-index: 1000;
+}
+
+.tt-icon-menu button {
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #8BC34A, #7CB342);
+  border: 2px solid white;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #33691E, 0 5px 10px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  text-transform: none;
+  font-weight: normal;
+}
+
+.tt-icon-menu button:hover {
+  transform: translateY(-2px);
+}
+
+.tt-tool-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  width: 96%;
+  max-width: 1800px;
+  padding: 20px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .tt-tool-container {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  }
+}

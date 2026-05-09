@@ -1,0 +1,501 @@
+/* SocialPage.css — Social Media Manager styles */
+
+:root {
+  --social-status-active-bg: #1a4731;
+  --social-status-active-text: #4ade80;
+  --social-status-paused-bg: #5b3d11;
+  --social-status-paused-text: #fbbf24;
+  --social-status-stopped-bg: #4c1d24;
+  --social-status-stopped-text: #f87171;
+  --social-warning-bg: #5b3d11;
+  --social-warning-text: #92591a;
+  --social-error-bg: #4c1d24;
+  --social-error-text: #7f1d24;
+  --social-chip-scheduled: #60a5fa;
+  --social-chip-posted: #4ade80;
+  --social-chip-failed: #f87171;
+  --social-btn-text: #fff;
+}
+
+/* ── Page layout ──────────────────────────────────────────── */
+.social-page {
+    padding: 24px;
+    color: var(--admin-text-primary);
+    background: var(--admin-bg);
+    min-height: 100%;
+}
+
+.social-page__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.social-page__title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* ── Tabs ─────────────────────────────────────────────────── */
+.social-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--admin-border);
+    margin-bottom: 24px;
+}
+
+.social-tab {
+    background: transparent;
+    border: none;
+    color: var(--admin-text-muted);
+    padding: 12px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.social-tab:hover { color: var(--admin-text-primary); }
+
+.social-tab--active {
+    color: var(--admin-text-primary);
+    border-bottom-color: var(--admin-accent);
+}
+
+/* ── Platform Hub grid ────────────────────────────────────── */
+.social-platform-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.social-platform-card {
+    background: var(--admin-sidebar-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.social-platform-card--connected { border-color: var(--admin-accent); }
+
+.social-platform-card--disabled { opacity: 0.6; }
+
+.social-platform-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--admin-accent-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--admin-text-primary);
+}
+
+.social-connect-btn {
+    background: var(--admin-accent);
+    color: var(--social-btn-text);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.social-connect-btn:disabled {
+    background: var(--admin-border);
+    color: var(--admin-text-muted);
+    cursor: not-allowed;
+}
+
+/* ── Campaigns ────────────────────────────────────────────── */
+.social-campaign-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.social-campaign-card {
+    background: var(--admin-sidebar-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.social-campaign-card__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.social-campaign-card__body {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--admin-border);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.social-campaign-card__stats {
+    color: var(--admin-text-muted);
+    font-size: 13px;
+}
+
+/* ── Platform pills ───────────────────────────────────────── */
+.social-platform-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.social-platform-pill {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--admin-accent-subtle);
+    color: var(--admin-text-muted);
+}
+
+.social-platform-pill--active { background: var(--social-status-active-bg); color: var(--social-status-active-text); }
+.social-platform-pill--paused { background: var(--social-status-paused-bg); color: var(--social-status-paused-text); }
+.social-platform-pill--stopped { background: var(--social-status-stopped-bg); color: var(--social-status-stopped-text); }
+
+/* ── Status badges ────────────────────────────────────────── */
+.social-status-badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.social-status-badge--active { background: var(--social-status-active-bg); color: var(--social-status-active-text); }
+.social-status-badge--paused { background: var(--social-status-paused-bg); color: var(--social-status-paused-text); }
+.social-status-badge--draft { background: var(--admin-accent-subtle); color: var(--admin-text-muted); }
+.social-status-badge--completed { background: var(--social-status-active-bg); color: var(--social-chip-scheduled); }
+
+/* ── Forms ────────────────────────────────────────────────── */
+.social-form {
+    background: var(--admin-sidebar-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.social-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.social-label {
+    font-size: 12px;
+    color: var(--admin-text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.social-select,
+.social-input,
+.social-textarea {
+    background: var(--admin-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--admin-text-primary);
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.social-textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.social-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+}
+
+.social-generate-btn,
+.social-launch-btn {
+    background: var(--admin-accent);
+    color: var(--social-btn-text);
+    border: none;
+    border-radius: 6px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+.social-generate-btn:disabled,
+.social-launch-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Calendar ─────────────────────────────────────────────── */
+.social-calendar {
+    background: var(--admin-sidebar-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.social-calendar__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.social-calendar__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.social-calendar__day {
+    background: var(--admin-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+    padding: 8px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.social-calendar__day-label {
+    font-size: 11px;
+    color: var(--admin-text-muted);
+    margin-bottom: 4px;
+}
+
+/* ── Post chips ───────────────────────────────────────────── */
+.social-post-chip {
+    background: var(--admin-accent-subtle);
+    color: var(--admin-text-primary);
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 11px;
+    cursor: pointer;
+    border-left: 3px solid var(--admin-border);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.social-post-chip--scheduled { border-left-color: var(--social-chip-scheduled); }
+.social-post-chip--posted { border-left-color: var(--social-chip-posted); }
+.social-post-chip--failed { border-left-color: var(--social-chip-failed); }
+.social-post-chip--skipped { border-left-color: var(--admin-text-muted); opacity: 0.6; }
+
+/* ── Banners ──────────────────────────────────────────────── */
+.social-warning {
+    background: var(--social-warning-bg);
+    color: var(--social-status-paused-text);
+    border: 1px solid var(--social-warning-text);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.social-error {
+    background: var(--social-error-bg);
+    color: var(--social-status-stopped-text);
+    border: 1px solid var(--social-error-text);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 13px;
+}
+
+.social-empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--admin-text-muted);
+    background: var(--admin-sidebar-bg);
+    border: 1px dashed var(--admin-border);
+    border-radius: 8px;
+}
+
+/* ── Generic buttons ──────────────────────────────────────── */
+.social-btn {
+    border: 1px solid var(--admin-border);
+    background: transparent;
+    color: var(--admin-text-primary);
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.social-btn--primary {
+    background: var(--admin-accent);
+    color: var(--social-btn-text);
+    border-color: var(--admin-accent);
+}
+
+.social-btn--ghost { background: transparent; }
+
+.social-btn--danger {
+    background: var(--social-error-bg);
+    color: var(--social-status-stopped-text);
+    border-color: var(--social-error-text);
+}
+
+.social-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Spinner ──────────────────────────────────────────────── */
+.social-spin-icon {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: social-spin 0.7s linear infinite;
+}
+
+@keyframes social-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Loading state ─────────────────────────────────────────── */
+.social-loading {
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--admin-text-muted);
+    font-size: 14px;
+}
+
+/* ── Performance Panel ─────────────────────────────────────── */
+.performance-panel {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.performance-panel__title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--admin-text-primary);
+}
+
+.performance-panel__empty,
+.performance-panel__hint {
+    font-size: 13px;
+    color: var(--admin-text-muted);
+    margin: 0;
+}
+
+.performance-panel__stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.performance-stat-card {
+    background: var(--admin-sidebar-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.performance-stat-card__platform {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--admin-text-primary);
+    text-transform: capitalize;
+}
+
+.performance-stat-card__metric {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--admin-text-muted);
+}
+
+.performance-stat-card__metric strong {
+    color: var(--admin-text-primary);
+}
+
+.performance-panel__result {
+    background: var(--admin-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--admin-text-primary);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ── Shared ad-style inputs/buttons (PerformancePanel borrows these) */
+.ads-textarea {
+    background: var(--admin-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--admin-text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
+.ads-textarea:focus {
+    outline: none;
+    border-color: var(--admin-accent);
+}
+
+.ads-btn {
+    border: 1px solid var(--admin-border);
+    background: transparent;
+    color: var(--admin-text-primary);
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.ads-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ads-btn--primary {
+    background: var(--admin-accent);
+    color: #fff;
+    border-color: var(--admin-accent);
+}
+
+.ads-btn--primary:not(:disabled):hover {
+    opacity: 0.85;
+}

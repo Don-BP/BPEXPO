@@ -1,0 +1,223 @@
+/* Hidden Picture Styles */
+
+/* Screens */
+.screen {
+    display: none;
+    padding: var(--space-2xl) 0;
+    min-height: 70vh;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* Setup Screen */
+.setup-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.setup-card h3 {
+    margin-bottom: var(--space-md);
+    color: var(--text-dark);
+}
+
+.input-select {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    background: var(--surface);
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+.input-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.team-buttons,
+.grid-buttons {
+    display: flex;
+    gap: var(--space-sm);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.team-count-btn,
+.grid-size-btn {
+    min-width: 120px;
+}
+
+.team-count-btn.active,
+.grid-size-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* Game Container - Centered Layout (Like Tornado) */
+.game-container-centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-md);
+    gap: var(--space-md);
+    max-width: 1000px;
+    /* Consistent with other games */
+    margin: 0 auto;
+}
+
+/* Score Row (Replaces Sidebar) */
+.scores-row {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md);
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.team-score {
+    background: var(--surface);
+    border-radius: var(--radius-full);
+    /* Pill shape for modern look */
+    padding: 0.5rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    box-shadow: var(--shadow-sm);
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.team-score.active {
+    border-color: var(--primary);
+    background: #FFF3E0;
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+}
+
+.team-name {
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.team-points {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--secondary);
+}
+
+/* Main Area - Focus on Image */
+.main-area {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    /* Remove padding to maximize space */
+}
+
+/* Picture Frame */
+.picture-frame {
+    position: relative;
+    /* Responsive sizing logic */
+    width: 100%;
+    max-width: 70vh;
+    /* Scaled to viewport height for visibility */
+    aspect-ratio: 1;
+
+    background: #000;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+    border: 6px solid white;
+}
+
+#hidden-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.overlay-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    /* Columns defined in JS */
+}
+
+.cover-tile {
+    /* Gradient matching branding */
+    background: linear-gradient(135deg, var(--secondary) 0%, #2A9D8F 100%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 2rem;
+    font-family: var(--font-heading);
+    color: white;
+    font-weight: 700;
+    transition: all 0.2s ease-out;
+}
+
+.cover-tile:hover {
+    background: linear-gradient(135deg, #FF9F1C 0%, #FFBF69 100%);
+    transform: scale(0.95);
+    z-index: 10;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.cover-tile.revealed {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0);
+}
+
+/* Turn Display in Header */
+.turn-display {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.25rem 1rem;
+    border-radius: var(--radius-full);
+}
+
+/* Modal Polish */
+.question-text {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: var(--space-lg);
+}
+
+/* Touch/Mobile Opt */
+@media (max-width: 768px) {
+    .picture-frame {
+        max-width: 90vw;
+    }
+
+    .team-score {
+        padding: 0.4rem 1rem;
+        flex-direction: column;
+        border-radius: var(--radius-md);
+        gap: 0;
+    }
+
+    .team-points {
+        font-size: 1.2rem;
+    }
+}

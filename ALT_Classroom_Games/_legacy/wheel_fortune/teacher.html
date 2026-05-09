@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Mode - Spin & Speak</title>
+    <link rel="stylesheet" href="../style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        .teacher-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-lg);
+        }
+
+        .editor-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+            display: block;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            font-family: monospace;
+            font-size: 1.1rem;
+            resize: vertical;
+        }
+
+        .help-text {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .segment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .segment-item {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            background: #fff;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .segment-input {
+            flex-grow: 1;
+            padding: 0.8rem;
+            border: none;
+            font-size: 1.1rem;
+            outline: none;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 500;
+        }
+
+        .btn-delete {
+            background: #ffebee;
+            color: #c62828;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: #ffcdd2;
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 1rem;
+            border: 2px dashed #bbb;
+            background: #f9f9f9;
+            color: #666;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #e3f2fd;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="game-header header-wheel">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='index.html'">← Back to Game</button>
+            <h1>⚙️ Teacher Mode - Spin & Speak</h1>
+        </div>
+    </header>
+
+    <div class="teacher-container">
+        <!-- Editor Section -->
+        <div class="editor-card">
+            <h2>Wheel Segments</h2>
+            <p class="help-text">Customize your wheel! Add your own questions, challenges, or points.</p>
+
+            <div id="segment-list" class="segment-list">
+                <!-- Segments injected here -->
+            </div>
+
+            <button class="btn-add" onclick="addSegment('')">+ Add New Segment</button>
+
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 2px solid #eee; padding-top: 1rem;">
+                <span id="word-count" style="font-weight: bold; color: var(--primary);">0 segments</span>
+                <div>
+                    <button class="btn btn-secondary" onclick="clearWords()">Reset to Default</button>
+                    <button class="btn btn-primary" onclick="saveWords()">💾 Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'wheel_custom_words';
+        // Default backup if reset
+        const DEFAULTS = [
+            "Speak 1 Min", "Free Point", "Lose Point", "Dance!",
+            "Question?", "Double Pts", "Sing Song", "Group High-5"
+        ];
+
+        function init() {
+            loadWords();
+        }
+
+        function loadWords() {
+            const list = document.getElementById('segment-list');
+            list.innerHTML = ''; // Clear
+
+            const saved = localStorage.getItem(STORAGE_KEY);
+            let words = DEFAULTS;
+
+            if (saved) {
+                try {
+                    words = JSON.parse(saved);
+                } catch (e) { console.error("Parse error", e); }
+            }
+
+            // Ensure words is an array
+            if (!Array.isArray(words)) words = DEFAULTS;
+
+            words.forEach(w => addSegment(w));
+            updateCount();
+        }
+
+        function addSegment(text = '') {
+            const list = document.getElementById('segment-list');
+            const div = document.createElement('div');
+            div.className = 'segment-item';
+
+            div.innerHTML = `
+                <span style="font-size:1.5rem;">🎡</span>
+                <input type="text" class="segment-input" value="${text}" placeholder="Enter text...">
+                <button class="btn-delete" title="Remove" onclick="this.parentElement.remove(); updateCount();">✕</button>
+            `;
+
+            list.appendChild(div);
+            // Focus new input if empty
+            if (text === '') div.querySelector('input').focus();
+            updateCount();
+        }
+
+        function saveWords() {
+            const inputs = document.querySelectorAll('.segment-input');
+            const words = Array.from(inputs).map(input => input.value.trim()).filter(w => w.length > 0);
+
+            if (words.length < 2) {
+                alert(`Please enter at least 2 segments for the wheel.`);
+                return;
+            }
+
+            // Warnings
+            if (words.length > 20) {
+                if (!confirm(`You have ${words.length} segments. The wheel might look crowded. Continue?`)) return;
+            }
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(words));
+            alert('Custom wheel saved!');
+            updateCount();
+        }
+
+        function clearWords() {
+            if (confirm("Reset to default wheel configuration?")) {
+                localStorage.removeItem(STORAGE_KEY);
+                loadWords(); // Re-load (which defaults to DEFAULTS)
+                alert('Reset to default.');
+            }
+        }
+
+        function updateCount() {
+            const count = document.querySelectorAll('.segment-item').length;
+            document.getElementById('word-count').textContent = `${count} segments`;
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

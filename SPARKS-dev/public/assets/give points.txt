@@ -1,0 +1,9 @@
+const currentData = JSON.parse(localStorage.getItem('bpEchoPlayerData'));
+if (currentData) {
+    currentData.unlockPoints = 50;
+    localStorage.setItem('bpEchoPlayerData', JSON.stringify(currentData));
+    console.log("Success! You now have 50 Unlock Points.");
+    window.location.reload();
+} else {
+    console.log("No player data found. Please create a username first.");
+}

@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"deno.enablePaths": [
+			"SPARKS-dev/supabase/functions"
+		],
+		"deno.lint": true,
+		"deno.unstable": false
+	}
+}

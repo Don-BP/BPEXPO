@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BP-Labo | The Future of Classroom Technology</title>
+    <link rel="icon" type="image/png" href="assets/bp_favicon.png">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+JP:wght@300;400;700&display=swap">
+    <style>
+        :root {
+            --primary-blue: #0077ff;
+            --secondary-blue: #096ad8;
+            --dark-blue: #003366;
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --text-white: #ffffff;
+            --text-gray: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background: radial-gradient(rgb(220, 241, 255) 30%, rgba(0, 119, 255, 0.639) 80%);
+            color: var(--text-white);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Fixed Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assets/main-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2;
+            z-index: -1;
+        }
+
+        /* Language Toggle */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 0 0 10px rgba(0, 119, 255, 0.5);
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            transition: transform 0.2s;
+            border: 1px solid var(--glass-border);
+        }
+
+        .back-btn:hover {
+            transform: scale(1.05);
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Sections */
+        section {
+            /* min-height: 100vh; REMOVED to reduce spacing */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+            /* Reduced padding */
+            position: relative;
+        }
+
+        /* Hero Section */
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            padding-top: 20px;
+            /* Reduced from 100px to move logo up */
+        }
+
+        .logo-large {
+            max-width: 600px;
+            width: 100%;
+            margin-bottom: 2rem;
+            margin-top: -20px;
+            /* Pull logo up further */
+            animation: fadeInDown 1.5s ease-out both;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(0, 119, 255, 0.6);
+            animation: fadeInUp 1.5s ease-out 0.5s both;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1.5s ease-out 0.8s both;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 30px rgba(0, 119, 255, 0.4);
+            transition: all 0.3s ease;
+            animation: bounceIn 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) 1.2s both;
+        }
+
+        .hero-cta:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px rgba(0, 119, 255, 0.8);
+        }
+
+        /* Feature Showcase Layout */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .feature-grid.reverse {
+            direction: rtl;
+        }
+
+        .feature-grid.reverse .feature-text {
+            direction: ltr;
+            /* Reset text direction */
+            text-align: left;
+        }
+
+        .feature-image-wrapper {
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .feature-img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.5s ease;
+            transform: rotateY(5deg) rotateX(5deg);
+        }
+
+        .feature-img:hover {
+            transform: rotateY(0) rotateX(0) scale(1.02);
+        }
+
+        .feature-text {
+            color: white;
+        }
+
+        .feature-label {
+            color: var(--secondary-blue);
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .feature-desc {
+            font-size: 1.6rem;
+            line-height: 1.8;
+            color: #ffffff;
+            /* Prioritized readability with larger font */
+            background: transparent;
+            padding: 20px 0;
+            position: relative;
+            filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.9));
+        }
+
+        /* Subtle backing behind words to enhance readability without full box */
+        .feature-desc .word-anim {
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .feature-title {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            /* Stronger shadow for title */
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+            color: white;
+            /* Ensure white text pop */
+            background: none;
+            /* remove gradient text if it conflicts with shadow visibility */
+            -webkit-text-fill-color: initial;
+            background-clip: border-box;
+        }
+
+        /* Animations classes */
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 1s ease;
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 1s ease;
+        }
+
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease;
+        }
+
+        .visible {
+            opacity: 1;
+            transform: translateX(0) translateY(0);
+        }
+
+        /* Game Section */
+        .game-section {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .game-area {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .game-card {
+            background: white;
+            color: #333;
+            width: 120px;
+            height: 120px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            user-select: none;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.1);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .game-card:active {
+            transform: scale(0.95);
+        }
+
+        .game-target {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--secondary-blue);
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(0, 195, 255, 0.5);
+            min-height: 60px;
+        }
+
+        .game-feedback {
+            height: 40px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+
+        .feedback-success {
+            color: #4ade80;
+            animation: bounceIn 0.5s;
+        }
+
+        .feedback-fail {
+            color: #f87171;
+            animation: shake 0.5s;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 50px 20px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+
+            70% {
+                transform: scale(0.9);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .feature-grid.reverse {
+                direction: ltr;
+            }
+
+            .feature-grid.reverse .feature-image-wrapper {
+                order: -1;
+            }
+
+            /* Image always on top for mobile */
+            .feature-title {
+                font-size: 2rem;
+            }
+
+            .game-card {
+                width: 90px;
+                height: 90px;
+                font-size: 3rem;
+            }
+        }
+
+        /* --- Text Animations --- */
+        .char {
+            display: inline-block;
+            opacity: 0;
+            animation-duration: 0.5s;
+            animation-fill-mode: forwards;
+            animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes charSlideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) rotate(-10deg);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) rotate(0);
+            }
+        }
+
+        @keyframes charSlideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes wordPopIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) translateY(20px);
+            }
+
+            70% {
+                transform: scale(1.1) translateY(-5px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .hero-title .char {
+            color: #ffffff;
+            text-shadow: 0 5px 15px rgba(0, 119, 255, 0.5);
+        }
+
+        .word-anim {
+            display: inline-block;
+            margin-right: 0.3em;
+            opacity: 0;
+        }
+
+        /* --- Word Hunt Game Styles --- */
+        .word-hunt-section {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .word-hunt-button {
+            background: linear-gradient(45deg, #ff00cc, #3333ff);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 0, 204, 0.5);
+            animation: pulse 2s infinite;
+            transition: all 0.3s ease;
+        }
+
+        .word-hunt-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(255, 0, 204, 0.8);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 0, 204, 0.7);
+            }
+
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 20px rgba(255, 0, 204, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 0, 204, 0);
+            }
+        }
+
+        .word-hunt-counter {
+            position: fixed;
+            top: 20px;
+            left: 80px;
+            /* Next to back button */
+            z-index: 1001;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            border: 2px solid #ff00cc;
+            display: none;
+            /* Hidden by default */
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px rgba(255, 0, 204, 0.5);
+        }
+
+        .word-hunt-target {
+            cursor: pointer;
+            /* Hidden highlight: border-bottom: 2px dashed rgba(255, 255, 255, 0.5); */
+            transition: all 0.2s;
+        }
+
+        .word-hunt-target:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .word-hunt-found {
+            background: #4ade80 !important;
+            color: #000 !important;
+            border-radius: 5px;
+            padding: 2px 5px;
+            border-bottom: none;
+            animation: wordFound 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 10px #4ade80;
+        }
+
+        .confetti {
+            position: fixed;
+            top: -10px;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(720deg);
+            }
+        }
+
+        /* --- Slideshow Styles (Fade Transition) --- */
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            /* Merged Visual Styles */
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+
+            /* Grid Layout for Stacking Fade */
+            display: grid;
+            grid-template-areas: "stack";
+
+            /* 3D Effects */
+            transition: transform 0.5s ease;
+            transform: rotateY(5deg) rotateX(5deg);
+            transform-style: preserve-3d;
+            background: #000;
+        }
+
+        .slideshow-container:hover {
+            transform: rotateY(0) rotateX(0) scale(1.02);
+        }
+
+        .slide {
+            grid-area: stack;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            /* Wait 3s (duration of fade in) then instantly disappear */
+            /* This keeps the old slide visible BEHIND the new one */
+            transition: opacity 0s linear 3s;
+            z-index: 1;
+            display: block;
+        }
+
+        .slide.active-slide {
+            opacity: 1;
+            /* 3s smooth fade in for the new slide on top */
+            transition: opacity 3s ease-in-out;
+            z-index: 2;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .dots-container {
+            grid-area: stack;
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            /* Robust flex centering */
+            gap: 10px;
+            z-index: 10;
+            margin-bottom: 0;
+            pointer-events: none;
+        }
+
+        .dots-container .dot {
+            pointer-events: auto;
+            cursor: pointer;
+            /* Dot Visuals */
+            height: 8px;
+            width: 8px;
+            margin: 0 4px;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .dot.active {
+            background-color: #fff;
+            transform: scale(1.2);
+        }
+
+
+
+        @keyframes wordFound {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.5);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Instructions Modal */
+        .word-hunt-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            border: 2px solid #ff00cc;
+            box-shadow: 0 0 50px rgba(255, 0, 204, 0.3);
+            max-width: 700px;
+            color: white;
+            animation: bounceIn 0.5s;
+        }
+
+        .modal-content h2 {
+            font-size: 2.5rem;
+            color: #ff00cc;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .modal-content button {
+            background: #4ade80;
+            color: #003366;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .modal-content button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #4ade80;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f2d74e;
+            animation: confettiFall 4s linear infinite;
+            z-index: 3000;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="index.html" class="back-btn">← Back to Hub</a>
+
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLanguage('jp')">JP</button>
+        <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+    </div>
+
+    <!-- Hero Section -->
+    <section>
+        <div class="container hero-content">
+            <img src="assets/bp-labo.png" alt="BP Labo" class="logo-large">
+            <h1 class="hero-title" id="main-title">
+                <span data-jp="教育の未来へようこそ" data-en="Welcome to the Future of Education">教育の未来へようこそ</span>
+            </h1>
+            <p class="hero-subtitle" id="main-subtitle" style="opacity: 1;"> <!-- Reset opacity for JS animation -->
+                <span data-jp="ブレインパワーのインタラクティブな教育ツールスイート"
+                    data-en="Brain Power's Suite of Interactive Educational Tools">ブレインパワーのインタラクティブな教育ツールスイート</span>
+            </p>
+            <a href="login.html" class="hero-cta" style="animation-delay: 2.5s;"> <!-- Delay button -->
+                <span data-jp="アカウント登録・ログイン" data-en="Register Account / Login">アカウント登録・ログイン</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- BP-Tools -->
+    <section>
+        <div class="container feature-grid">
+            <div class="feature-image-wrapper reveal-left">
+                <div class="slideshow-container" data-interval="3500" data-folder="bp_tools_showcase" data-count="9">
+                    <div class="dots-container"></div>
+                </div>
+            </div>
+            <div class="feature-text reveal-right">
+                <span class="feature-label">
+                    <span data-jp="教室のユーティリティ" data-en="Classroom Utilities">Classroom Utilities</span>
+                </span>
+                <h2 class="feature-title">
+                    <span data-jp="BP-Tools" data-en="BP-Tools">BP-Tools</span>
+                </h2>
+                <p class="feature-desc">
+                    <span data-jp="【教室の必需品ツール】<br>タイマー、指名ルーレット、スコアボードなど、授業を効率的に進めるためのインタラクティブなツールセットです。"
+                        data-en="[Essential Classroom Utilities]<br>A suite of interactive tools like timers, name pickers, and scoreboards to manage your class efficiently.">
+                        【教室の必需品ツール】<br>タイマー、指名ルーレット、スコアボードなど、授業を効率的に進めるためのインタラクティブなツールセットです。
+                    </span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BP-Pay -->
+    <section>
+        <div class="container feature-grid reverse">
+            <div class="feature-image-wrapper reveal-right">
+                <div class="slideshow-container" data-interval="4000" data-folder="bp_pay_showcase" data-count="4">
+                    <div class="dots-container"></div>
+                </div>
+            </div>
+            <div class="feature-text reveal-left">
+                <span class="feature-label">
+                    <span data-jp="金融リテラシー" data-en="Financial Literacy">Financial Literacy</span>
+                </span>
+                <h2 class="feature-title">
+                    <span data-jp="BP-Pay" data-en="BP-Pay">BP-Pay</span>
+                </h2>
+                <p class="feature-desc">
+                    <span data-jp="【デジタル通貨システム】<br>楽しみながら金融リテラシーを学び、バーチャル通貨で生徒のやる気を引き出します。"
+                        data-en="[Digital Currency System]<br>Teach financial literacy and reward students with a fun, virtual economy.">
+                        【デジタル通貨システム】<br>楽しみながら金融リテラシーを学び、バーチャル通貨で生徒のやる気を引き出します。
+                    </span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BP-Expo -->
+    <section>
+        <div class="container feature-grid">
+            <div class="feature-image-wrapper reveal-left">
+                <div class="slideshow-container" data-interval="3800" data-folder="bp_expo_showcase" data-count="8">
+                    <div class="dots-container"></div>
+                </div>
+            </div>
+            <div class="feature-text reveal-right">
+                <span class="feature-label">
+                    <span data-jp="世界の発見" data-en="Global Discovery">Global Discovery</span>
+                </span>
+                <h2 class="feature-title">
+                    <span data-jp="BP-Expo" data-en="BP-Expo">BP-Expo</span>
+                </h2>
+                <p class="feature-desc">
+                    <span data-jp="【世界の発見プラットフォーム】<br>インタラクティブな地図やガイドを通して、世界の文化や習慣を探求しましょう。"
+                        data-en="[Global Discovery Platform]<br>Explore the world's cultures and customs through interactive maps and guides.">
+                        【世界の発見プラットフォーム】<br>インタラクティブな地図やガイドを通して、世界の文化や習慣を探求しましょう。
+                    </span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BP-Talk -->
+    <section>
+        <div class="container feature-grid reverse">
+            <div class="feature-image-wrapper reveal-right">
+                <div class="slideshow-container" data-interval="4200" data-folder="bp_echo_talk_showcase"
+                    data-count="9">
+                    <div class="dots-container"></div>
+                </div>
+            </div>
+            <div class="feature-text reveal-left">
+                <span class="feature-label">
+                    <span data-jp="AI英会話" data-en="AI Conversation">AI Conversation</span>
+                </span>
+                <h2 class="feature-title">
+                    <span data-jp="BP-Talk" data-en="BP-Talk">BP-Talk</span>
+                </h2>
+                <p class="feature-desc">
+                    <span data-jp="【AI英会話パートナー】<br>リアルタイムで発音を矯正してくれるAI先生と、自然な英会話を練習しましょう。"
+                        data-en="[AI Conversation Partner]<br>Practice speaking naturally with an AI teacher that corrects pronunciation in real-time.">
+                        【AI英会話パートナー】<br>リアルタイムで発音を矯正してくれるAI先生と、自然な英会話を練習しましょう。
+                    </span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BP-Shout -->
+    <section>
+        <div class="container feature-grid">
+            <div class="feature-image-wrapper reveal-left">
+                <div class="slideshow-container" data-interval="3600" data-folder="bp_echo_shout_showcase"
+                    data-count="5">
+                    <div class="dots-container"></div>
+                </div>
+            </div>
+            <div class="feature-text reveal-right">
+                <span class="feature-label">
+                    <span data-jp="ゲーム学習" data-en="Gamified Learning">Gamified Learning</span>
+                </span>
+                <h2 class="feature-title">
+                    <span data-jp="BP-Shout" data-en="BP-Shout">BP-Shout</span>
+                </h2>
+                <p class="feature-desc">
+                    <span data-jp="【ハイスピード単語ゲーム】<br>スピードと正確さがハイスコアの鍵となる、スリリングな発音チャレンジです。"
+                        data-en="[High-Speed Vocabulary Game]<br>A thrilling pronunciation challenge where speed and accuracy earn high scores.">
+                        【ハイスピード単語ゲーム】<br>スピードと正確さがハイスコアの鍵となる、スリリングな発音チャレンジです。
+                    </span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BP-Tango -->
+    <section>
+        <div class="container feature-grid reverse">
+            <div class="feature-image-wrapper reveal-right">
+                <div class="slideshow-container" data-interval="3900" data-folder="bp_tango_showcase" data-count="8">
+                    <div class="dots-container"></div>
+                </div>
+            </div>
+            <div class="feature-text reveal-left">
+                <span class="feature-label">
+                    <span data-jp="語彙習得" data-en="Vocabulary Mastery">Vocabulary Mastery</span>
+                </span>
+                <h2 class="feature-title">
+                    <span data-jp="BP-Tango" data-en="BP-Tango">BP-Tango</span>
+                </h2>
+                <p class="feature-desc">
+                    <span data-jp="【インタラクティブ単語カード】<br>学年別の単語セットと反復学習で、英単語をマスターしましょう。"
+                        data-en="[Interactive Flashcards]<br>Master vocabulary with grade-aligned decks and spaced repetition.">
+                        【インタラクティブ単語カード】<br>学年別の単語セットと反復学習で、英単語をマスターしましょう。
+                    </span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BP-Planner -->
+    <section>
+        <div class="container feature-grid">
+            <div class="feature-image-wrapper reveal-left">
+                <div class="slideshow-container" data-interval="4100" data-folder="bp_planner_showcase" data-count="9">
+                    <div class="dots-container"></div>
+                </div>
+            </div>
+            <div class="feature-text reveal-right">
+                <span class="feature-label">
+                    <span data-jp="教師支援" data-en="Teacher Support">Teacher Support</span>
+                </span>
+                <h2 class="feature-title">
+                    <span data-jp="BP-Planner" data-en="BP-Planner">BP-Planner</span>
+                </h2>
+                <p class="feature-desc">
+                    <span data-jp="【AIレッスン作成ビルダー】<br>人工知能のサポートで、プロフェッショナルな指導案を数秒で作成できます。"
+                        data-en="[AI Lesson Builder]<br>Create professional lesson plans in seconds with the help of artificial intelligence.">
+                        【AIレッスン作成ビルダー】<br>人工知能のサポートで、プロフェッショナルな指導案を数秒で作成できます。
+                    </span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mini Game Section -->
+    <section style="background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
+        <div class="container">
+            <div class="game-section reveal-up">
+                <h2 class="hero-subtitle" style="margin-bottom: 20px;">
+                    <span data-jp="ミニゲームに挑戦！" data-en="Try our Mini Game!">ミニゲームに挑戦！</span>
+                </h2>
+                <p style="margin-bottom: 20px;">
+                    <span data-jp="英単語と絵を合わせてみよう！" data-en="Match the word to the picture!">英単語と絵を合わせてみよう！</span>
+                </p>
+
+                <div class="game-target" id="game-target-word">Start</div>
+
+                <div class="game-area" id="game-cards-area">
+                    <!-- Cards injected by JS -->
+                </div>
+
+                <div class="game-feedback" id="game-feedback"></div>
+
+                <button onclick="initGame()" class="hero-cta"
+                    style="margin-top:20px; font-size: 1rem; padding: 10px 30px;">
+                    <span data-jp="リセット / 新しい問題" data-en="Reset / New Question">リセット / 新しい問題</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Word Hunt UI Elements -->
+    <div id="word-hunt-section" class="word-hunt-section">
+        <div class="game-description-box"
+            style="margin-bottom: 2rem; color: #e0e0e0; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto; background: rgba(0,0,0,0.5); padding: 1.5rem; border-radius: 15px; border: 1px solid rgba(255, 0, 204, 0.3);">
+            <p style="margin-bottom: 0.5rem; font-size: 1.1rem;">
+                <strong style="color: #ff00cc;">🎮 Game Rule:</strong> Find and click specific words or letters hidden
+                in the page descriptions!
+            </p>
+            <p style="font-size: 1.1rem;">
+                <strong style="color: #ff00cc;">🎮 遊び方:</strong> ページ内の説明文に隠された特定の単語や文字を探してクリックしよう！
+            </p>
+        </div>
+        <button class="word-hunt-button" onclick="startWordHunt()" data-jp="🎯 英語でチャレンジ！"
+            data-en="🎯 Challenge Your English!">
+            🎯 英語でチャレンジ！
+        </button>
+    </div>
+
+    <div id="word-hunt-counter" class="word-hunt-counter">
+        <span id="hunt-counter-text">0 remaining</span>
+    </div>
+
+    <div id="word-hunt-modal" class="word-hunt-modal" style="display: none;">
+        <div class="modal-content">
+            <h2>🎯 Word Hunt Challenge</h2>
+            <p id="hunt-instructions">Find all the verbs!</p>
+            <button onclick="closeInstructions()">Start Hunting!</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <h2 style="margin-bottom: 20px;">Ready to Transform Your Classroom?</h2>
+            <a href="login.html" class="hero-cta">
+                <span data-jp="今すぐ始める" data-en="Get Started Now">今すぐ始める</span>
+            </a>
+            <p style="margin-top: 30px; opacity: 0.7;">&copy; 2024 Brain Power. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ... (Existing Scripts) ...
+
+        // --- Slideshow Logic ---
+        function initSlideshows() {
+            const containers = document.querySelectorAll('.slideshow-container');
+
+            containers.forEach((container) => {
+                const folder = container.getAttribute('data-folder');
+                const count = parseInt(container.getAttribute('data-count')) || 3;
+                let intervalTime = parseInt(container.getAttribute('data-interval')) || 4000;
+
+                // Increase base interval to account for longer transition if not set high enough
+                if (intervalTime < 4000) intervalTime = 5000;
+
+                // Clear existing content just in case, or we could leave one as fallback/loading
+                container.innerHTML = '<div class="dots-container"></div>';
+                const dotsContainer = container.querySelector('.dots-container');
+
+                if (!folder) return;
+
+                // Dynamically create slides
+                for (let i = 1; i <= count; i++) {
+                    const slide = document.createElement('div');
+                    slide.className = 'slide' + (i === 1 ? ' active-slide' : '');
+
+                    const img = document.createElement('img');
+                    // Pattern: assets/folder/folder_i.jpg
+                    img.src = `assets/${folder}/${folder}_${i}.jpg`;
+                    img.alt = `${folder} slide ${i}`;
+
+                    // Create Dot immediately so we can link it
+                    const dot = document.createElement('span');
+                    dot.className = 'dot' + (i === 1 ? ' active' : '');
+
+                    // Manual Navigation Click Handler
+                    dot.onclick = () => {
+                        goToSlide(i - 1); // 0-indexed
+                        resetAutoPlay();
+                    };
+
+                    dotsContainer.appendChild(dot);
+
+                    // Robust Error Handling & Fallback
+                    img.onerror = function () {
+                        if (this.src.endsWith('.jpg')) {
+                            // Try PNG if JPG fails
+                            this.src = this.src.replace('.jpg', '.png');
+                        } else {
+                            // If both fail, remove the slide and the dot
+                            slide.remove();
+                            dot.remove();
+                            // Note: If the active slide is removed, we might need to handle that,
+                            // but showNextSlide will self-correct on next tick.
+                        }
+                    };
+
+                    slide.appendChild(img);
+                    container.insertBefore(slide, dotsContainer);
+                }
+
+                let slideIndex = 0;
+                let autoPlayTimer;
+                let resumeTimer;
+
+                function showSlide(index) {
+                    let slides = container.querySelectorAll('.slide');
+                    let dots = container.querySelectorAll('.dot');
+
+                    if (slides.length === 0) return;
+
+                    // Wrap index
+                    if (index >= slides.length) index = 0;
+                    if (index < 0) index = slides.length - 1;
+
+                    slideIndex = index;
+
+                    // Update classes
+                    slides.forEach(s => s.classList.remove('active-slide'));
+                    dots.forEach(d => d.classList.remove('active'));
+
+                    if (slides[slideIndex]) slides[slideIndex].classList.add('active-slide');
+                    if (dots[slideIndex]) dots[slideIndex].classList.add('active');
+                }
+
+                function showNextSlide() {
+                    showSlide(slideIndex + 1);
+                }
+
+                function goToSlide(index) {
+                    showSlide(index);
+                }
+
+                function startAutoPlay() {
+                    stopAutoPlay(); // Ensure clean state
+                    autoPlayTimer = setInterval(showNextSlide, intervalTime);
+                }
+
+                function stopAutoPlay() {
+                    if (autoPlayTimer) clearInterval(autoPlayTimer);
+                    if (resumeTimer) clearTimeout(resumeTimer);
+                }
+
+                function resetAutoPlay() {
+                    stopAutoPlay();
+                    // Resume after 5 seconds of inactivity
+                    resumeTimer = setTimeout(startAutoPlay, 5000);
+                }
+
+                // Start auto-play
+                startAutoPlay();
+            });
+        }
+
+        window.addEventListener('load', initSlideshows);
+
+        // --- Word Hunt Game Logic ---
+
+        const wordDatabase = {
+            verbs: ['welcome', 'teach', 'learn', 'explore', 'practice', 'create', 'reward', 'manage', 'start', 'transform', 'empower', 'engage', 'track', 'visualize', 'automate', 'connect', 'communicate', 'master', 'build', 'match', 'find', 'click', 'challenge', 'help', 'earn', 'speaking', 'corrects', 'talk', 'shout', 'pay'],
+            nouns: ['future', 'education', 'classroom', 'tools', 'utilities', 'literacy', 'currency', 'platform', 'culture', 'partner', 'brain', 'power', 'world', 'map', 'guide', 'hub', 'assistant', 'dashboard', 'experience', 'system', 'app', 'student', 'teacher', 'school', 'progress', 'flashcards', 'vocabulary', 'lesson', 'builder', 'game', 'word', 'picture', 'question', 'english', 'expo', 'planner', 'tango', 'utilities', 'discovery', 'conversation', 'learning', 'suite', 'timers', 'pickers', 'scoreboards', 'class', 'cultures', 'customs', 'maps', 'guides', 'score', 'decks'],
+            adjectives: ['interactive', 'educational', 'essential', 'digital', 'virtual', 'global', 'natural', 'high-speed', 'professional', 'smart', 'dynamic', 'fun', 'easy', 'ready', 'new', 'thrilling']
+        };
+
+        let activeTargets = [];
+        let foundCount = 0;
+        let totalTargets = 0;
+        let isGameActive = false;
+        let lastMode = ''; // Track last mode to prevent repeats
+
+        function startWordHunt() {
+            resetWordHunt(); // Clear any previous game
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            const allModes = ['verbs', 'nouns', 'adjectives', 'letter'];
+            let availableModes = allModes.filter(m => m !== lastMode);
+
+            // Randomly select from available modes (ensures no immediate repeat)
+            // Logic: 3 types of words vs 1 type of letter.
+            // If we cycle through them, the weight remains roughly 25% for 'letter' over time.
+            let mode = availableModes[Math.floor(Math.random() * availableModes.length)];
+            lastMode = mode;
+
+            let targetLetter = '';
+
+            // Store game state globally for activation in closeInstructions
+            window.pendingGame = { type: '', value: '' };
+
+            const instructionsP = document.getElementById('hunt-instructions');
+
+            // Define missing variables
+            const isJP = document.querySelector('.lang-btn.active').innerText === 'JP';
+            const modalBtn = document.querySelector('#word-hunt-modal button');
+
+            // ALWAYS Bilingual Modal Content
+            // Determine target for display
+            let targetDisplayEN = "";
+            let targetDisplayJP = "";
+
+            if (mode === 'letter') {
+                // Expanded common letters pool (excluding rare Q, X, Z just in case)
+                const chars = "ABCDEFGHIJKLMNOPRSTUVWXY".split('');
+                targetLetter = chars[Math.floor(Math.random() * chars.length)];
+
+                window.pendingGame = { type: 'letter', value: targetLetter };
+                targetDisplayEN = `the letter <strong style="color:#ff00cc; font-size:1.5em;">"${targetLetter}"</strong>`;
+                targetDisplayJP = `文字 <strong style="color:#ff00cc; font-size:1.5em;">「${targetLetter}」</strong>`;
+            } else {
+                window.pendingGame = { type: 'word', value: mode };
+                const modeJP = { verbs: '動詞', nouns: '名詞', adjectives: '形容詞' }[mode];
+                targetDisplayEN = `all the <strong style="color:#ff00cc; font-size:1.5em;">${mode.toUpperCase()}</strong>`;
+                targetDisplayJP = `すべての <strong style="color:#ff00cc; font-size:1.5em;">${modeJP}</strong>`;
+            }
+
+            modalBtn.innerText = isJP ? "ゲームスタート / Start Game" : "Start Game / ゲームスタート";
+
+            instructionsP.innerHTML = `
+                <div style="margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 20px;">
+                    <h3 style="color:#4ade80; margin-bottom:10px;">🇬🇧 English Instructions</h3>
+                    Find ${targetDisplayEN} on the page!<br>
+                    <small>Click the text in the descriptions.</small>
+                </div>
+                <div>
+                    <h3 style="color:#4ade80; margin-bottom:10px;">🇯🇵 日本語の説明</h3>
+                    ページ内の ${targetDisplayJP} を探してください！<br>
+                    <small>説明文の中のテキストをクリックします。</small>
+                </div>
+            `;
+
+            document.getElementById('word-hunt-modal').style.display = 'flex';
+        }
+
+        function closeInstructions() {
+            setLanguage('en');
+            // DELAY prepareGame slightly to ensure DOM update is complete
+            setTimeout(() => {
+                if (window.pendingGame) {
+                    prepareGame(window.pendingGame.type, window.pendingGame.value);
+                }
+                document.getElementById('word-hunt-modal').style.display = 'none';
+                document.getElementById('word-hunt-counter').style.display = 'block';
+                isGameActive = true;
+                updateCounter();
+            }, 100);
+        }
+
+        function prepareGame(type, value) {
+            // Include headers in scan
+            const containers = document.querySelectorAll('.feature-desc, .feature-label, .feature-title, .hero-title, .hero-subtitle, h1, h2, h3');
+
+            containers.forEach(container => {
+                // EXCLUDE Mini Game Section
+                if (container.closest('.game-section')) return;
+
+                // We need to work with the visible text (which might be split into spans or not)
+                // Simplest approach: Text replacement on innerHTML is risky with existing spans.
+                // Better: Iterate over text nodes? 
+                // Given our specific structure, the text is inside span[data-en].
+
+                const enSpan = container.querySelector('span[data-en]');
+                if (!enSpan) return;
+
+                // Safely process text content without breaking HTML or double-wrapping
+                let text = enSpan.getAttribute('data-en'); // Source text
+
+                // Split by HTML tags to isolate text content
+                // Regex matches tag (<...>) and keeps it in the array
+                const parts = text.split(/(<[^>]*>)/);
+
+                const processedParts = parts.map(part => {
+                    // Return tags as is
+                    if (part.startsWith('<')) return part;
+
+                    // Process text parts
+                    let processed = part;
+
+                    if (type === 'word') {
+                        // Create a SINGLE regex for all target words to avoid recursive replacement
+                        // Sort by length descending to match longer words first (e.g. "classroom" before "class")
+                        const targets = wordDatabase[value].sort((a, b) => b.length - a.length);
+                        if (targets.length > 0) {
+                            // Join words with OR operator
+                            const pattern = targets.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+                            const regex = new RegExp(`\\b(${pattern})\\b`, 'gi');
+
+                            processed = processed.replace(regex, (match) =>
+                                `<span class="word-hunt-target" onclick="handleTargetClick(this)">${match}</span>`
+                            );
+                        }
+                    } else if (type === 'letter') {
+                        // For letters, just target the specific character case-insensitive
+                        const regex = new RegExp(`(${value})`, 'gi');
+                        processed = processed.replace(regex, (match) =>
+                            `<span class="word-hunt-target" onclick="handleTargetClick(this)">${match}</span>`
+                        );
+                    }
+                    return processed;
+                });
+
+                // Reassemble
+                enSpan.innerHTML = processedParts.join('');
+            });
+
+            // Count targets
+            activeTargets = document.querySelectorAll('.word-hunt-target');
+            totalTargets = activeTargets.length;
+            foundCount = 0;
+            updateCounter();
+        }
+
+        function handleTargetClick(element) {
+            if (!isGameActive) return;
+            if (element.classList.contains('word-hunt-found')) return; // Already found
+
+            element.classList.add('word-hunt-found');
+            // Play sound?
+            playSound('success'); // Re-use existing sound
+
+            foundCount++;
+            updateCounter();
+
+            if (foundCount >= totalTargets) {
+                showCelebration();
+            }
+        }
+
+        function updateCounter() {
+            const remaining = totalTargets - foundCount;
+            document.getElementById('hunt-counter-text').innerText = `${remaining} remaining`;
+        }
+
+        function resetWordHunt() {
+            isGameActive = false;
+            document.getElementById('word-hunt-counter').style.display = 'none';
+
+            // Restore original text by re-calling setLanguage('en') which resets innerHTML from attributes
+            setLanguage('en');
+        }
+
+        function showCelebration() {
+            // Fireworks and Confetti
+            const colors = ['#ff00cc', '#3333ff', '#4ade80', '#f2d74e', '#ffffff'];
+
+            for (let i = 0; i < 300; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confetti.style.opacity = Math.random();
+                confetti.style.zIndex = '5000';
+                document.body.appendChild(confetti);
+
+                // Remove after animation
+                setTimeout(() => confetti.remove(), 5000);
+            }
+
+            const feedback = document.createElement('div');
+            feedback.style.position = 'fixed';
+            feedback.style.top = '50%';
+            feedback.style.left = '50%';
+            feedback.style.transform = 'translate(-50%, -50%)';
+            feedback.style.fontSize = '5rem';
+            feedback.style.fontWeight = 'bold';
+            feedback.style.color = '#fff';
+            feedback.style.textShadow = '0 0 50px #ff00cc';
+            feedback.style.zIndex = '5001';
+            feedback.innerText = 'CONGRATULATIONS!';
+            feedback.style.animation = 'bounceIn 1s';
+            feedback.style.textAlign = 'center';
+            feedback.style.width = '100%';
+
+            document.body.appendChild(feedback);
+
+            // Cleanup feedback
+            setTimeout(() => {
+                feedback.style.transition = 'opacity 1s';
+                feedback.style.opacity = '0';
+                setTimeout(() => feedback.remove(), 1000);
+                resetWordHunt();
+            }, 5000);
+        }
+
+
+        function createConfetti(color) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.backgroundColor = color;
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.body.appendChild(confetti);
+        }
+
+        function setLanguage(lang) {
+            const elements = document.querySelectorAll('[data-jp]');
+            elements.forEach(el => {
+                const text = lang === 'jp' ? el.getAttribute('data-jp') : el.getAttribute('data-en');
+
+                // Reset content
+                el.innerHTML = text;
+
+                // Re-trigger animations if applicable
+                const parent = el.parentElement;
+                if (parent.id === 'main-title') animateText(el, 'drop');
+                if (parent.id === 'main-subtitle') animateText(el, 'slide');
+                if (parent.classList.contains('feature-desc')) {
+                    // Re-run description animation only if it was already visible/animated
+                    animateDescription(el);
+                }
+            });
+
+            // Update buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.innerText.toLowerCase() === lang) btn.classList.add('active');
+            });
+
+            // Toggle Word Hunt Button - MOVED TO ALWAYS VISIBLE
+            /*
+            const huntSection = document.getElementById('word-hunt-section');
+            if (huntSection) {
+                huntSection.style.display = (lang === 'en') ? 'block' : 'none';
+            }
+            */
+
+            // If switching to JP while game is active, maybe reset?
+            if (lang === 'jp' && document.getElementById('word-hunt-counter').style.display === 'block') {
+                resetWordHunt(); // Cancel game
+            }
+        }
+
+        // --- Intersection Observer for Animations ---
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+
+                    // Trigger text animation for descriptions
+                    const descSpan = entry.target.querySelector('.feature-desc span[data-jp]');
+                    if (descSpan && !descSpan.hasAttribute('data-animated')) {
+                        animateDescription(descSpan);
+                        descSpan.setAttribute('data-animated', 'true');
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-left, .reveal-right, .reveal-up').forEach(el => {
+            observer.observe(el);
+        });
+
+        // --- Mini Game Logic ---
+        const gameItems = [
+            { word: "Dog", icon: "🐶", jp: "犬" },
+            { word: "Cat", icon: "🐱", jp: "猫" },
+            { word: "Apple", icon: "🍎", jp: "りんご" },
+            { word: "Car", icon: "🚙", jp: "車" },
+            { word: "Star", icon: "⭐", jp: "星" },
+            { word: "Ball", icon: "⚽", jp: "ボール" },
+            { word: "Book", icon: "📕", jp: "本" },
+            { word: "Fish", icon: "🐟", jp: "魚" },
+            { word: "Bird", icon: "🐦", jp: "鳥" },
+            { word: "Tree", icon: "🌳", jp: "木" },
+            { word: "Sun", icon: "☀️", jp: "太陽" },
+            { word: "Moon", icon: "🌙", jp: "月" },
+            { word: "Flower", icon: "🌸", jp: "花" },
+            { word: "House", icon: "🏠", jp: "家" },
+            { word: "Pencil", icon: "✏️", jp: "鉛筆" },
+            { word: "Music", icon: "🎵", jp: "音楽" },
+            { word: "Rocket", icon: "🚀", jp: "ロケット" },
+            { word: "Heart", icon: "❤️", jp: "ハート" },
+            { word: "Cake", icon: "🍰", jp: "ケーキ" },
+            { word: "Camera", icon: "📷", jp: "カメラ" }
+        ];
+
+        let currentTarget = null;
+
+        function shuffle(array) {
+            // Fisher-Yates shuffle
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function initGame() {
+            const container = document.getElementById('game-cards-area');
+            const targetDisplay = document.getElementById('game-target-word');
+            const feedback = document.getElementById('game-feedback');
+
+            container.innerHTML = '';
+            feedback.innerHTML = '';
+            feedback.className = 'game-feedback';
+
+            // Pick 3 random items
+            const roundItems = shuffle([...gameItems]).slice(0, 3);
+
+            // Pick one as target
+            currentTarget = roundItems[Math.floor(Math.random() * roundItems.length)];
+            targetDisplay.textContent = currentTarget.word;
+
+            // Render cards
+            roundItems.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.textContent = item.icon;
+                card.onclick = () => checkAnswer(item);
+                container.appendChild(card);
+            });
+        }
+
+        function checkAnswer(selectedItem) {
+            const feedback = document.getElementById('game-feedback');
+            const isJP = document.querySelector('.lang-btn.active').innerText === 'JP';
+
+            if (selectedItem.word === currentTarget.word) {
+                feedback.textContent = isJP ? "正解！ Great Job!" : "Correct! Great Job!";
+                feedback.className = 'game-feedback feedback-success';
+                playSound('success');
+                setTimeout(initGame, 2000); // Auto restart after 2s
+            } else {
+                feedback.textContent = isJP ? "もういちど！ Try Again!" : "Oops! Try Again!";
+                feedback.className = 'game-feedback feedback-fail';
+            }
+        }
+
+        function playSound(type) {
+            // Simple synthetic sound for feedback
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'success') {
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(500, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            }
+        }
+
+        // Initialize game on load
+        window.addEventListener('load', () => {
+            initGame();
+            // Initial Animation
+            const titleSpan = document.querySelector('#main-title span');
+            const subSpan = document.querySelector('#main-subtitle span');
+            if (titleSpan) animateText(titleSpan, 'drop');
+            setTimeout(() => {
+                if (subSpan) animateText(subSpan, 'slide');
+            }, 1000);
+        });
+
+        // --- Text Animation Helper ---
+        function animateText(element, effect) {
+            const text = element.innerText;
+            element.innerHTML = '';
+
+            const chars = text.split('');
+
+            chars.forEach((char, index) => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.className = 'char';
+
+                if (char === ' ') {
+                    span.style.width = '0.5em';
+                }
+
+                if (effect === 'drop') {
+                    span.style.animationName = 'charSlideInDown';
+                } else if (effect === 'slide') {
+                    span.style.animationName = 'charSlideInLeft';
+                }
+
+                span.style.animationDelay = `${index * 0.05}s`;
+                element.appendChild(span);
+            });
+        }
+
+        function animateDescription(element) {
+            const tempText = element.innerText.trim();
+            element.innerHTML = '';
+
+            // Detect if contains spaces (English-like) or mostly characters (Japanese-like)
+            const hasSpaces = tempText.includes(' ');
+            let chunks = [];
+
+            // Simple heuristic: If it has spaces and Latin characters, split by space.
+            // Otherwise treat as Japanese/Chinese (char by char).
+            if (hasSpaces && tempText.match(/[a-zA-Z]/)) {
+                chunks = tempText.split(' ');
+            } else {
+                chunks = tempText.split('');
+            }
+
+            chunks.forEach((chunk, index) => {
+                const span = document.createElement('span');
+
+                // Add space if it was split by space
+                if (hasSpaces && tempText.match(/[a-zA-Z]/)) {
+                    span.innerHTML = chunk + '&nbsp;';
+                } else {
+                    span.textContent = chunk;
+                }
+
+                span.className = 'word-anim';
+                span.style.animationName = 'wordPopIn';
+                span.style.animationDuration = '0.5s';
+                span.style.animationFillMode = 'forwards';
+                span.style.animationTimingFunction = 'cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                span.style.animationDelay = `${index * 0.05}s`; // Faster for flow
+
+                element.appendChild(span);
+            });
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,34 @@
+/* Global styles */
+:root {
+  --primary-green: #56ab2f;
+  --secondary-green: #a8e063;
+  --text-dark: #333;
+  --text-light: #fff;
+  --bg-light: #f0f2f5;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body, h1, h2, h3, h4, p {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+button {
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+}

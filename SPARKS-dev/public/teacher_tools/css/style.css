@@ -1,0 +1,597 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+:root {
+    /* FRUITY RUSH PALETTE */
+    --fruit-gold: #FDD835;
+    --fruit-gold-shadow: #F9A825;
+
+    --fruit-pink: #EC407A;
+    --fruit-pink-shadow: #880E4F;
+
+    --fruit-green: #8BC34A;
+    --fruit-green-shadow: #33691E;
+
+    --fruit-orange: #FF9800;
+    --fruit-orange-shadow: #E65100;
+
+    --fruit-cream: #FFFDE7;
+    /* Light creamy background */
+    --text-color: #3E2723;
+    /* Dark Brown for chocolate/organic feel */
+
+    --primary-color: var(--fruit-pink);
+    --secondary-color: var(--fruit-cream);
+    --border-radius: 24px;
+
+    /* LEGACY COMPATIBILITY (Mapped to Fruity) */
+    --team1-color: #42A5F5;
+    /* Blue -> Soft Blue */
+    --team2-color: var(--fruit-pink);
+    /* Red -> Fruity Pink */
+    --team3-color: var(--fruit-green);
+    /* Green -> Fruity Green */
+    --team4-color: var(--fruit-orange);
+    /* Orange -> Fruity Orange */
+}
+
+/* Safe Centering Fix */
+body {
+    font-family: 'Poppins', 'M PLUS Rounded 1c', sans-serif;
+    background-color: #FFF9C4;
+    /* Light Yellow */
+    color: var(--text-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Candy Pattern: Polka dots */
+    background-image:
+        radial-gradient(#F48FB1 3px, transparent 3px),
+        radial-gradient(#81C784 3px, transparent 3px);
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    /* Prevent horizontal scroll */
+    width: 100%;
+}
+
+#icon-menu {
+    display: flex;
+    justify-content: center;
+    /* Center buttons */
+    align-items: center;
+    gap: 15px;
+    /* Spacing between buttons */
+    margin-top: 5px;
+    /* Space between title and buttons */
+    z-index: 1000;
+}
+
+#icon-menu button,
+#icon-menu .button-like-label {
+    margin: 0;
+    width: 50px;
+    /* Slightly larger targets */
+    height: 50px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    /* Larger icons */
+    border-radius: 50%;
+    /* Ensure they pop */
+    box-shadow: 0 4px 0 var(--fruit-green-shadow), 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    position: relative;
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 0px 1em 1em 1em;
+    /* Reduced top padding */
+    width: 96%;
+    /* Safe "almost edge-to-edge" */
+    max-width: 1800px;
+    /* Cap width for giant screens */
+    margin-left: auto;
+    margin-right: auto;
+    background: white;
+    border-radius: 0 0 50px 50px;
+
+    /* GOLD BORDER: The signature Fruity Rush look */
+    border: 6px solid var(--fruit-gold);
+    border-top: none;
+    /* Open sides for edge-to-edge feel */
+    box-shadow: 0 10px 0 rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+header h1 {
+    margin-top: 10px;
+    margin-bottom: 0px;
+    line-height: 1.2;
+}
+
+/* ... existing header h1 ... */
+
+.tool-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    /* Use auto-fill to center nicely when few items */
+    gap: 20px;
+    width: 96%;
+    max-width: 1800px;
+    padding: 20px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    justify-content: center;
+    /* Centers grid items if they don't fill row */
+}
+
+/* === FRUIT CARD (Game Panel) === */
+.tool-card {
+    position: relative;
+    background-color: white;
+    border-radius: 30px;
+    padding: 1.5em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* GOLD RIM */
+    border: 6px solid var(--fruit-gold);
+    box-shadow:
+        0 8px 0 var(--fruit-gold-shadow),
+        /* Deep gold 3D shadow */
+        0 15px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Glossy Overlay for Card */
+/* Glossy Overlay Removed for Readability */
+/* .tool-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, transparent 100%);
+    pointer-events: none;
+    border-radius: 20px 20px 50% 50% / 20px 20px 20px 20px;
+} */
+
+.tool-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow:
+        0 12px 0 var(--fruit-gold-shadow),
+        0 20px 30px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+/* Card Headers: Ribbons */
+.tool-card h2 {
+    margin-top: -35px;
+    /* Pull up */
+    background: var(--fruit-pink);
+    color: white;
+    padding: 8px 25px;
+    border-radius: 50px;
+    border: 3px solid white;
+    box-shadow: 0 4px 0 var(--fruit-pink-shadow);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 1.4em;
+    z-index: 5;
+    position: relative;
+}
+
+/* Varying Colors for Variety */
+/* === TOOL-SPECIFIC JUICY THEMES === */
+
+/* Helper Mixin logic via CSS Variables */
+/* 
+   We redefine --fruit-gold (border) and --fruit-pink (header) locally 
+   for each card to create the unique theme effect without rewriting rules.
+*/
+
+/* 1. Lesson Menu (Pink/Rose) */
+#lesson-menu-tool {
+    --card-border: #EC407A;
+    --card-shadow: #880E4F;
+    --card-header: #D81B60;
+}
+
+/* 2. Date & Weather (Sky Blue) */
+#date-weather-tool {
+    --card-border: #42A5F5;
+    --card-shadow: #1565C0;
+    --card-header: #1E88E5;
+}
+
+/* 3. Name Picker (Purple) */
+#name-picker-tool {
+    --card-border: #AB47BC;
+    --card-shadow: #6A1B9A;
+    --card-header: #8E24AA;
+}
+
+/* 4. Classroom Timer (Teal) */
+#timer-tool {
+    --card-border: #26C6DA;
+    --card-shadow: #006064;
+    --card-header: #00ACC1;
+}
+
+/* 5. Flashcards (Orange) */
+#flashcards-tool-card-id {
+    --card-border: #FFA726;
+    --card-shadow: #E65100;
+    --card-header: #FB8C00;
+}
+
+/* 6. Scoreboard (Royal Gold - Keeps Magno feel but matches structure) */
+#scoreboard-tool {
+    --card-border: #FFCA28;
+    --card-shadow: #FF6F00;
+    --card-header: #FFB300;
+    background-color: #FFF8E1;
+    /* Light Gold BG */
+}
+
+/* 7. What's Missing (Lime) */
+#whats-missing-tool {
+    --card-border: #D4E157;
+    --card-shadow: #827717;
+    --card-header: #C0CA33;
+}
+
+/* 8. Image Reveal (Deep Purple/Indigo) */
+#image-reveal-tool {
+    --card-border: #5C6BC0;
+    --card-shadow: #283593;
+    --card-header: #3949AB;
+}
+
+/* 9. Jeopardy (Red) */
+#jeopardy-tool {
+    --card-border: #EF5350;
+    --card-shadow: #B71C1C;
+    --card-header: #E53935;
+}
+
+/* 10. Bingo (Green) */
+#bingo-tool {
+    --card-border: #66BB6A;
+    --card-shadow: #1B5E20;
+    --card-header: #43A047;
+}
+
+/* 11. Mystery Word (Deep Teal) */
+#mystery-word-tool {
+    --card-border: #009688;
+    --card-shadow: #004D40;
+    --card-header: #00796B;
+}
+
+/* 12. Spinner (Cyan) */
+#spinner-tool {
+    --card-border: #29B6F6;
+    --card-shadow: #01579B;
+    --card-header: #039BE5;
+}
+
+/* 13. Whiteboard (Blue Grey) */
+#whiteboard-tool {
+    --card-border: #78909C;
+    --card-shadow: #37474F;
+    --card-header: #546E7A;
+}
+
+/* 14. Noise Meter (Amber) */
+#noise-meter-tool {
+    --card-border: #FFD54F;
+    --card-shadow: #FF8F00;
+    --card-header: #FFC107;
+}
+
+/* 15. Phonics (Light Green) */
+#phonics-tool {
+    --card-border: #9CCC65;
+    --card-shadow: #33691E;
+    --card-header: #7CB342;
+}
+
+/* 16. Sound Board (Deep Orange) */
+#sound-board-tool {
+    --card-border: #FF7043;
+    --card-shadow: #BF360C;
+    --card-header: #F4511E;
+}
+
+/* 17. Coin Toss (Yellow) */
+#coin-toss-tool {
+    --card-border: #FFEE58;
+    --card-shadow: #F57F17;
+    --card-header: #FDD835;
+}
+
+
+/* APPLY VARIABLES TO CARD PROPERTIES */
+.tool-card {
+    /* Use the variable if defined, else fallback to Gold */
+    border: 6px solid var(--card-border, #FDD835);
+    box-shadow:
+        0 8px 0 var(--card-shadow, #F9A825),
+        0 15px 20px rgba(0, 0, 0, 0.1);
+}
+
+.tool-card:hover {
+    box-shadow:
+        0 12px 0 var(--card-shadow, #F9A825),
+        0 20px 30px rgba(0, 0, 0, 0.15);
+}
+
+.tool-card h2 {
+    background: var(--card-header, #EC407A);
+    box-shadow: 0 4px 0 var(--card-shadow, #880E4F);
+}
+
+/* === JELLY BUTTONS === */
+button,
+.button-like-label {
+    position: relative;
+    background: linear-gradient(to bottom, var(--fruit-green), #7CB342);
+    /* Default Green */
+    color: white;
+    border: 2px solid white;
+    /* White rim */
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 1.1em;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.1s;
+    margin: 8px;
+    display: inline-block;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+    /* 3D Depth */
+    box-shadow:
+        0 6px 0 var(--fruit-green-shadow),
+        0 10px 10px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+/* Gloss Overlay for Buttons */
+button::before,
+.button-like-label::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 50%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), transparent);
+    border-radius: 50px 50px 0 0;
+    pointer-events: none;
+}
+
+button:hover,
+.button-like-label:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+button:active,
+.button-like-label:active {
+    transform: translateY(4px);
+    box-shadow:
+        0 2px 0 var(--fruit-green-shadow),
+        0 4px 4px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled {
+    background: #CFD8DC;
+    color: #90A4AE;
+    box-shadow: 0 4px 0 #90A4AE;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* === UTILITY BUTTONS (Favorite/Fullscreen) === */
+.favorite-btn,
+.fullscreen-btn {
+    position: absolute !important;
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50% !important;
+    z-index: 20;
+    font-size: 1.2em !important;
+    background: white !important;
+    /* White bg for utility */
+    color: var(--fruit-green) !important;
+    border: 2px solid var(--fruit-gold) !important;
+    box-shadow: 0 4px 0 var(--fruit-gold-shadow) !important;
+}
+
+.favorite-btn:hover,
+.fullscreen-btn:hover {
+    transform: translateY(-2px) scale(1.1) !important;
+}
+
+.favorite-btn {
+    top: 15px;
+    left: 15px;
+}
+
+.fullscreen-btn {
+    top: 15px;
+    right: 15px;
+    color: var(--fruit-blue) !important;
+}
+
+/* Special Button Colors based on Context */
+/* You can add classes later or target specific IDs, but defaults are green */
+#reset-scores,
+#timer-reset,
+#timer-clear {
+    background: linear-gradient(to bottom, var(--fruit-orange), #EF6C00);
+    box-shadow: 0 6px 0 var(--fruit-orange-shadow), 0 10px 10px rgba(0, 0, 0, 0.2);
+}
+
+#reset-scores:active {
+    box-shadow: 0 2px 0 var(--fruit-orange-shadow);
+}
+
+
+/* === SCOREBOARD: THE BOSS LEVEL === */
+/* Making Scoreboard look distinct and powerful */
+#scoreboard-tool {
+    background-color: #F3E5F5;
+    /* Light Purple bg */
+    border-color: #9C27B0;
+    /* Purple Border */
+    box-shadow:
+        0 8px 0 #7B1FA2,
+        0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+#scoreboard-tool h2 {
+    background: #9C27B0;
+    box-shadow: 0 4px 0 #4A148C;
+}
+
+/* === UTILITIES === */
+.hidden {
+    display: none !important;
+}
+
+/* Fullscreen Overrides */
+.tool-card.fullscreen-mode {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    background-color: #FFF9C4;
+    /* Match body bg */
+    overflow-y: auto;
+    padding: 0 !important;
+}
+
+.tool-card.fullscreen-mode h2 {
+    display: none;
+    /* Hide header in fullscreen usually */
+}
+
+/* === GLOBAL TOOL OVERRIDES === */
+
+/* Inputs & Selects: Make them Chunky */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    background-color: white;
+    border: 3px solid #E0E0E0;
+    border-radius: 15px;
+    padding: 10px 15px;
+    font-size: 1em;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
+    transition: all 0.2s;
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.05);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--fruit-green);
+    box-shadow: 0 0 0 4px rgba(139, 195, 74, 0.2);
+}
+
+/* Specific Tool Containers: Make them pop */
+.dw-time-weather-row,
+.timer-visual-container,
+.flashcard-display-container,
+.jeopardy-board-placeholder,
+.bingo-display-area {
+    background-color: white !important;
+    border: 3px dashed var(--fruit-gold) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+    padding: 1em;
+    margin-top: 1em;
+}
+
+/* Date & Weather Specifics */
+.dw-date-cell {
+    border-radius: 12px !important;
+    border: 2px solid transparent !important;
+}
+
+.dw-date-cell.current-day {
+    background-color: var(--fruit-orange) !important;
+    box-shadow: 0 4px 0 var(--fruit-orange-shadow);
+}
+
+.dw-date-cell.selected-day {
+    background-color: var(--fruit-pink) !important;
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--fruit-pink);
+}
+
+/* Timer Visual */
+.timer-visual-container {
+    border: none !important;
+    background-color: #E1F5FE !important;
+    /* Sky blue for timer */
+    border: 4px solid #81D4FA !important;
+}
+
+/* Name Picker Input */
+#name-list {
+    border: 3px solid var(--fruit-pink) !important;
+}
+
+/* Popup Styling */
+.confirm-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(62, 39, 35, 0.6);
+    /* Chocolate dim */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2900;
+}
+
+.confirm-popup-content {
+    background: white;
+    padding: 2em;
+    border-radius: 30px;
+    border: 6px solid var(--fruit-gold);
+    box-shadow: 0 10px 0 var(--fruit-gold-shadow);
+    text-align: center;
+}

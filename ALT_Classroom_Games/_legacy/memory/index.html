@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Match - Brain Power</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../global_setup.css">
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <script src="../utils/audio.js"></script>
+</head>
+
+<body>
+    <header class="game-header header-memory">
+        <div class="container">
+            <button class="btn-back" onclick="window.location.href='../index.html'">← Back to Hub</button>
+            <h1>🧠 Memory Match</h1>
+            <div class="right-actions">
+                <button class="btn-icon" onclick="toggleMute()" title="Toggle Sound">🔊</button>
+                <button class="btn-icon" onclick="window.location.href='teacher.html'" title="Teacher Mode">⚙️</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Setup Screen -->
+    <div id="setup-screen" class="screen active">
+        <div class="container text-center">
+            <h2 class="mb-lg">Game Setup</h2>
+
+            <div class="setup-card">
+                <h3>Choose Card Set</h3>
+                <select id="game-set-select" class="input-select">
+                    <!-- Options populated by JS -->
+                </select>
+            </div>
+
+            <div class="setup-card">
+                <h3>Grid Size</h3>
+                <div class="grid-buttons">
+                    <button class="btn btn-primary grid-size-btn active" data-size="16"
+                        onclick="selectGridSize(16, this)">4×4</button>
+                    <button class="btn btn-primary grid-size-btn" data-size="20"
+                        onclick="selectGridSize(20, this)">4×5</button>
+                    <button class="btn btn-primary grid-size-btn" data-size="24"
+                        onclick="selectGridSize(24, this)">4×6</button>
+                    <button class="btn btn-primary grid-size-btn" data-size="36"
+                        onclick="selectGridSize(36, this)">6×6</button>
+                </div>
+            </div>
+
+            <div class="setup-card">
+                <h3>Number of Teams</h3>
+                <div class="team-buttons">
+                    <button class="btn btn-accent team-count-btn active" data-teams="2" onclick="selectTeams(2, this)">2
+                        Teams</button>
+                    <button class="btn btn-accent team-count-btn" data-teams="3" onclick="selectTeams(3, this)">3
+                        Teams</button>
+                    <button class="btn btn-accent team-count-btn" data-teams="4" onclick="selectTeams(4, this)">4
+                        Teams</button>
+                </div>
+            </div>
+
+            <button class="btn btn-large btn-primary mt-lg" onclick="startGame()">Start Game!</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen game-screen">
+        <div class="container">
+            <div class="score-board" id="score-board">
+                <!-- Team scores generated here -->
+            </div>
+
+            <div class="turn-indicator">
+                <span id="current-team-display">Team 1's Turn</span>
+            </div>
+
+            <div class="memory-grid-container">
+                <div id="memory-grid" class="memory-grid">
+                    <!-- Cards generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Win Modal -->
+    <div id="win-modal" class="modal-overlay">
+        <div class="modal text-center">
+            <h1 style="font-size: 3rem; margin-bottom: var(--space-md);">🎉 Game Over! 🎉</h1>
+            <h2 id="winner-announcement" style="color: var(--primary); margin-bottom: var(--space-lg);">Team 1 Wins!
+            </h2>
+            <div id="final-scores" style="font-size: 1.2rem; margin-bottom: var(--space-xl);"></div>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button class="btn btn-primary" onclick="location.reload()">Play Again</button>
+                <button class="btn btn-secondary" onclick="window.location.href='../index.html'">Back to Hub</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+
+</html>

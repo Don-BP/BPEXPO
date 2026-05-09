@@ -1,0 +1,385 @@
+:root {
+    --analytics-chart-reach: var(--admin-accent);
+    --analytics-chart-engagement: var(--admin-text-muted);
+    --analytics-kpi-bg: var(--admin-sidebar-bg);
+    --analytics-kpi-border: var(--admin-border);
+    --analytics-panel-bg: var(--admin-sidebar-bg);
+    --analytics-panel-border: var(--admin-border);
+    --analytics-badge-bg: var(--admin-accent-subtle);
+    --analytics-badge-color: var(--admin-accent);
+    --analytics-row-hover: var(--admin-accent-subtle);
+    --analytics-error-bg: #fef2f2;
+    --analytics-error-color: #dc2626;
+    --analytics-error-border: #fecaca;
+    --analytics-skeleton-bg: var(--admin-border);
+    --analytics-pill-bg: var(--admin-bg);
+    --analytics-pill-border: var(--admin-border);
+}
+
+.analytics-page {
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* ── Header + Controls ─────────────────────────────────────────── */
+
+.analytics-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.analytics-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--admin-text-primary);
+    margin: 0;
+}
+
+.analytics-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.analytics-presets {
+    display: flex;
+    gap: 4px;
+}
+
+.analytics-preset-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--admin-text-primary);
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.15s, color 0.15s;
+}
+
+.analytics-preset-btn:hover {
+    background: var(--admin-accent-subtle);
+}
+
+.analytics-preset-btn.active {
+    background: var(--admin-accent);
+    color: #fff;
+    border-color: var(--admin-accent);
+}
+
+.analytics-custom-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.analytics-date-input {
+    padding: 6px 8px;
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+    background: var(--admin-bg);
+    color: var(--admin-text-primary);
+    font-size: 13px;
+}
+
+.analytics-date-sep {
+    font-size: 13px;
+    color: var(--admin-text-muted);
+}
+
+.analytics-apply-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+    background: var(--admin-sidebar-bg);
+    color: var(--admin-text-primary);
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.analytics-apply-btn:hover {
+    background: var(--admin-accent-subtle);
+}
+
+/* ── Error Banner ──────────────────────────────────────────────── */
+
+.analytics-error {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+    border: 1px solid var(--analytics-error-border);
+    border-radius: 8px;
+    background: var(--analytics-error-bg);
+    color: var(--analytics-error-color);
+    font-size: 14px;
+}
+
+.analytics-retry-btn {
+    padding: 5px 12px;
+    border: 1px solid var(--analytics-error-border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--analytics-error-color);
+    cursor: pointer;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+/* ── KPI Summary Row ───────────────────────────────────────────── */
+
+.analytics-summary-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 900px) {
+    .analytics-summary-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 500px) {
+    .analytics-summary-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.analytics-kpi-card {
+    background: var(--analytics-kpi-bg);
+    border: 1px solid var(--analytics-kpi-border);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.analytics-kpi-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--admin-text-primary);
+    min-height: 36px;
+}
+
+.analytics-kpi-platform {
+    text-transform: capitalize;
+    font-size: 22px;
+}
+
+.analytics-kpi-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--admin-text-primary);
+}
+
+.analytics-kpi-sublabel {
+    font-size: 12px;
+    color: var(--admin-text-muted);
+}
+
+.analytics-skeleton {
+    height: 36px;
+    width: 80px;
+    background: var(--analytics-skeleton-bg);
+    border-radius: 6px;
+    animation: analytics-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes analytics-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* ── Platform Panels Grid ─────────────────────────────────────── */
+
+.analytics-platforms-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 700px) {
+    .analytics-platforms-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.analytics-platform-panel {
+    background: var(--analytics-panel-bg);
+    border: 1px solid var(--analytics-panel-border);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.analytics-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.analytics-platform-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--analytics-badge-bg);
+    color: var(--analytics-badge-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.analytics-platform-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--admin-text-primary);
+}
+
+.analytics-panel-message {
+    font-size: 13px;
+    color: var(--admin-text-muted);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.analytics-panel-link {
+    color: var(--admin-accent);
+    text-decoration: none;
+}
+
+.analytics-panel-link:hover {
+    text-decoration: underline;
+}
+
+/* ── Metric Pills ─────────────────────────────────────────────── */
+
+.analytics-metric-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.analytics-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--analytics-pill-bg);
+    border: 1px solid var(--analytics-pill-border);
+    border-radius: 8px;
+    min-width: 72px;
+    flex: 1;
+}
+
+.analytics-pill-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--admin-text-primary);
+}
+
+.analytics-pill-label {
+    font-size: 11px;
+    color: var(--admin-text-muted);
+    margin-top: 2px;
+}
+
+/* ── Recharts container ───────────────────────────────────────── */
+
+.analytics-chart {
+    width: 100%;
+}
+
+/* ── Campaign Table ───────────────────────────────────────────── */
+
+.analytics-campaigns-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.analytics-section-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--admin-text-primary);
+    margin: 0;
+}
+
+.analytics-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--admin-border);
+    border-radius: 10px;
+}
+
+.analytics-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    color: var(--admin-text-primary);
+}
+
+.analytics-table thead tr {
+    background: var(--admin-sidebar-bg);
+}
+
+.analytics-table th {
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--admin-text-muted);
+    border-bottom: 1px solid var(--admin-border);
+    white-space: nowrap;
+}
+
+.analytics-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.analytics-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.analytics-table-row {
+    cursor: pointer;
+    transition: background 0.12s;
+}
+
+.analytics-table-row:hover {
+    background: var(--analytics-row-hover);
+}
+
+.analytics-table-name {
+    font-weight: 600;
+}
+
+.analytics-table-empty {
+    padding: 32px;
+    text-align: center;
+    color: var(--admin-text-muted);
+    font-size: 14px;
+    border: 1px solid var(--admin-border);
+    border-radius: 10px;
+    background: var(--admin-sidebar-bg);
+}
+
+.analytics-table-loading {
+    padding: 32px;
+    text-align: center;
+    color: var(--admin-text-muted);
+}
